@@ -57,6 +57,10 @@ public class MainOpMode extends OpMode{
         CLAW1 = hardwareMap.get(Servo.class, "claw1");
         CLAW2 = hardwareMap.get(Servo.class, "claw2");
 
+        //Opening claw to try and prevent the claw from getting jammed in some way... You get the point
+        CLAW1.setPosition(CLAW1open);
+        CLAW2.setPosition(CLAW2open);
+
         //Signals ready
         telemetry.addData("~>", "Robot Ready.  Press Play.  Or else...");
     }
@@ -113,13 +117,13 @@ public class MainOpMode extends OpMode{
 
         //===========TELEMETRY=====================
         //Motors
-        telemetry.addData("FL ",  "%.2f", leftFrontPower);
-        telemetry.addData("BL ",  "%.2f", leftBackPower);
-        telemetry.addData("FR",  "%.2f", rightFrontPower);
-        telemetry.addData("BR",  "%.2f", rightBackPower);
+        telemetry.addData("FL Power",  "%.2f", leftFrontPower);
+        telemetry.addData("BL Power",  "%.2f", leftBackPower);
+        telemetry.addData("FR Power",  "%.2f", rightFrontPower);
+        telemetry.addData("BR Power",  "%.2f", rightBackPower);
         //Claw
-        telemetry.addData("LeftClaw", "%.2f", CLAW1.getPosition());
-        telemetry.addData("RightClaw", "%.2f", CLAW2.getPosition());
+        telemetry.addData("LeftClaw Position", "%.2f", CLAW1.getPosition());
+        telemetry.addData("RightClaw Position", "%.2f", CLAW2.getPosition());
     }
 
     @Override //>>>>>>>>>>>>>> STOP <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
