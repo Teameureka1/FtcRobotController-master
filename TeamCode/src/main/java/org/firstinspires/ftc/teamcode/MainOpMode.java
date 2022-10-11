@@ -1,5 +1,5 @@
 /* Name: Hex Bot Main
- * Desc: Controls the manualy
+ * Desc: Controls the manually
  * Team: 10662
  * Developed By: Chester, Kyler, Dillon, Joe, Talon(the great).
  * Date Updated: 09/19/22
@@ -24,6 +24,8 @@ public class MainOpMode extends OpMode{
     public DcMotor  FL = null;
     public DcMotor  BR   = null;
     public DcMotor  FR   = null;
+    public DcMotor ARM1 = null;
+    public DcMotor ARM2 = null;
     public Servo    CLAW1 = null;
     public Servo    CLAW2 = null;
 
@@ -47,11 +49,16 @@ public class MainOpMode extends OpMode{
         FL  = hardwareMap.get(DcMotor.class, "FL");
         BR  = hardwareMap.get(DcMotor.class, "BR");
         FR  = hardwareMap.get(DcMotor.class, "FR");
+        ARM1 = hardwareMap.get(DcMotor.class, "ARM1");
+        ARM2 = hardwareMap.get(DcMotor.class, "ARM2");
 
         BL.setDirection(DcMotor.Direction.FORWARD);
         FL.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.REVERSE);
+
+        ARM1.setDirection(DcMotorSimple.Direction.REVERSE);
+        ARM1.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Set servos
         CLAW1 = hardwareMap.get(Servo.class, "claw1");
@@ -82,7 +89,7 @@ public class MainOpMode extends OpMode{
         double yaw;
 
         //Doubles speed when right bumper 1 is pressed
-        if (gamepad1.right_bumper) {
+        if (gamepad1.right_bumper) { //Dividing by two to slow it down
             axial = (-gamepad1.left_stick_y);
             lateral = (gamepad1.left_stick_x);
             yaw = (gamepad1.right_stick_x);
@@ -105,6 +112,20 @@ public class MainOpMode extends OpMode{
         BR.setPower(rightBackPower + BRoffset);
 
         //===========GAMEPAD2=====================
+        //Defining variables
+        double armPower;
+
+        //Assigning power to arm
+        armPower = -gamepad2.left_stick_y;
+
+        if(gamepad2.right_bumper) {  //Doubles speed when pressed
+            ARM1.setPower(armPower);
+            ARM2.setPower(armPower);
+        } else {
+            ARM1.setPower(armPower / 2);
+            ARM2.setPower(armPower / 2);
+        }
+
         //Open and close claw
         if (gamepad2.x) {
             CLAW1.setPosition(CLAW1open);
@@ -124,6 +145,9 @@ public class MainOpMode extends OpMode{
         //Claw
         telemetry.addData("LeftClaw Position", "%.2f", CLAW1.getPosition());
         telemetry.addData("RightClaw Position", "%.2f", CLAW2.getPosition());
+
+        telemetry.addData("Arm1", "%.2f", ARM1.getPower());
+        telemetry.addData("Arm2", "%.2f", ARM2.getPower());
     }
 
     @Override //>>>>>>>>>>>>>> STOP <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
