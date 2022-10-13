@@ -11,7 +11,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> MAIN <#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
@@ -19,54 +18,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 //@Disabled
 public class MainOpMode extends OpMode{
 
-    //Declares Op Members
-    public DcMotor  BL   = null;
-    public DcMotor  FL = null;
-    public DcMotor  BR   = null;
-    public DcMotor  FR   = null;
-    public DcMotor ARM1 = null;
-    public DcMotor ARM2 = null;
-    public Servo    CLAW1 = null;
-    public Servo    CLAW2 = null;
-
-    //Public Moter Offset
-    public double BLoffset = 0;
-    public double FLoffset = 0;
-    public double BRoffset = 0;
-    public double FRoffset = 0.0147;
-
-    //Public Servo Positions
-    public double CLAW1open = 0.25;
-    public double CLAW2open = 0.7;
-
-    public double CLAW1close = 0.05;
-    public double CLAW2close = 0.9;
+    //Instantiate the Hardware class
+    Robot10662Hardware robot = new Robot10662Hardware();
 
     @Override //>>>>>>>>>>>>>> INT <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     public void init() { //Runs ONCE when driver hits INIT <<
-        //Sets motors
-        BL  = hardwareMap.get(DcMotor.class, "BL");
-        FL  = hardwareMap.get(DcMotor.class, "FL");
-        BR  = hardwareMap.get(DcMotor.class, "BR");
-        FR  = hardwareMap.get(DcMotor.class, "FR");
-        ARM1 = hardwareMap.get(DcMotor.class, "ARM1");
-        ARM2 = hardwareMap.get(DcMotor.class, "ARM2");
-
-        BL.setDirection(DcMotor.Direction.FORWARD);
-        FL.setDirection(DcMotor.Direction.REVERSE);
-        BR.setDirection(DcMotor.Direction.REVERSE);
-        FR.setDirection(DcMotor.Direction.REVERSE);
-
-        ARM1.setDirection(DcMotorSimple.Direction.REVERSE);
-        ARM1.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        //Set servos
-        CLAW1 = hardwareMap.get(Servo.class, "claw1");
-        CLAW2 = hardwareMap.get(Servo.class, "claw2");
-
-        //Opening claw to try and prevent the claw from getting jammed in some way... You get the point
-        CLAW1.setPosition(CLAW1open);
-        CLAW2.setPosition(CLAW2open);
+        //Use 'init' methods from Hardware class to Map hardware to match robot's config
+        robot.init(hardwareMap);
 
         //Signals ready
         telemetry.addData("~>", "Robot Ready.  Press Play.  Or else...");
@@ -106,10 +64,10 @@ public class MainOpMode extends OpMode{
         double rightBackPower = axial + lateral - yaw;
 
         //Setting power to moters
-        FL.setPower(leftFrontPower + FLoffset);
-        FR.setPower(rightFrontPower + FRoffset);
-        BL.setPower(leftBackPower + BLoffset);
-        BR.setPower(rightBackPower + BRoffset);
+        robot.FrontLeftDrive.setPower(leftFrontPower);
+        robot.FrontRightDrive.setPower(rightFrontPower);
+        robot.BackLeftDrive.setPower(leftBackPower);
+        robot.BackRightDrive.setPower(rightBackPower);
 
         //===========GAMEPAD2=====================
         //Defining variables
@@ -119,35 +77,36 @@ public class MainOpMode extends OpMode{
         armPower = -gamepad2.left_stick_y;
 
         if(gamepad2.right_bumper) {  //Doubles speed when pressed
-            ARM1.setPower(armPower);
-            ARM2.setPower(armPower);
+            robot.Arm0.setPower(armPower);
+            robot.Arm1.setPower(armPower);
         } else {
-            ARM1.setPower(armPower / 2);
-            ARM2.setPower(armPower / 2);
+            robot.Arm0.setPower(armPower / 2);
+            robot.Arm1.setPower(armPower / 2);
         }
 
         //Open and close claw
         if (gamepad2.x) {
-            CLAW1.setPosition(CLAW1open);
-            CLAW2.setPosition(CLAW2open);
+            robot.Claw0.setPosition(robot.Claw0Open);
+            robot.Claw1.setPosition(robot.Claw1Open);
         } else if (gamepad2.a) {
-            CLAW1.setPosition(CLAW1close);
-            CLAW2.setPosition(CLAW2close);
+            robot.Claw0.setPosition(robot.Claw0Close);
+            robot.Claw1.setPosition(robot.Claw1Close);
         }
 
 
-        //===========TELEMETRY=====================
+        //region ===========TELEMETRY=====================
         //Motors
-        telemetry.addData("FL Power",  "%.2f", leftFrontPower);
-        telemetry.addData("BL Power",  "%.2f", leftBackPower);
-        telemetry.addData("FR Power",  "%.2f", rightFrontPower);
-        telemetry.addData("BR Power",  "%.2f", rightBackPower);
+        telemetry.addData("FL Power",  "%.2f :%7d", robot.FrontLeftDrive.getPower(), robot.FrontLeftDrive.getCurrentPosition());
+        telemetry.addData("BL Power",  "%.2f :%7d", robot.BackLeftDrive.getPower(), robot.BackLeftDrive.getCurrentPosition());
+        telemetry.addData("FR Power",  "%.2f :%7d", robot.FrontRightDrive.getPower(), robot.FrontRightDrive.getCurrentPosition());
+        telemetry.addData("BR Power",  "%.2f :%7d", robot.BackRightDrive.getPower(), robot.BackRightDrive.getCurrentPosition());
         //Claw
-        telemetry.addData("LeftClaw Position", "%.2f", CLAW1.getPosition());
-        telemetry.addData("RightClaw Position", "%.2f", CLAW2.getPosition());
+        telemetry.addData("LeftClaw Position", "%.2f", robot.Claw0.getPosition());
+        telemetry.addData("RightClaw Position", "%.2f", robot.Claw1.getPosition());
 
-        telemetry.addData("Arm1", "%.2f", ARM1.getPower());
-        telemetry.addData("Arm2", "%.2f", ARM2.getPower());
+        telemetry.addData("Arm1", "%.2f", robot.Arm0.getPower());
+        telemetry.addData("Arm2", "%.2f", robot.Arm1.getPower());
+        //endregion
     }
 
     @Override //>>>>>>>>>>>>>> STOP <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
