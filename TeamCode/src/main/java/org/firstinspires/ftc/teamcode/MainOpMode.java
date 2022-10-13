@@ -12,12 +12,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> MAIN <#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
 @TeleOp(name="Main :: Op Mode", group="Robot")
 //@Disabled
 public class MainOpMode extends OpMode{
-
+    private ElapsedTime runtime = new ElapsedTime();
     //Instantiate the Hardware class
     Robot10662Hardware robot = new Robot10662Hardware();
 
@@ -62,7 +63,7 @@ public class MainOpMode extends OpMode{
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower = axial - lateral + yaw;
         double rightBackPower = axial + lateral - yaw;
-
+        
         //Setting power to moters
         robot.FrontLeftDrive.setPower(leftFrontPower);
         robot.FrontRightDrive.setPower(rightFrontPower);
