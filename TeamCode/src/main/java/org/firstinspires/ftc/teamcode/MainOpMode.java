@@ -1,8 +1,10 @@
-/* Name: Hex Bot Main
- * Desc: Controls the manually
- * Team: 10662
- * Developed By: Chester, Kyler, Dillon, Joe, Talon(the great).
- * Date Updated: 09/19/22
+/**
+ * Welcome to the MainOpMode program
+ *
+ * This programs purpose is to make the robot follow the drivers commands like a puppy dog
+ * and try to be a pleasent experience as well. This program is inteded to be used with two controllers.
+ * Controller A controls all of the robots wheel based movement.
+ * Controller B controls all of the robots arm and claw movement.
  */
 
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> IMPORTS <#$##$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#

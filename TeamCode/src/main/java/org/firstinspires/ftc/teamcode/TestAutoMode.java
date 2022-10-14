@@ -1,8 +1,7 @@
-/* Name: Hex Bot Main
- * Desc: Controls the manually
- * Team: 10662
- * Developed By: Chester, Kyler, Dillon, Joe, Talon(the great).
- * Date Updated: 09/19/22
+/**
+ * Welcome to the Test Auto mode yes program(If i didnt forget to update this that is correct)
+ *
+ * This programs purpose is to test autonomous mode related stuff, mostly temporary...
  */
 
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> IMPORTS <#$##$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
