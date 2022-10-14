@@ -109,6 +109,8 @@ public class MainOpMode extends OpMode{
 
         telemetry.addData("Arm1", "%.2f", robot.Arm0.getPower());
         telemetry.addData("Arm2", "%.2f", robot.Arm1.getPower());
+
+        telemetry.addData("Gyro", "%.2f", robot.imu.getAcceleration());
         //endregion
     }
 

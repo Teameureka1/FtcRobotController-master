@@ -9,6 +9,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> MAIN <#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
@@ -37,7 +38,6 @@ public class TestAutoMode extends LinearOpMode {
 
 
 
-
     }
     //#$#$#$#$#$#$#$#$#$#$#$#$#$> MOVE <#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
     public void moveSeconds(double seconds, double axial, double lateral, double yaw) {
@@ -58,6 +58,5 @@ public class TestAutoMode extends LinearOpMode {
             telemetry.update();
         }
     }
-    public void testMove(double axial, double lateral, double yaw) {
-    }
+
 }

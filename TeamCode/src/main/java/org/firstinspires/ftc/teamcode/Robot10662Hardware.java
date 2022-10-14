@@ -13,6 +13,7 @@
 //#$#$#$#$#$#$#$#$#>> IMPORTS <<#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -28,6 +29,7 @@ public class Robot10662Hardware {
     public DcMotor Arm1             = null;
     public Servo   Claw0            = null;
     public Servo   Claw1            = null;
+    public BNO055IMU imu         = null;
 
     //Defining public constant variables
     public static final double Claw0Open       = 0.25 ;
@@ -78,5 +80,11 @@ public class Robot10662Hardware {
         //Opening Claw at the Start to Prevent Problems
         Claw0.setPosition(Claw0Open);
         Claw1.setPosition(Claw1Open);
+
+        //Define Sensors
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
+        imu = hwMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
     }
 }
