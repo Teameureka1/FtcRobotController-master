@@ -15,6 +15,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -72,6 +73,8 @@ public class Robot10662Hardware {
         BackLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         BackLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BackLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        Arm0.setDirection((DcMotorSimple.Direction.REVERSE));
 
         //Define and initialize Servos.
         Claw0 = hwMap.get(Servo.class, "Claw0");

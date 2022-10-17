@@ -96,10 +96,12 @@ public class MainOpMode extends OpMode{
             robot.Claw1.setPosition(robot.Claw1Close);
         }
 
+        //CHESTER PLEASE READ we commented out the telementry because we needed to test the arm without errors
+        //P.S - If we didn't already tell you, the claw does work.
 
         //region ===========TELEMETRY=====================
         //Motors
-        telemetry.addData("FL Power",  "%.2f :%7d", robot.FrontLeftDrive.getPower(), robot.FrontLeftDrive.getCurrentPosition());
+     /*   telemetry.addData("FL Power",  "%.2f :%7d", robot.FrontLeftDrive.getPower(), robot.FrontLeftDrive.getCurrentPosition());
         telemetry.addData("BL Power",  "%.2f :%7d", robot.BackLeftDrive.getPower(), robot.BackLeftDrive.getCurrentPosition());
         telemetry.addData("FR Power",  "%.2f :%7d", robot.FrontRightDrive.getPower(), robot.FrontRightDrive.getCurrentPosition());
         telemetry.addData("BR Power",  "%.2f :%7d", robot.BackRightDrive.getPower(), robot.BackRightDrive.getCurrentPosition());
@@ -112,6 +114,8 @@ public class MainOpMode extends OpMode{
 
         telemetry.addData("Gyro", "%.2f", robot.imu.getAcceleration());
         //endregion
+
+      */
     }
 
     @Override //>>>>>>>>>>>>>> STOP <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
