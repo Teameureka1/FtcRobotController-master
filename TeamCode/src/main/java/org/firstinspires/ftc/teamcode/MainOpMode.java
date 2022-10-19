@@ -101,7 +101,7 @@ public class MainOpMode extends OpMode{
 
         //region ===========TELEMETRY=====================
         //Motors
-     /*   telemetry.addData("FL Power",  "%.2f :%7d", robot.FrontLeftDrive.getPower(), robot.FrontLeftDrive.getCurrentPosition());
+        telemetry.addData("FL Power",  "%.2f :%7d", robot.FrontLeftDrive.getPower(), robot.FrontLeftDrive.getCurrentPosition());
         telemetry.addData("BL Power",  "%.2f :%7d", robot.BackLeftDrive.getPower(), robot.BackLeftDrive.getCurrentPosition());
         telemetry.addData("FR Power",  "%.2f :%7d", robot.FrontRightDrive.getPower(), robot.FrontRightDrive.getCurrentPosition());
         telemetry.addData("BR Power",  "%.2f :%7d", robot.BackRightDrive.getPower(), robot.BackRightDrive.getCurrentPosition());
@@ -112,10 +112,8 @@ public class MainOpMode extends OpMode{
         telemetry.addData("Arm1", "%.2f", robot.Arm0.getPower());
         telemetry.addData("Arm2", "%.2f", robot.Arm1.getPower());
 
-        telemetry.addData("Gyro", "%.2f", robot.imu.getAcceleration());
         //endregion
 
-      */
     }
 
     @Override //>>>>>>>>>>>>>> STOP <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
