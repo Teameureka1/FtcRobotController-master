@@ -49,6 +49,7 @@ public class TestAutoMode extends LinearOpMode {
         //Repeatedly will run for however many seconds
         runtime.reset();
 
+        //Runs a while loop to keep the method going and provide output
         while (opModeIsActive() && (runtime.seconds() < seconds)) {
             telemetry.addData("FL Power",  "%.2f :%7d", robot.FrontLeftDrive.getPower(), robot.FrontLeftDrive.getCurrentPosition());
             telemetry.addData("BL Power",  "%.2f :%7d", robot.BackLeftDrive.getPower(), robot.BackLeftDrive.getCurrentPosition());
@@ -57,6 +58,12 @@ public class TestAutoMode extends LinearOpMode {
             telemetry.addData("move", "%4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
+
+        //Stopping motors
+        robot.FrontLeftDrive.setPower(0);
+        robot.BackLeftDrive.setPower(0);
+        robot.FrontRightDrive.setPower(0);
+        robot.BackRightDrive.setPower(0);
     }
 
 }

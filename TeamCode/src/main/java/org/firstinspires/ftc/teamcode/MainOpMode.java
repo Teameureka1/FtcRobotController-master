@@ -109,6 +109,7 @@ public class MainOpMode extends OpMode{
         telemetry.addData("LeftClaw Position", "%.2f", robot.Claw0.getPosition());
         telemetry.addData("RightClaw Position", "%.2f", robot.Claw1.getPosition());
 
+
         telemetry.addData("Arm1", "%.2f", robot.Arm0.getPower());
         telemetry.addData("Arm2", "%.2f", robot.Arm1.getPower());
 
