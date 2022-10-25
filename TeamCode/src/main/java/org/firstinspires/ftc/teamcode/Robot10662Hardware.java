@@ -33,10 +33,10 @@ public class Robot10662Hardware {
     public BNO055IMU imu         = null;
 
     //Defining public constant variables
-    public static final double Claw0Open       = 0.25 ;
-    public static final double Claw1Open       = 0.7 ;
-    public static final double Claw0Close      = 0.05 ;
-    public static final double Claw1Close      = 0.9 ;
+    public static final double Claw0Open       = 0.7;
+    public static final double Claw1Open       = 0.65;
+    public static final double Claw0Close      = 0.9;
+    public static final double Claw1Close      = 0.85;
 
     //Local opMember
     HardwareMap hwMap = null;
