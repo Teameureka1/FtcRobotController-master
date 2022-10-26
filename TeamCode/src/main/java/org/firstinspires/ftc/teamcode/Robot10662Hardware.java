@@ -90,4 +90,50 @@ public class Robot10662Hardware {
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
     }
+
+    public void toggleMotorHold(String motor, boolean hold) {
+        if (hold == true) { //Toggle hold ON
+            if (motor.equals("FL")) { //Front Left Motor
+                FrontLeftDrive.setTargetPosition(FrontLeftDrive.getCurrentPosition());
+                FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                FrontLeftDrive.setPower(0);
+            } else if (motor.equals("FR")) { //Front Right Motor
+                FrontRightDrive.setTargetPosition(FrontRightDrive.getCurrentPosition());
+                FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                FrontRightDrive.setPower(0);
+            } else if (motor.equals("BL")) { //Back Left Motor
+                BackLeftDrive.setTargetPosition(BackLeftDrive.getCurrentPosition());
+                BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                BackLeftDrive.setPower(0);
+            } else if (motor.equals("BR")) { //Back Right Motor
+                BackRightDrive.setTargetPosition(BackRightDrive.getCurrentPosition());
+                BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                BackRightDrive.setPower(0);
+            } else if (motor.equals("A0")) { //Arm 0 Motor
+                Arm0.setTargetPosition(Arm0.getCurrentPosition());
+                Arm0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Arm0.setPower(0);
+            } else if (motor.equals("A1")) { //Arm 1 Motor
+                Arm1.setTargetPosition(Arm1.getCurrentPosition());
+                Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Arm1.setPower(0);
+            }
+        } else { //Toggle hold OFF
+            if (motor.equals("FL")) { //Front Left Motor
+                FrontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            } else if (motor.equals("FR")) { //Front Right Motor
+                FrontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            } else if (motor.equals("BL")) { //Back Left Motor
+                BackLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            } else if (motor.equals("BR")) { //Back Right Motor
+                BackRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            } else if (motor.equals("A0")) { //Arm 0 Motor
+                Arm0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            } else if (motor.equals("A1")) { //Arm 1 Motor
+                Arm1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+        }
+
+    }
+
 }

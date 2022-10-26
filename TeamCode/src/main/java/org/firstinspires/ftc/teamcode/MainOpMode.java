@@ -61,16 +61,41 @@ public class MainOpMode extends OpMode{
         }
 
         //Simple algebra to tell moters their speed for movement and strafe
-        double leftFrontPower = axial + lateral + yaw;
-        double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower = axial - lateral + yaw;
-        double rightBackPower = axial + lateral - yaw;
+        double frontLeftPower = axial + lateral + yaw;
+        double frontRightPower = axial - lateral - yaw;
+        double backLeftPower = axial - lateral + yaw;
+        double backRightPower = axial + lateral - yaw;
         
         //Setting power to moters
-        robot.FrontLeftDrive.setPower(leftFrontPower);
-        robot.FrontRightDrive.setPower(rightFrontPower);
-        robot.BackLeftDrive.setPower(leftBackPower);
-        robot.BackRightDrive.setPower(rightBackPower);
+        robot.FrontLeftDrive.setPower(frontLeftPower);
+        robot.FrontRightDrive.setPower(frontRightPower);
+        robot.BackLeftDrive.setPower(backLeftPower);
+        robot.BackRightDrive.setPower(backRightPower);
+
+       //Stop and hold drive motors !!!!!!!!!!!!!REPLACE WITH BETTER!!!!!!!!!!!!!!!!!!!!
+        if (frontLeftPower == 0) { //Front Left
+            robot.toggleMotorHold("FL",true);
+        } else {
+            robot.toggleMotorHold("FL",false);
+        }
+
+        if (frontRightPower == 0) { //Front Right
+            robot.toggleMotorHold("FR",true);
+        } else {
+            robot.toggleMotorHold("FR",false);
+        }
+
+        if (backLeftPower == 0) { //Back Left
+            robot.toggleMotorHold("BL",true);
+        } else {
+            robot.toggleMotorHold("BL",false);
+        }
+
+        if (backRightPower == 0) { //Back Right
+            robot.toggleMotorHold("BR",true);
+        } else {
+            robot.toggleMotorHold("BR",false);
+        }
 
         //===========GAMEPAD2=====================
         //Defining variables
@@ -96,8 +121,8 @@ public class MainOpMode extends OpMode{
             robot.Claw1.setPosition(robot.Claw1Close);
         }
 
-        //CHESTER PLEASE READ we commented out the telementry because we needed to test the arm without errors
-        //P.S - If we didn't already tell you, the claw does work.
+
+
 
         //region ===========TELEMETRY=====================
         //Motors
