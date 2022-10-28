@@ -16,6 +16,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -30,13 +31,20 @@ public class Robot10662Hardware {
     public DcMotor Arm1             = null;
     public Servo   Claw0            = null;
     public Servo   Claw1            = null;
+    public DigitalChannel armTouch;
     public BNO055IMU imu         = null;
 
     //Defining public constant variables
-    public static final double Claw0Open       = 0.7;
-    public static final double Claw1Open       = 0.65;
-    public static final double Claw0Close      = 0.9;
-    public static final double Claw1Close      = 0.85;
+    public static final double Claw0Open       = 0.6;
+    public static final double Claw1Open       = 0.7;
+    public static final double Claw0Close      = 0.8;
+    public static final double Claw1Close      = 0.9;
+
+    public boolean FLHeld = false;
+    public boolean FRHeld = false;
+    public boolean BLHeld = false;
+    public boolean BRHeld = false;
+    public boolean AHeld = false;
 
     //Local opMember
     HardwareMap hwMap = null;
@@ -60,21 +68,24 @@ public class Robot10662Hardware {
         //Setting Motor Directions + Mode
         FrontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         FrontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         FrontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         FrontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         BackRightDrive.setDirection(DcMotor.Direction.REVERSE);
         BackRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BackRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         BackLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         BackLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BackLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         Arm0.setDirection((DcMotorSimple.Direction.REVERSE));
+        Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Arm1.setDirection((DcMotorSimple.Direction.FORWARD));
+        Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Define and initialize Servos.
         Claw0 = hwMap.get(Servo.class, "Claw0");
@@ -85,55 +96,29 @@ public class Robot10662Hardware {
         Claw1.setPosition(Claw1Open);
 
         //Define Sensors
+        //Imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-    }
 
-    public void toggleMotorHold(String motor, boolean hold) {
-        if (hold == true) { //Toggle hold ON
-            if (motor.equals("FL")) { //Front Left Motor
-                FrontLeftDrive.setTargetPosition(FrontLeftDrive.getCurrentPosition());
-                FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                FrontLeftDrive.setPower(0);
-            } else if (motor.equals("FR")) { //Front Right Motor
-                FrontRightDrive.setTargetPosition(FrontRightDrive.getCurrentPosition());
-                FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                FrontRightDrive.setPower(0);
-            } else if (motor.equals("BL")) { //Back Left Motor
-                BackLeftDrive.setTargetPosition(BackLeftDrive.getCurrentPosition());
-                BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                BackLeftDrive.setPower(0);
-            } else if (motor.equals("BR")) { //Back Right Motor
-                BackRightDrive.setTargetPosition(BackRightDrive.getCurrentPosition());
-                BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                BackRightDrive.setPower(0);
-            } else if (motor.equals("A0")) { //Arm 0 Motor
-                Arm0.setTargetPosition(Arm0.getCurrentPosition());
-                Arm0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Arm0.setPower(0);
-            } else if (motor.equals("A1")) { //Arm 1 Motor
-                Arm1.setTargetPosition(Arm1.getCurrentPosition());
-                Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Arm1.setPower(0);
-            }
-        } else { //Toggle hold OFF
-            if (motor.equals("FL")) { //Front Left Motor
-                FrontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            } else if (motor.equals("FR")) { //Front Right Motor
-                FrontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            } else if (motor.equals("BL")) { //Back Left Motor
-                BackLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            } else if (motor.equals("BR")) { //Back Right Motor
-                BackRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            } else if (motor.equals("A0")) { //Arm 0 Motor
-                Arm0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            } else if (motor.equals("A1")) { //Arm 1 Motor
-                Arm1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
-        }
+        //Touch Sensor
+        armTouch = hwMap.get(DigitalChannel.class, "ArmTouch");
+
+        //Setting Touch Sensor Mode
+        armTouch.setMode(DigitalChannel.Mode.INPUT);
+
+        //Setting arm Position
+        while (armTouch.getState() == true) {
+            Arm0.setPower(-0.4);
+            Arm1.setPower(-0.4);
+        } //Stopping the motors
+        Arm0.setPower(0);
+        Arm0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Arm1.setPower(0);
+        Arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
+
 
 }

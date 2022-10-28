@@ -67,49 +67,127 @@ public class MainOpMode extends OpMode{
         double backRightPower = axial + lateral - yaw;
         
         //Setting power to moters
-        robot.FrontLeftDrive.setPower(frontLeftPower);
-        robot.FrontRightDrive.setPower(frontRightPower);
-        robot.BackLeftDrive.setPower(backLeftPower);
-        robot.BackRightDrive.setPower(backRightPower);
-
-       //Stop and hold drive motors !!!!!!!!!!!!!REPLACE WITH BETTER!!!!!!!!!!!!!!!!!!!!
-        if (frontLeftPower == 0) { //Front Left
-            robot.toggleMotorHold("FL",true);
-        } else {
-            robot.toggleMotorHold("FL",false);
+        if (frontLeftPower != 0) {
+            if (robot.FLHeld == true) {
+                robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.FLHeld = false;
+            }
+            robot.FrontLeftDrive.setPower(frontLeftPower);
+        } else if (frontLeftPower == 0) {
+            if (robot.FLHeld == false) {
+                robot.FrontLeftDrive.setTargetPosition(robot.FrontLeftDrive.getCurrentPosition());
+                robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.FrontLeftDrive.setPower(0.5);
+                robot.FLHeld = true;
+            }
         }
 
-        if (frontRightPower == 0) { //Front Right
-            robot.toggleMotorHold("FR",true);
-        } else {
-            robot.toggleMotorHold("FR",false);
+        if (frontRightPower != 0) {
+            if (robot.FRHeld == true) {
+                robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.FRHeld = false;
+            }
+            robot.FrontRightDrive.setPower(frontRightPower);
+        } else if (frontRightPower == 0) {
+            if (robot.FRHeld == false) {
+                robot.FrontRightDrive.setTargetPosition(robot.FrontRightDrive.getCurrentPosition());
+                robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.FrontRightDrive.setPower(0.5);
+                robot.FRHeld = true;
+            }
         }
 
-        if (backLeftPower == 0) { //Back Left
-            robot.toggleMotorHold("BL",true);
-        } else {
-            robot.toggleMotorHold("BL",false);
+        if (backLeftPower != 0) {
+            if (robot.BLHeld == true) {
+                robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.BLHeld = false;
+            }
+            robot.BackLeftDrive.setPower(backLeftPower);
+        } else if (backLeftPower == 0) {
+            if (robot.BLHeld == false) {
+                robot.BackLeftDrive.setTargetPosition(robot.BackLeftDrive.getCurrentPosition());
+                robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.BackLeftDrive.setPower(0.5);
+                robot.BLHeld = true;
+            }
         }
 
-        if (backRightPower == 0) { //Back Right
-            robot.toggleMotorHold("BR",true);
-        } else {
-            robot.toggleMotorHold("BR",false);
+        if (backRightPower != 0) {
+            if (robot.BRHeld == true) {
+                robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.BRHeld = false;
+            }
+            robot.BackRightDrive.setPower(backRightPower);
+        } else if (backLeftPower == 0) {
+            if (robot.BRHeld == false) {
+                robot.BackRightDrive.setTargetPosition(robot.BackRightDrive.getCurrentPosition());
+                robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.BackRightDrive.setPower(0.5);
+                robot.BRHeld = true;
+            }
         }
 
         //===========GAMEPAD2=====================
         //Defining variables
         double armPower;
 
-        //Assigning power to arm
-        armPower = -gamepad2.left_stick_y;
-
-        if(gamepad2.right_bumper) {  //Doubles speed when pressed
-            robot.Arm0.setPower(armPower);
-            robot.Arm1.setPower(armPower);
+        //Doubles speed when pressed
+        if(gamepad2.right_bumper && robot.Arm0.getCurrentPosition() != 400) {
+            armPower = (-gamepad2.left_stick_y / 1.5);
         } else {
-            robot.Arm0.setPower(armPower / 2);
-            robot.Arm1.setPower(armPower / 2);
+            armPower = (-gamepad2.left_stick_y / 2);
+        }
+
+        if (armPower != 0) {
+            if (robot.AHeld == true) {
+                robot.Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.AHeld = false;
+            }
+
+            if (robot.armTouch.getState() == false) {
+                robot.Arm0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.Arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                if (armPower <= 0) {
+                    robot.Arm0.setPower(0);
+                    robot.Arm1.setPower(0);
+                } else {
+                    robot.Arm0.setPower(armPower);
+                    robot.Arm1.setPower(armPower);
+                }
+            } else {
+                if (robot.Arm0.getCurrentPosition() >= 4350) {
+                    if (armPower >= 0) {
+                        robot.Arm0.setPower(0);
+                        robot.Arm1.setPower(0);
+                    } else {
+                        robot.Arm0.setPower(armPower);
+                        robot.Arm1.setPower(armPower);
+                    }
+                } else {
+                    robot.Arm0.setPower(armPower);
+                    robot.Arm1.setPower(armPower);
+                }
+            }
+
+
+        } else if (armPower == 0) {
+            if (robot.AHeld == false) {
+                if (robot.Arm0.getCurrentPosition() <= 30) {
+                    robot.Arm0.setTargetPosition(0);
+                    robot.Arm1.setTargetPosition(0);
+                } else {
+                    robot.Arm0.setTargetPosition(robot.Arm0.getCurrentPosition());
+                    robot.Arm1.setTargetPosition(robot.Arm1.getCurrentPosition());
+                }
+                robot.Arm0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.Arm0.setPower(0.5);
+                robot.Arm1.setPower(0.5);
+                robot.AHeld = true;
+            }
         }
 
         //Open and close claw
@@ -135,8 +213,8 @@ public class MainOpMode extends OpMode{
         telemetry.addData("RightClaw Position", "%.2f", robot.Claw1.getPosition());
 
 
-        telemetry.addData("Arm1", "%.2f", robot.Arm0.getPower());
-        telemetry.addData("Arm2", "%.2f", robot.Arm1.getPower());
+        telemetry.addData("Arm1", "%.2f :%7d", robot.Arm0.getPower(), robot.Arm0.getCurrentPosition());
+        telemetry.addData("Arm2", "%.2f :%7d", robot.Arm1.getPower(), robot.Arm1.getCurrentPosition());
 
         //endregion
 
