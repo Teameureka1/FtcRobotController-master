@@ -132,8 +132,8 @@ public class MainOpMode extends OpMode{
         //Defining variables
         double armPower;
 
-        //Doubles speed when pressed
-        if(gamepad2.right_bumper && robot.Arm0.getCurrentPosition() >= 400) {
+        //Doubles speed when pressed and within required range
+        if((gamepad2.right_bumper && robot.Arm0.getCurrentPosition() >= 400) && (gamepad2.right_bumper && robot.Arm0.getCurrentPosition() <= 4000)) {
             armPower = (-gamepad2.left_stick_y / 1.5);
         } else {
             armPower = (-gamepad2.left_stick_y / 2);
