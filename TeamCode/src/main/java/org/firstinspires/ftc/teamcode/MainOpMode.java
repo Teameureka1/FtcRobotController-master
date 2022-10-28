@@ -209,6 +209,22 @@ public class MainOpMode extends OpMode{
             robot.Claw1.setPosition(robot.Claw1Close);
         }
 
+        //Reset encoder position if errors
+        if (gamepad2.y) {
+            while (robot.armTouch.getState()) {//Lowering
+                robot.Arm0.setPower(-0.4);
+                robot.Arm1.setPower(-0.4);
+            } //Stopping the motors
+            //Setting the position.
+            robot.Arm0.setPower(0);
+            robot.Arm0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            robot.Arm1.setPower(0);
+            robot.Arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
 
 
 
