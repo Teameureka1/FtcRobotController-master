@@ -66,22 +66,23 @@ public class Robot10662Hardware {
         Arm1    = hwMap.get(DcMotor.class, "Arm1");
 
         //Setting Motor Directions + Mode
+        //FrontLeft
         FrontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         FrontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        //FrontRight
         FrontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         FrontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        //BackRight
         BackRightDrive.setDirection(DcMotor.Direction.REVERSE);
         BackRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        //BackLeft
         BackLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         BackLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        //ArmMotors
         Arm0.setDirection((DcMotorSimple.Direction.REVERSE));
         Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Arm1.setDirection((DcMotorSimple.Direction.FORWARD));
@@ -104,15 +105,15 @@ public class Robot10662Hardware {
 
         //Touch Sensor
         armTouch = hwMap.get(DigitalChannel.class, "ArmTouch");
-
         //Setting Touch Sensor Mode
         armTouch.setMode(DigitalChannel.Mode.INPUT);
 
-        //Setting arm Position
-        while (armTouch.getState() == true) {
+        //Lowering arm until it is bottomed out and then setting the position.
+        while (armTouch.getState() == true) {//Lowering
             Arm0.setPower(-0.4);
             Arm1.setPower(-0.4);
         } //Stopping the motors
+        //Setting the position.
         Arm0.setPower(0);
         Arm0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Arm1.setPower(0);

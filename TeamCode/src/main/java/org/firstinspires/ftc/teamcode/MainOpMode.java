@@ -13,14 +13,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> MAIN <#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
 @TeleOp(name="Main :: Op Mode", group="Robot")
 //@Disabled
 public class MainOpMode extends OpMode{
-    private ElapsedTime runtime = new ElapsedTime();
     //Instantiate the Hardware class
     Robot10662Hardware robot = new Robot10662Hardware();
 
@@ -67,59 +64,63 @@ public class MainOpMode extends OpMode{
         double backRightPower = axial + lateral - yaw;
         
         //Setting power to moters
-        if (frontLeftPower != 0) {
-            if (robot.FLHeld == true) {
+        //Front Left Motor
+        if (frontLeftPower != 0) {//While the motor is not stopped
+            if (robot.FLHeld) {//Runs once
+                //Defualt settings
                 robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.FLHeld = false;
             }
+            //Powering the motor
             robot.FrontLeftDrive.setPower(frontLeftPower);
-        } else if (frontLeftPower == 0) {
-            if (robot.FLHeld == false) {
+        } else if (frontLeftPower == 0) {//While motor is stopped
+            if (!robot.FLHeld) {//Runs once
+                //Holding motor at its current position
                 robot.FrontLeftDrive.setTargetPosition(robot.FrontLeftDrive.getCurrentPosition());
                 robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.FrontLeftDrive.setPower(0.5);
                 robot.FLHeld = true;
             }
         }
-
+        //Front Right Motor
         if (frontRightPower != 0) {
-            if (robot.FRHeld == true) {
+            if (robot.FRHeld) {
                 robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.FRHeld = false;
             }
             robot.FrontRightDrive.setPower(frontRightPower);
         } else if (frontRightPower == 0) {
-            if (robot.FRHeld == false) {
+            if (!robot.FRHeld) {
                 robot.FrontRightDrive.setTargetPosition(robot.FrontRightDrive.getCurrentPosition());
                 robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.FrontRightDrive.setPower(0.5);
                 robot.FRHeld = true;
             }
         }
-
+        //Back Left Motor
         if (backLeftPower != 0) {
-            if (robot.BLHeld == true) {
+            if (robot.BLHeld) {
                 robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.BLHeld = false;
             }
             robot.BackLeftDrive.setPower(backLeftPower);
         } else if (backLeftPower == 0) {
-            if (robot.BLHeld == false) {
+            if (!robot.BLHeld) {
                 robot.BackLeftDrive.setTargetPosition(robot.BackLeftDrive.getCurrentPosition());
                 robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.BackLeftDrive.setPower(0.5);
                 robot.BLHeld = true;
             }
         }
-
+        //Back Right Motor
         if (backRightPower != 0) {
-            if (robot.BRHeld == true) {
+            if (robot.BRHeld) {
                 robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.BRHeld = false;
             }
             robot.BackRightDrive.setPower(backRightPower);
         } else if (backLeftPower == 0) {
-            if (robot.BRHeld == false) {
+            if (!robot.BRHeld) {
                 robot.BackRightDrive.setTargetPosition(robot.BackRightDrive.getCurrentPosition());
                 robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.BackRightDrive.setPower(0.5);
@@ -132,56 +133,65 @@ public class MainOpMode extends OpMode{
         double armPower;
 
         //Doubles speed when pressed
-        if(gamepad2.right_bumper && robot.Arm0.getCurrentPosition() != 400) {
+        if(gamepad2.right_bumper && robot.Arm0.getCurrentPosition() >= 400) {
             armPower = (-gamepad2.left_stick_y / 1.5);
         } else {
             armPower = (-gamepad2.left_stick_y / 2);
         }
 
-        if (armPower != 0) {
-            if (robot.AHeld == true) {
+        if (armPower != 0) {//While the arm is moving
+            if (robot.AHeld) {//Runs once
+                //Defualt settings
                 robot.Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.AHeld = false;
             }
 
-            if (robot.armTouch.getState() == false) {
+            if (!robot.armTouch.getState()) {//Button is presssed
+                //Switching modes
                 robot.Arm0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.Arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                if (armPower <= 0) {
+                if (armPower <= 0) {//If the user is still trying to lower arm cut power
                     robot.Arm0.setPower(0);
                     robot.Arm1.setPower(0);
-                } else {
+                } else {//Allow user to continue up
                     robot.Arm0.setPower(armPower);
                     robot.Arm1.setPower(armPower);
                 }
-            } else {
-                if (robot.Arm0.getCurrentPosition() >= 4350) {
-                    if (armPower >= 0) {
+            } else {//Button not presssed
+                if (robot.Arm0.getCurrentPosition() >= 4350) {//If the arm goes too high
+                    if (armPower >= 0) {//Stop the user from going any higher
                         robot.Arm0.setPower(0);
                         robot.Arm1.setPower(0);
-                    } else {
+                    } else {//Allow user to lower the arm
                         robot.Arm0.setPower(armPower);
                         robot.Arm1.setPower(armPower);
                     }
-                } else {
+                } else {//Defualt when no limits are hit
                     robot.Arm0.setPower(armPower);
                     robot.Arm1.setPower(armPower);
                 }
             }
 
-
-        } else if (armPower == 0) {
-            if (robot.AHeld == false) {
-                if (robot.Arm0.getCurrentPosition() <= 30) {
+        //STOP AND HOLD
+        } else if (armPower == 0) {//When the arm is stopped
+            if (!robot.AHeld) {//Runs once
+                if (robot.Arm0.getCurrentPosition() <= 30) {//Buffer to lower the arm to the button
+                    //Setting hold position to zero if it is low enough
                     robot.Arm0.setTargetPosition(0);
                     robot.Arm1.setTargetPosition(0);
-                } else {
+                } else if (robot.Arm0.getCurrentPosition() >= 4350) {//Preventing arm from holding too high
+                    //Setting the hold position to the max position
+                    robot.Arm0.setTargetPosition(4350);//!!!!!!!!!!!!!!!CAUTION, THIS MAY CAUSE THE ROBOTS MOTORS TO BE OFF SYNC DUE TO THE LACK OF ACCURACY!!!!!!!!!!!!!!!
+                    robot.Arm1.setTargetPosition(4350);
+                } else {//Any other height
+                    //Hold the motors at the current position
                     robot.Arm0.setTargetPosition(robot.Arm0.getCurrentPosition());
                     robot.Arm1.setTargetPosition(robot.Arm1.getCurrentPosition());
                 }
+                //Holding the motors at their set position above
                 robot.Arm0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.Arm0.setPower(0.5);
@@ -202,21 +212,18 @@ public class MainOpMode extends OpMode{
 
 
 
-        //region ===========TELEMETRY=====================
+       //===========TELEMETRY=====================
         //Motors
         telemetry.addData("FL Power",  "%.2f :%7d", robot.FrontLeftDrive.getPower(), robot.FrontLeftDrive.getCurrentPosition());
         telemetry.addData("BL Power",  "%.2f :%7d", robot.BackLeftDrive.getPower(), robot.BackLeftDrive.getCurrentPosition());
         telemetry.addData("FR Power",  "%.2f :%7d", robot.FrontRightDrive.getPower(), robot.FrontRightDrive.getCurrentPosition());
         telemetry.addData("BR Power",  "%.2f :%7d", robot.BackRightDrive.getPower(), robot.BackRightDrive.getCurrentPosition());
+        //Arm motors
+        telemetry.addData("Arm0", "%.2f :%7d", robot.Arm0.getPower(), robot.Arm0.getCurrentPosition());
+        telemetry.addData("Arm1", "%.2f :%7d", robot.Arm1.getPower(), robot.Arm1.getCurrentPosition());
         //Claw
         telemetry.addData("LeftClaw Position", "%.2f", robot.Claw0.getPosition());
         telemetry.addData("RightClaw Position", "%.2f", robot.Claw1.getPosition());
-
-
-        telemetry.addData("Arm1", "%.2f :%7d", robot.Arm0.getPower(), robot.Arm0.getCurrentPosition());
-        telemetry.addData("Arm2", "%.2f :%7d", robot.Arm1.getPower(), robot.Arm1.getCurrentPosition());
-
-        //endregion
 
     }
 
