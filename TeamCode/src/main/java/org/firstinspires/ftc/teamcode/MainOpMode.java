@@ -13,6 +13,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> MAIN <#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
 @TeleOp(name="Main :: Op Mode", group="Robot")
@@ -46,15 +51,40 @@ public class MainOpMode extends OpMode{
         double lateral;
         double yaw;
 
+        double driveTurn;
+        double gamepadXCord;
+        double gamepadYCord;
+        double gamepadHypot;
+        double gamepadDegree;
+        double robotDegree;
+        double movementDegree;
+        double gamepadXControl;
+        double gamepadYControl;
+
+
+        //Epic math I bearly understand but its suppoesd to add driver centric controls
+        driveTurn = -gamepad1.right_stick_x;
+
+        gamepadXCord = gamepad1.left_stick_x;
+        gamepadYCord = -gamepad1.left_stick_y;
+        gamepadHypot = Range.clip(Math.hypot(gamepadXCord, gamepadYCord), 0, 1);
+
+        gamepadDegree = Math.atan2(gamepadYCord, gamepadXCord);
+        robotDegree = getAngle();
+        movementDegree = gamepadDegree - robotDegree;
+
+        gamepadXControl = Math.cos(Math.toRadians(movementDegree)) * gamepadHypot;
+        gamepadYControl = Math.sin(Math.toRadians(movementDegree)) * gamepadHypot;
+
         //Doubles speed when right bumper 1 is pressed
         if (gamepad1.right_bumper) { //Dividing by two to slow it down
-            axial = (-gamepad1.left_stick_y);
-            lateral = (gamepad1.left_stick_x);
-            yaw = (gamepad1.right_stick_x);
+            axial = (gamepadYControl * Math.abs(gamepadYControl));
+            lateral = (gamepadXControl * Math.abs(gamepadXControl));
+            yaw = (driveTurn);
         } else {
-            axial = (-gamepad1.left_stick_y) / 2;
-            lateral = (gamepad1.left_stick_x) / 2;
-            yaw = (gamepad1.right_stick_x) / 2;
+            axial = (gamepadYControl * Math.abs(gamepadYControl)) / 2;
+            lateral = (gamepadXControl * Math.abs(gamepadXControl)) / 2;
+            yaw = (driveTurn) / 2;
         }
 
         //Simple algebra to tell moters their speed for movement and strafe
@@ -127,6 +157,13 @@ public class MainOpMode extends OpMode{
                 robot.BRHeld = true;
             }
         }
+
+
+
+
+
+
+
 
         //===========GAMEPAD2=====================
         //Defining variables
@@ -228,6 +265,7 @@ public class MainOpMode extends OpMode{
 
 
 
+
        //===========TELEMETRY=====================
         //Motors
         telemetry.addData("FL Power",  "%.2f :%7d", robot.FrontLeftDrive.getPower(), robot.FrontLeftDrive.getCurrentPosition());
@@ -245,5 +283,9 @@ public class MainOpMode extends OpMode{
 
     @Override //>>>>>>>>>>>>>> STOP <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     public void stop() { //Runs ONCE when driver hits STOP <<
+    }
+
+    public double getAngle() {
+        return robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 }

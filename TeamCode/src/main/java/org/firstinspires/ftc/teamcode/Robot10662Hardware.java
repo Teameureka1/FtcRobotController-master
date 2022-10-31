@@ -14,11 +14,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 //#$#$#$#$#$#$#$#$#>> DEFINING-OBJECTS + PUBLIC-VARIABLES <<#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 public class Robot10662Hardware {
@@ -34,7 +38,11 @@ public class Robot10662Hardware {
     public DigitalChannel armTouch;
     public BNO055IMU imu         = null;
 
-    //Defining public constant variables
+    //Imu config
+    Orientation angles;
+    Acceleration gravity;
+
+    //Defining public variables
     public static final double Claw0Open       = 0.6;
     public static final double Claw1Open       = 0.7;
     public static final double Claw0Close      = 0.8;
@@ -45,6 +53,13 @@ public class Robot10662Hardware {
     public boolean BLHeld = false;
     public boolean BRHeld = false;
     public boolean AHeld = false;
+
+    public int armPosition = 1;
+    public double arm1Pos = 0;
+    public double arm2Pos = 1000;
+    public double arm3Pos = 2000;
+    public double arm4Pos = 3000;
+
 
     //Local opMember
     HardwareMap hwMap = null;
@@ -100,6 +115,11 @@ public class Robot10662Hardware {
         //Imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit            = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile  = "BNO055IMUCalibration.json";
+        parameters.loggingEnabled       = true;
+        parameters.loggingTag           = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
