@@ -5,12 +5,14 @@
  */
 
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> IMPORTS <#$##$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.Robot10662Hardware;
 
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> MAIN <#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
 @Autonomous(name="Main :: Auto Mode Test", group="Robot")
@@ -58,12 +60,6 @@ public class TestAutoMode extends LinearOpMode {
             telemetry.addData("move", "%4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-
-        //Stopping motors
-        robot.FrontLeftDrive.setPower(0);
-        robot.BackLeftDrive.setPower(0);
-        robot.FrontRightDrive.setPower(0);
-        robot.BackRightDrive.setPower(0);
     }
 
 }

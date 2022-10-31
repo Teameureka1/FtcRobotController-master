@@ -51,40 +51,16 @@ public class MainOpMode extends OpMode{
         double lateral;
         double yaw;
 
-        double driveTurn;
-        double gamepadXCord;
-        double gamepadYCord;
-        double gamepadHypot;
-        double gamepadDegree;
-        double robotDegree;
-        double movementDegree;
-        double gamepadXControl;
-        double gamepadYControl;
-
-
-        //Epic math I bearly understand but its suppoesd to add driver centric controls
-        driveTurn = -gamepad1.right_stick_x;
-
-        gamepadXCord = gamepad1.left_stick_x;
-        gamepadYCord = -gamepad1.left_stick_y;
-        gamepadHypot = Range.clip(Math.hypot(gamepadXCord, gamepadYCord), 0, 1);
-
-        gamepadDegree = Math.atan2(gamepadYCord, gamepadXCord);
-        robotDegree = getAngle();
-        movementDegree = gamepadDegree - robotDegree;
-
-        gamepadXControl = Math.cos(Math.toRadians(movementDegree)) * gamepadHypot;
-        gamepadYControl = Math.sin(Math.toRadians(movementDegree)) * gamepadHypot;
 
         //Doubles speed when right bumper 1 is pressed
         if (gamepad1.right_bumper) { //Dividing by two to slow it down
-            axial = (gamepadYControl * Math.abs(gamepadYControl));
-            lateral = (gamepadXControl * Math.abs(gamepadXControl));
-            yaw = (driveTurn);
+            axial = -gamepad1.left_stick_y;
+            lateral = gamepad1.left_stick_x;
+            yaw = gamepad1.right_stick_x;
         } else {
-            axial = (gamepadYControl * Math.abs(gamepadYControl)) / 2;
-            lateral = (gamepadXControl * Math.abs(gamepadXControl)) / 2;
-            yaw = (driveTurn) / 2;
+            axial = (-gamepad1.left_stick_y) / 2;
+            lateral = (gamepad1.left_stick_x) / 2;
+            yaw = (gamepad1.right_stick_x) / 2;
         }
 
         //Simple algebra to tell moters their speed for movement and strafe
