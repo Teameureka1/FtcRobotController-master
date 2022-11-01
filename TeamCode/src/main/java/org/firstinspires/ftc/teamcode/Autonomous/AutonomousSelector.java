@@ -20,10 +20,64 @@ public class AutonomousSelector extends LinearOpMode {
         //Use 'init' methods from Hardware class to Map hardware to match robot's config
         robot.init(hardwareMap);
 
+        //Modes
         int teamSelection = 0;
         int sideSelection = 0;
 
+        //SELECTING TEAM
+        while (true) {
+            //Title
+            telemetry.addData(">>", "Select Team");
+            //Selection Output
+            if (teamSelection == 0) {
+                telemetry.addData("   *", "Red Team");
+                telemetry.addData("    ", "Blue Team");
+            } else {
+                telemetry.addData("    ", "Red Team");
+                telemetry.addData("   *", "Blue Team");
+            }
 
+            //Selector
+            if (gamepad1.a) { //Select
+                break;
+            } else if (gamepad1.dpad_up) { //Select 0
+                teamSelection = 0;
+            } else if (gamepad1.dpad_down) { //Select 1
+                teamSelection = 1;
+            }
+
+            //Updating Telemetry
+            telemetry.update();
+            telemetry.clearAll();
+        }
+
+        //SELECTING SIDE
+        while (true) {
+            //Title
+            telemetry.addData("SELECTED TEAM :: ", teamSelection + "(0=Red 1=Blue)");
+            telemetry.addData(">>", "Select Side");
+            //Selection Output
+            if (sideSelection == 0) {
+                telemetry.addData("   *", "Left Side");
+                telemetry.addData("    ", "Right Side");
+            } else {
+                telemetry.addData("    ", "Left Side");
+                telemetry.addData("   *", "Right Side");
+            }
+
+            //Selector
+            if (gamepad1.a) { //Select
+                break;
+            } else if (gamepad1.dpad_up) { //Select 0
+                sideSelection = 0;
+            } else if (gamepad1.dpad_down) { //Select 1
+                sideSelection = 1;
+            }
+
+            //Updating Telemetry
+            telemetry.update();
+            telemetry.clearAll();
+        }
 
 
 
