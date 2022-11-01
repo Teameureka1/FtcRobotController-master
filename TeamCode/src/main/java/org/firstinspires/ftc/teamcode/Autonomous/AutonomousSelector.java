@@ -39,6 +39,7 @@ public class AutonomousSelector extends LinearOpMode {
 
             //Selector
             if (gamepad1.a) { //Select
+            while (gamepad1.a) {} //Waits for button to be unselected
                 break;
             } else if (gamepad1.dpad_up) { //Select 0
                 teamSelection = 0;
@@ -50,6 +51,7 @@ public class AutonomousSelector extends LinearOpMode {
             telemetry.update();
             telemetry.clearAll();
         }
+        telemetry.clearAll(); //Clearing
 
         //SELECTING SIDE
         while (true) {
@@ -67,6 +69,7 @@ public class AutonomousSelector extends LinearOpMode {
 
             //Selector
             if (gamepad1.a) { //Select
+                while (gamepad1.a) {} //Waits for the button to be unseleted
                 break;
             } else if (gamepad1.dpad_up) { //Select 0
                 sideSelection = 0;
@@ -78,15 +81,18 @@ public class AutonomousSelector extends LinearOpMode {
             telemetry.update();
             telemetry.clearAll();
         }
-
+        telemetry.clearAll(); //Clearing
 
 
         //Display telemetry Waiting for driver to be ready
+        telemetry.addData("CONFIG :: ", "Team:" + teamSelection + " Side:" + sideSelection);
         telemetry.addData("~>", "Robot Ready.  Press Play.  Or else...");
         telemetry.update();
         waitForStart();
 
-        //>>>>>>>>>>>>>> AUTO Code  runs once "Start" is activated <<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+        //>>>>>>>>>>>>>> AUTO Code runs once "Start" is activated <<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 

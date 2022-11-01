@@ -45,6 +45,11 @@ public class Robot10662Hardware {
     Acceleration gravity;
 
     //Defining public variables
+    public static final double pi = 3.14159265358979323846;
+
+    public static final double ticksPerRotation = 535;
+    public static final double tickPerInch;
+
     public static final double Claw0Open       = 0.6;
     public static final double Claw1Open       = 0.7;
     public static final double Claw0Close      = 0.8;
@@ -55,12 +60,6 @@ public class Robot10662Hardware {
     public boolean BLHeld = false;
     public boolean BRHeld = false;
     public boolean AHeld = false;
-
-    public int armPosition = 1;
-    public double arm1Pos = 0;
-    public double arm2Pos = 1000;
-    public double arm3Pos = 2000;
-    public double arm4Pos = 3000;
 
 
     //Local opMember
