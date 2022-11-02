@@ -26,6 +26,10 @@ public class Testing extends OpMode{
     //Instantiate the Hardware class
     Robot10662Hardware robot = new Robot10662Hardware();
 
+    double posX;
+    double posZ;
+    double posY;
+
     @Override //>>>>>>>>>>>>>> INT <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     public void init() { //Runs ONCE when driver hits INIT <<
         //Use 'init' methods from Hardware class to Map hardware to match robot's config
@@ -45,11 +49,19 @@ public class Testing extends OpMode{
 
     @Override //>>>>>>>>>>>>>> LOOP <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     public void loop() { //Runs REPEATEDLY when driver hits PLAY <<
-        robot.FrontRightDrive.setTargetPosition(535);
+        double FL = robot.FrontLeftDrive.getCurrentPosition();
+        double FR = robot.FrontRightDrive.getCurrentPosition();
+        double BL = robot.BackLeftDrive.getCurrentPosition();
+        double BR = robot.BackRightDrive.getCurrentPosition();
 
-        robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        posX = ((((FL + (-FR)) - (posZ)) + (-((BL + (-BR)) + (posZ))))/4) / robot.ticksPerInch;
+        posZ = (-(-((FL + BL) - (posX)) + ((FR+BR) + (posX)))/4) / robot.ticksPerInch;
+        posY = ((((FL + BL) - (posZ + posX)) + ((FR + BR) + (posZ + posX)))/4) / robot.ticksPerInch;
 
-        robot.FrontRightDrive.setPower(0.1);
+        telemetry.addData("VERTICLE ", posY);
+        telemetry.addData("HORIZONTAL ", posX);
+        telemetry.addData("YAW ", posZ);
+        telemetry.update();
 
     }
 

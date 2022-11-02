@@ -12,6 +12,7 @@ import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot10662Hardware;
@@ -20,8 +21,6 @@ import org.firstinspires.ftc.teamcode.Robot10662Hardware;
 @Autonomous(name="Main :: Autonomous", group="Robot")
 //@Disabled
 public class AutonomousMain extends LinearOpMode {
-    //Running
-    public boolean running = true;
 
     //Timer
     private ElapsedTime gameClock = new ElapsedTime();
@@ -29,8 +28,7 @@ public class AutonomousMain extends LinearOpMode {
     //Instantiate the Hardware class
     Robot10662Hardware robot = new Robot10662Hardware();
 
-    //Identifying all other classes
-    Thread pos00 = new Thread(new Position00());
+    //Treads
 
     //Current Robot Position
     public double robotPosX = 0;
@@ -49,16 +47,16 @@ public class AutonomousMain extends LinearOpMode {
 
     //Starting Positions
     public final double start00PosX = 35.5;
-    public final double start00PosY = 0;
+    public final double start00PosY = 65;
 
-    public final double start01PosX = 35.5;
-    public final double start01PosY = 0;
+    public final double start01PosX = -35.5;
+    public final double start01PosY = 65;
 
-    public final double start10PosX = 35.5;
-    public final double start10PosY = 0;
+    public final double start10PosX = -35.5;
+    public final double start10PosY = -65;
 
     public final double start11PosX = 35.5;
-    public final double start11PosY = 0;
+    public final double start11PosY = -65;
 
     //Parking Positions
     public final double parkPos001X = 12;
@@ -192,45 +190,77 @@ public class AutonomousMain extends LinearOpMode {
 
         //>>>>>>>>>>>>>> AUTO Code runs once "Start" is activated <<<<<<<<<<<<<<<<<<<<<<<<<<
 
-        //Running Corresponding Autonomous to the robots position
-        if (teamSelection == 0) { //Red Team
-            if (sideSelection == 0) { //Left Side
-                //Starting Class 00
-                pos00.start();
-            } else { //Right Side
+        runToCoordinate(parkPos011X, parkPos011Y, 0);
 
-            }
-        } else { //Blue Team
-            if (sideSelection == 0) { //Left Side
-
-            } else { //Right Side
-
-            }
-        }
-
-        //Backend work while running
-        while (running) {
+        /*
+        while (opModeIsActive()) {
             updatePosition();
 
-            telemetry.addData("Robot Position > ", "%.2f ,%.2f ,%.2f", robotPosX, robotPosY, robotPosZ);
-            telemetry.addData("Raw Robot Position > ", "%.2f ,%.2f ,%.2f", rawRobotPosY, rawRobotPosY, rawRobotPosY);
+            telemetry.addData("X ", robotPosX);
+            telemetry.addData("Y ", robotPosY);
+            telemetry.addData("Z ", robotPosZ);
             telemetry.update();
         }
+*/
+
     }
 
     private void updatePosition() {
-        double FLMP = robot.FrontLeftDrive.getCurrentPosition();
-        double FRMP = robot.FrontRightDrive.getCurrentPosition();
-        double BLMP = robot.BackLeftDrive.getCurrentPosition();
-        double BRMP = robot.BackRightDrive.getCurrentPosition();
+        //Getting position of all the motors
+        double FL = robot.FrontLeftDrive.getCurrentPosition();
+        double FR = robot.FrontRightDrive.getCurrentPosition();
+        double BL = robot.BackLeftDrive.getCurrentPosition();
+        double BR = robot.BackRightDrive.getCurrentPosition();
 
-        rawRobotPosX = ((FLMP + FRMP) + (-(BLMP + BRMP)))/2;
-        rawRobotPosZ = (-(-(FLMP + BLMP)) + (FRMP+BRMP))/2;
-        rawRobotPosY = (((FLMP+BLMP)-(rawRobotPosX - rawRobotPosZ)) + ((FRMP + BRMP) + (rawRobotPosX + rawRobotPosZ)))/4;
+        //Epik formula that I came up with at 1 am
+        rawRobotPosX = ((((FL + (-FR)) - (rawRobotPosZ)) + (-((BL + (-BR)) + (rawRobotPosZ))))/4) / robot.ticksPerInch;
+        rawRobotPosZ = (-(-((FL + BL) - (rawRobotPosX)) + ((FR+BR) + (rawRobotPosX)))/4) / robot.ticksPerInch;
+        rawRobotPosY = ((((FL + BL) - (rawRobotPosZ + rawRobotPosX)) + ((FR + BR) + (rawRobotPosZ + rawRobotPosX)))/4) / robot.ticksPerInch;
 
+        //Setting Position
         robotPosX = rawRobotPosX + robotPosXOffset;
         robotPosY = rawRobotPosY + robotPosYOffset;
         robotPosZ = rawRobotPosZ + robotPosZOffset;
+    }
+
+    public void runToCoordinate(double X, double Y, double Z) {
+        updatePosition();
+
+        double targetX = (robotPosX - X) * robot.ticksPerInch;
+        double targetY = (robotPosY - Y) * robot.ticksPerInch;
+        double targetZ = (robotPosZ - Z) * robot.ticksPerInch;
+
+        double flPos = targetY + targetX + targetZ;
+        double frPos = targetY - targetX - targetZ;
+        double blPos = targetY - targetX + targetZ;
+        double brPos = targetY + targetX - targetZ;
+
+        robot.FrontLeftDrive.setTargetPosition((int)flPos);
+        robot.FrontRightDrive.setTargetPosition((int)frPos);
+        robot.BackLeftDrive.setTargetPosition((int)blPos);
+        robot.BackRightDrive.setTargetPosition((int)brPos);
+
+        robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        if (targetX + targetY + targetZ > 2000) {
+            robot.FrontLeftDrive.setPower(0.6);
+            robot.FrontRightDrive.setPower(0.6);
+            robot.BackLeftDrive.setPower(0.6);
+            robot.BackRightDrive.setPower(0.6);
+        } else {
+            robot.FrontLeftDrive.setPower(0.4);
+            robot.FrontRightDrive.setPower(0.4);
+            robot.BackLeftDrive.setPower(0.4);
+            robot.BackRightDrive.setPower(0.4);
+        }
+
+        while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy()  && robot.BackLeftDrive.isBusy()  && robot.BackRightDrive.isBusy()  ) {
+            updatePosition();
+        }
 
     }
-}
+
+  }

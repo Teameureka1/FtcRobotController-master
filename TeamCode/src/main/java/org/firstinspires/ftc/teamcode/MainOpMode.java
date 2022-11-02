@@ -267,8 +267,4 @@ public class MainOpMode extends OpMode{
     @Override //>>>>>>>>>>>>>> STOP <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     public void stop() { //Runs ONCE when driver hits STOP <<
     }
-
-    public double getAngle() {
-        return robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-    }
 }
