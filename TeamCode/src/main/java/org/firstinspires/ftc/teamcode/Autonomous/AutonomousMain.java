@@ -46,16 +46,16 @@ public class AutonomousMain extends LinearOpMode {
     public double robotPosZOffset = 0;
 
     //Starting Positions
-    public final double start00PosX = 35.5;
+    public final double start00PosX = 40;
     public final double start00PosY = 65;
 
-    public final double start01PosX = -35.5;
+    public final double start01PosX = -40;
     public final double start01PosY = 65;
 
-    public final double start10PosX = -35.5;
+    public final double start10PosX = -40;
     public final double start10PosY = -65;
 
-    public final double start11PosX = 35.5;
+    public final double start11PosX = 40;
     public final double start11PosY = -65;
 
     //Parking Positions
@@ -68,14 +68,14 @@ public class AutonomousMain extends LinearOpMode {
 
     public final double parkPos011X = -60;
     public final double parkPos011Y = 36;
-    public final double parkPos012X = -30;
+    public final double parkPos012X = -36;
     public final double parkPos012Y = 36;
     public final double parkPos013X = -12;
     public final double parkPos013Y = 36;
 
     public final double parkPos101X = -60;
     public final double parkPos101Y = -36;
-    public final double parkPos102X = -32;
+    public final double parkPos102X = -36;
     public final double parkPos102Y = -36;
     public final double parkPos103X = -12;
     public final double parkPos103Y = -36;
@@ -190,7 +190,7 @@ public class AutonomousMain extends LinearOpMode {
 
         //>>>>>>>>>>>>>> AUTO Code runs once "Start" is activated <<<<<<<<<<<<<<<<<<<<<<<<<<
 
-        runToCoordinate(parkPos011X, parkPos011Y, 0);
+        runToCoordinate(start01PosX, start01PosY, 0);
 
         /*
         while (opModeIsActive()) {
@@ -226,9 +226,9 @@ public class AutonomousMain extends LinearOpMode {
     public void runToCoordinate(double X, double Y, double Z) {
         updatePosition();
 
-        double targetX = (robotPosX - X) * robot.ticksPerInch;
-        double targetY = (robotPosY - Y) * robot.ticksPerInch;
-        double targetZ = (robotPosZ - Z) * robot.ticksPerInch;
+        double targetX = (X - robotPosX) * robot.ticksPerInch;
+        double targetY = (Y - robotPosY) * robot.ticksPerInch;
+        double targetZ = (Z - robotPosZ) * robot.ticksPerInch;
 
         double flPos = targetY + targetX + targetZ;
         double frPos = targetY - targetX - targetZ;
@@ -257,9 +257,20 @@ public class AutonomousMain extends LinearOpMode {
             robot.BackRightDrive.setPower(0.4);
         }
 
-        while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy()  && robot.BackLeftDrive.isBusy()  && robot.BackRightDrive.isBusy()  ) {
+        while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy()  && robot.BackLeftDrive.isBusy()  & robot.BackRightDrive.isBusy()  ) {
             updatePosition();
+
         }
+
+        robot.FrontLeftDrive.setTargetPosition(robot.FrontLeftDrive.getCurrentPosition());
+        robot.FrontRightDrive.setTargetPosition(robot.FrontLeftDrive.getCurrentPosition());
+        robot.BackLeftDrive.setTargetPosition(robot.BackLeftDrive.getCurrentPosition());
+        robot.BackRightDrive.setTargetPosition(robot.BackRightDrive.getCurrentPosition());
+
+        robot.FrontLeftDrive.setPower(0.5);
+        robot.FrontRightDrive.setPower(0.5);
+        robot.BackLeftDrive.setPower(0.5);
+        robot.BackRightDrive.setPower(0.5);
 
     }
 
