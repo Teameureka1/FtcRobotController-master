@@ -44,22 +44,17 @@ public class Robot10662Hardware {
     Orientation angles;
     Acceleration gravity;
 
-    //Defining public variables
+    //Other
     public static final double pi = 3.14159265358979323846;
 
-    public static final double ticksPerRotation = 535;
-    public static final double tickPerInch;
+    //Motor Related
+    public static final double ticksPerInch = 535 / (pi*4);
 
+    //Servo Related
     public static final double Claw0Open       = 0.6;
     public static final double Claw1Open       = 0.7;
     public static final double Claw0Close      = 0.8;
     public static final double Claw1Close      = 0.9;
-
-    public boolean FLHeld = false;
-    public boolean FRHeld = false;
-    public boolean BLHeld = false;
-    public boolean BRHeld = false;
-    public boolean AHeld = false;
 
 
     //Local opMember
