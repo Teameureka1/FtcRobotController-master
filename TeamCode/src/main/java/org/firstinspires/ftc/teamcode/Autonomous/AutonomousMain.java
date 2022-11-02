@@ -190,7 +190,19 @@ public class AutonomousMain extends LinearOpMode {
 
         //>>>>>>>>>>>>>> AUTO Code runs once "Start" is activated <<<<<<<<<<<<<<<<<<<<<<<<<<
 
-        runToCoordinate(start01PosX, start01PosY, 0);
+        if (teamSelection == 0) { //Red Side
+            if (sideSelection == 0) { //Left Red Side
+
+            } else { //Right Red Side
+
+            }
+        } else { //Blue Side
+            if (sideSelection == 0) { //Left Blue Side
+
+            } else { //Right Blue Side
+
+            }
+        }
 
         /*
         while (opModeIsActive()) {
