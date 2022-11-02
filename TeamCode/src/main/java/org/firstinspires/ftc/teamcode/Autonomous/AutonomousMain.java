@@ -35,10 +35,17 @@ public class AutonomousMain extends LinearOpMode {
     //Current Robot Position
     public double robotPosX = 0;
     public double robotPosY = 0;
+    public double robotPosZ = 0;
+
+    //Raw Bot Position
+    public double rawRobotPosX = 0;
+    public double rawRobotPosY = 0;
+    public double rawRobotPosZ = 0;
 
     //Offset Robot Position
     public double robotPosXOffset = 0;
     public double robotPosYOffset = 0;
+    public double robotPosZOffset = 0;
 
     //Starting Positions
     public final double start00PosX = 35.5;
@@ -205,10 +212,25 @@ public class AutonomousMain extends LinearOpMode {
         while (running) {
             updatePosition();
 
+            telemetry.addData("Robot Position > ", "%.2f ,%.2f ,%.2f", robotPosX, robotPosY, robotPosZ);
+            telemetry.addData("Raw Robot Position > ", "%.2f ,%.2f ,%.2f", rawRobotPosY, rawRobotPosY, rawRobotPosY);
+            telemetry.update();
         }
     }
 
     private void updatePosition() {
-        //Insert code here
+        double FLMP = robot.FrontLeftDrive.getCurrentPosition();
+        double FRMP = robot.FrontRightDrive.getCurrentPosition();
+        double BLMP = robot.BackLeftDrive.getCurrentPosition();
+        double BRMP = robot.BackRightDrive.getCurrentPosition();
+
+        rawRobotPosX = ((FLMP + FRMP) + (-(BLMP + BRMP)))/2;
+        rawRobotPosZ = (-(-(FLMP + BLMP)) + (FRMP+BRMP))/2;
+        rawRobotPosY = (((FLMP+BLMP)-(rawRobotPosX - rawRobotPosZ)) + ((FRMP + BRMP) + (rawRobotPosX + rawRobotPosZ)))/4;
+
+        robotPosX = rawRobotPosX + robotPosXOffset;
+        robotPosY = rawRobotPosY + robotPosYOffset;
+        robotPosZ = rawRobotPosZ + robotPosZOffset;
+
     }
 }
