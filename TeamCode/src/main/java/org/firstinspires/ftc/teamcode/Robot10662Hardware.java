@@ -61,10 +61,10 @@ public class Robot10662Hardware {
     public final int armPos8 = 4400;
 
     //Servo Related
-    public static final double Claw0Open       = 0.6;
-    public static final double Claw1Open       = 0.7;
-    public static final double Claw0Close      = 0.8;
-    public static final double Claw1Close      = 0.9;
+    public final double Claw0Open       = 0.6;
+    public final double Claw1Open       = 0.7;
+    public final double Claw0Close      = 0.8;
+    public final double Claw1Close      = 0.9;
 
 
 

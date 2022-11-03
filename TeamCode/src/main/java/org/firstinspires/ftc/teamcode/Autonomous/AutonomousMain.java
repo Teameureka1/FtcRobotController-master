@@ -195,7 +195,8 @@ public class AutonomousMain extends LinearOpMode {
 
         if (teamSelection == 0) { //Red Side
             if (sideSelection == 0) { //Left Red Side
-                while (!autoPositions.position00()) {
+                while (!autoPositions.finished) {
+                    autoPositions.position00();
                     backend();
                 }
             } else { //Right Red Side
@@ -237,5 +238,7 @@ public class AutonomousMain extends LinearOpMode {
         telemetry.addData("Z ", robotPosZ);
         telemetry.update();
     }
+
+
 
   }

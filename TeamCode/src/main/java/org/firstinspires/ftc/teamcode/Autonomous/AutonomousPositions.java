@@ -11,6 +11,7 @@ public class AutonomousPositions {
     AutonomousMain parent = new AutonomousMain();
 
     //Stages
+    public boolean finished = false;
     private boolean startup = false;
     private int stage = 0;
     private boolean done = true;
@@ -20,7 +21,7 @@ public class AutonomousPositions {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime gameTime = new ElapsedTime();
 
-    public boolean position00() {
+    public void position00() {
         if (!startup) {
             clawToggle(true);
             runToCoordinate(36 ,0 ,0 ,0);
@@ -125,9 +126,9 @@ public class AutonomousPositions {
 
         if (gameTime.seconds() >= 25) {
             //Parking and ending
-            return true;
+            finished = true;
         } else {
-            return false;
+            finished = false;
         }
     }
 
@@ -225,11 +226,11 @@ public class AutonomousPositions {
 
     public void clawToggle(boolean toggle) {
         if (toggle) {
-            robot.Claw0.setPosition(robot.Claw0Close);
-            robot.Claw1.setPosition(robot.Claw1Close);
+            robot.Claw0.setPosition(0.6);
+            robot.Claw1.setPosition(0.7);
         } else {
-            robot.Claw0.setPosition(robot.Claw0Open);
-            robot.Claw1.setPosition(robot.Claw1Open);
+            robot.Claw0.setPosition(0.8);
+            robot.Claw1.setPosition(0.9);
         }
     }
 
