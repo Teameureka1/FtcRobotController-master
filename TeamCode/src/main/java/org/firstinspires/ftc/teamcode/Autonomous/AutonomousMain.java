@@ -60,32 +60,32 @@ public class AutonomousMain extends LinearOpMode {
 
     //Parking Positions
     public final double parkPos001X = 12;
-    public final double parkPos001Y = 36;
+    public final double parkPos001Y = 12;
     public final double parkPos002X = 36;
-    public final double parkPos002Y = 36;
+    public final double parkPos002Y = 12;
     public final double parkPos003X = 60;
-    public final double parkPos003Y = 36;
+    public final double parkPos003Y = 12;
 
     public final double parkPos011X = -60;
-    public final double parkPos011Y = 36;
+    public final double parkPos011Y = 12;
     public final double parkPos012X = -36;
-    public final double parkPos012Y = 36;
+    public final double parkPos012Y = 12;
     public final double parkPos013X = -12;
-    public final double parkPos013Y = 36;
+    public final double parkPos013Y = 12;
 
     public final double parkPos101X = -60;
-    public final double parkPos101Y = -36;
+    public final double parkPos101Y = -12;
     public final double parkPos102X = -36;
-    public final double parkPos102Y = -36;
+    public final double parkPos102Y = -12;
     public final double parkPos103X = -12;
-    public final double parkPos103Y = -36;
+    public final double parkPos103Y = -12;
 
     public final double parkPos111X = 12;
-    public final double parkPos111Y = -36;
+    public final double parkPos111Y = -12;
     public final double parkPos112X = 36;
-    public final double parkPos112Y = -36;
+    public final double parkPos112Y = -12;
     public final double parkPos113X = 60;
-    public final double parkPos113Y = -36;
+    public final double parkPos113Y = -12;
 
 
     @SuppressLint("SuspiciousIndentation")
@@ -94,6 +94,9 @@ public class AutonomousMain extends LinearOpMode {
         //>>>>>>>>>>>>>> INT <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         //Use 'init' methods from Hardware class to Map hardware to match robot's config
         robot.init(hardwareMap);
+
+        //Positions Auto Code
+        AutonomousPositions autoPositions = new AutonomousPositions();
 
         //Modes
         int teamSelection = 0;
@@ -204,20 +207,9 @@ public class AutonomousMain extends LinearOpMode {
             }
         }
 
-        /*
-        while (opModeIsActive()) {
-            updatePosition();
-
-            telemetry.addData("X ", robotPosX);
-            telemetry.addData("Y ", robotPosY);
-            telemetry.addData("Z ", robotPosZ);
-            telemetry.update();
-        }
-*/
-
     }
 
-    private void updatePosition() {
+    public void updatePosition() {
         //Getting position of all the motors
         double FL = robot.FrontLeftDrive.getCurrentPosition();
         double FR = robot.FrontRightDrive.getCurrentPosition();
@@ -235,55 +227,13 @@ public class AutonomousMain extends LinearOpMode {
         robotPosZ = rawRobotPosZ + robotPosZOffset;
     }
 
-    public void runToCoordinate(double X, double Y, double Z) {
+    public void backend() {
         updatePosition();
 
-        double targetX = (X - robotPosX) * robot.ticksPerInch;
-        double targetY = (Y - robotPosY) * robot.ticksPerInch;
-        double targetZ = (Z - robotPosZ) * robot.ticksPerInch;
-
-        double flPos = targetY + targetX + targetZ;
-        double frPos = targetY - targetX - targetZ;
-        double blPos = targetY - targetX + targetZ;
-        double brPos = targetY + targetX - targetZ;
-
-        robot.FrontLeftDrive.setTargetPosition((int)flPos);
-        robot.FrontRightDrive.setTargetPosition((int)frPos);
-        robot.BackLeftDrive.setTargetPosition((int)blPos);
-        robot.BackRightDrive.setTargetPosition((int)brPos);
-
-        robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        if (targetX + targetY + targetZ > 2000) {
-            robot.FrontLeftDrive.setPower(0.6);
-            robot.FrontRightDrive.setPower(0.6);
-            robot.BackLeftDrive.setPower(0.6);
-            robot.BackRightDrive.setPower(0.6);
-        } else {
-            robot.FrontLeftDrive.setPower(0.4);
-            robot.FrontRightDrive.setPower(0.4);
-            robot.BackLeftDrive.setPower(0.4);
-            robot.BackRightDrive.setPower(0.4);
-        }
-
-        while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy()  && robot.BackLeftDrive.isBusy()  & robot.BackRightDrive.isBusy()  ) {
-            updatePosition();
-
-        }
-
-        robot.FrontLeftDrive.setTargetPosition(robot.FrontLeftDrive.getCurrentPosition());
-        robot.FrontRightDrive.setTargetPosition(robot.FrontLeftDrive.getCurrentPosition());
-        robot.BackLeftDrive.setTargetPosition(robot.BackLeftDrive.getCurrentPosition());
-        robot.BackRightDrive.setTargetPosition(robot.BackRightDrive.getCurrentPosition());
-
-        robot.FrontLeftDrive.setPower(0.5);
-        robot.FrontRightDrive.setPower(0.5);
-        robot.BackLeftDrive.setPower(0.5);
-        robot.BackRightDrive.setPower(0.5);
-
+        telemetry.addData("X ", robotPosX);
+        telemetry.addData("Y ", robotPosY);
+        telemetry.addData("Z ", robotPosZ);
+        telemetry.update();
     }
 
   }

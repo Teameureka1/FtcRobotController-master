@@ -45,16 +45,27 @@ public class Robot10662Hardware {
     Acceleration gravity;
 
     //Other
-    public static final double pi = 3.14159265358979323846;
+    public final double pi = 3.14159265358979323846;
 
     //Motor Related
-    public static final double ticksPerInch = 535 / (pi*4);
+    public final double ticksPerInch = 535 / (pi*4);
+
+    public final int armPos0 = 0;
+    public final int armPos1 = 0;
+    public final int armPos2 = 0;
+    public final int armPos3 = 0;
+    public final int armPos4 = 0;
+    public final int armPos5 = 0;
+    public final int armPos6 = 2000;
+    public final int armPos7 = 3200;
+    public final int armPos8 = 4400;
 
     //Servo Related
     public static final double Claw0Open       = 0.6;
     public static final double Claw1Open       = 0.7;
     public static final double Claw0Close      = 0.8;
     public static final double Claw1Close      = 0.9;
+
 
 
     //Local opMember
