@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -107,7 +108,9 @@ public class AutonomousManager extends LinearOpMode {
 
         ////////////////////////////////////////////////////////////////////////////////////////MAIN
 
-        starter();
+        grab();
+        armHeight(5);
+        detectObjects();
 
         while (opModeIsActive()) {
             backend();
@@ -116,9 +119,8 @@ public class AutonomousManager extends LinearOpMode {
     }
     ////////////////////////////////////////////////////////////////////////////////AUTONOMOUS-MODES
     private void starter() {
-        grab();
-        armHeight(5);
-        detectObjects();
+
+
         armHeight(0);
         teleTargetPosX = waypointBotPositionsX[0];
         teleTargetPosY = waypointBotPositionsY[0];
@@ -126,6 +128,10 @@ public class AutonomousManager extends LinearOpMode {
         teleTargetPosX = waypointBotPositionsX[1];
         teleTargetPosY = waypointBotPositionsY[1];
         runToCoordinate(waypointBotPositionsX[1],waypointBotPositionsY[1],0 );
+    }
+
+    private void park() {
+
     }
 
 
@@ -312,7 +318,7 @@ public class AutonomousManager extends LinearOpMode {
 
     //////////////////////////////////////////////////////////////////////////////////DETECT-OBJECTS
     private void detectObjects() {
-        while(parkingSpot == null && opModeIsActive()) {
+        //while(parkingSpot == null && opModeIsActive()) {
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
@@ -344,15 +350,19 @@ public class AutonomousManager extends LinearOpMode {
                                 parkingPositionY = robot.parkingPosBaseY;
                                 if (sideSelection.equals("Right")) {
                                     parkingPositionX = -robot.parkingPos3BaseX;
+                                    break;
                                 } else {
                                     parkingPositionX = robot.parkingPos1BaseX;
+                                    break;
                                 }
                             } else {
                                 parkingPositionY = -robot.parkingPosBaseY;
                                 if (sideSelection.equals("Left")) {
                                     parkingPositionX = -robot.parkingPos3BaseX;
+                                    break;
                                 } else {
                                     parkingPositionX = robot.parkingPos1BaseX;
+                                    break;
                                 }
                             }
                         } else if (recognition.getLabel().equals("Position 2")) {
@@ -360,15 +370,19 @@ public class AutonomousManager extends LinearOpMode {
                                 parkingPositionY = robot.parkingPosBaseY;
                                 if (sideSelection.equals("Right")) {
                                     parkingPositionX = -robot.parkingPos2BaseX;
+                                    break;
                                 } else {
                                     parkingPositionX = robot.parkingPos2BaseX;
+                                    break;
                                 }
                             } else {
                                 parkingPositionY = -robot.parkingPosBaseY;
                                 if (sideSelection.equals("Left")) {
                                     parkingPositionX = -robot.parkingPos2BaseX;
+                                    break;
                                 } else {
                                     parkingPositionX = robot.parkingPos2BaseX;
+                                    break;
                                 }
                             }
                         } else if (recognition.getLabel().equals("Position 3")) {
@@ -376,20 +390,25 @@ public class AutonomousManager extends LinearOpMode {
                                 parkingPositionY = robot.parkingPosBaseY;
                                 if (sideSelection.equals("Right")) {
                                     parkingPositionX = -robot.parkingPos1BaseX;
+                                    break;
                                 } else {
                                     parkingPositionX = robot.parkingPos3BaseX;
+                                    break;
                                 }
                             } else {
                                 parkingPositionY = -robot.parkingPosBaseY;
                                 if (sideSelection.equals("Left")) {
                                     parkingPositionX = -robot.parkingPos1BaseX;
+                                    break;
                                 } else {
                                     parkingPositionX = robot.parkingPos3BaseX;
+                                    break;
                                 }
                             }
                         }
                     }
-                }
+                    //telemetry.update();
+               // }
             }
         }
     }
