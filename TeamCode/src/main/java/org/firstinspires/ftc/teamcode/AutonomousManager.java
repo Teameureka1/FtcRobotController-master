@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -19,6 +20,9 @@ import java.util.List;
 public class AutonomousManager extends LinearOpMode {
     //Instantiate other classes
     Robot10662Hardware robot = new Robot10662Hardware();
+
+    //Elapsed time
+    private ElapsedTime runtime = new ElapsedTime();
 
     //Variables
     private String teamSelection = "Red";
@@ -42,8 +46,11 @@ public class AutonomousManager extends LinearOpMode {
     private double parkingPositionY = 0;
     private double parkingPositionZ = 0;
 
+    private double teleTargetPosX = 0;
+    private double teleTargetPosY = 0;
+
     //Tensor Flow Init
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay2.tflite";
 
     private static final String[] LABELS = {
             "Position 1",
@@ -59,11 +66,11 @@ public class AutonomousManager extends LinearOpMode {
 
     //Waypoint Positions
     double[] waypointBotPositionsX = {
-
+            0,0
     };
 
     double[] waypointBotPositionsY = {
-
+            0,0
     };
 
     double[] waypointBotTurnPositions = {
@@ -79,7 +86,7 @@ public class AutonomousManager extends LinearOpMode {
     public void runOpMode() {
         //Use 'init' methods from Hardware class to Map hardware to match robot's config
         robot.init(hardwareMap);
-        robot.setAutonomosMode();
+
 
         //Selecting position
         pickTeam();
@@ -87,6 +94,8 @@ public class AutonomousManager extends LinearOpMode {
         setInitPos();
 
         //Object detection
+        initVuforia();
+        initTfod();
         activateTFOD();
 
         //Converting waypoints
@@ -100,6 +109,10 @@ public class AutonomousManager extends LinearOpMode {
 
         starter();
 
+        while (opModeIsActive()) {
+            backend();
+        }
+
     }
     ////////////////////////////////////////////////////////////////////////////////AUTONOMOUS-MODES
     private void starter() {
@@ -107,7 +120,11 @@ public class AutonomousManager extends LinearOpMode {
         armHeight(5);
         detectObjects();
         armHeight(0);
+        teleTargetPosX = waypointBotPositionsX[0];
+        teleTargetPosY = waypointBotPositionsY[0];
         runToCoordinate(waypointBotPositionsX[0],waypointBotPositionsY[0],0);
+        teleTargetPosX = waypointBotPositionsX[1];
+        teleTargetPosY = waypointBotPositionsY[1];
         runToCoordinate(waypointBotPositionsX[1],waypointBotPositionsY[1],0 );
     }
 
@@ -149,7 +166,7 @@ public class AutonomousManager extends LinearOpMode {
             //Title
             telemetry.addData(">>", "Select Side");
             //Selection Output
-            if (teamSelection.equals("Left")) {
+            if (sideSelection.equals("Left")) {
                 telemetry.addData("   *", "Left Side");
                 telemetry.addData("    ", "Right Side");
             } else {
@@ -162,9 +179,9 @@ public class AutonomousManager extends LinearOpMode {
                 while (gamepad1.a || gamepad2.a) {} //Waits for button to be unselected
                 break;
             } else if (gamepad1.dpad_up || gamepad2.dpad_up) { //Select Left
-                teamSelection = "Left";
+                sideSelection = "Left";
             } else if (gamepad1.dpad_down || gamepad2.dpad_down) { //Select Right
-                teamSelection = "Right";
+                sideSelection = "Right";
             }
 
             //Updating Telemetry
@@ -198,7 +215,13 @@ public class AutonomousManager extends LinearOpMode {
     ///////////////////////////////////////////////////////////////////////////////STARTUP-TELEMETRY
     public void startupTelemetry() {
         telemetry.addData(">>", "Welcome back operator. Robot is ready, press play when ready.");
-        telemetry.addData("    ", "Current Team: " + teamSelection + " Current Side: " + sideSelection);
+        telemetry.addLine();
+        telemetry.addData("Team & Side: ", teamSelection + " " + sideSelection);
+        if (tfod != null) {
+            telemetry.addData("Tfod: ", "True");
+        } else {
+            telemetry.addData("Tfod: ", "TFOD NOT INITIALIZED, VERY BAD ERRORS WILL OCCUR.");
+        }
         telemetry.update();
     }
 
@@ -211,6 +234,9 @@ public class AutonomousManager extends LinearOpMode {
 
         //Parking Position
         telemetry.addData("PARK AREA: ", parkingSpot + "  X:" + parkingPositionX + ", Y:" + parkingPositionY + ", Z:" + parkingPositionZ);
+
+        //Target Position
+        telemetry.addData("TARGET: ", teleTargetPosX + ", " + teleTargetPosY);
 
         //Updating
         telemetry.update();
@@ -286,7 +312,7 @@ public class AutonomousManager extends LinearOpMode {
 
     //////////////////////////////////////////////////////////////////////////////////DETECT-OBJECTS
     private void detectObjects() {
-        while(parkingSpot == null) {
+        while(parkingSpot == null && opModeIsActive()) {
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
@@ -385,6 +411,11 @@ public class AutonomousManager extends LinearOpMode {
         robot.BackLeftDrive.setTargetPosition((int)blPos);
         robot.BackRightDrive.setTargetPosition((int)brPos);
 
+        robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         if (targetX + targetY + targetZ > 2000) {
             robot.FrontLeftDrive.setPower(0.6);
             robot.FrontRightDrive.setPower(0.6);
@@ -410,6 +441,9 @@ public class AutonomousManager extends LinearOpMode {
         robot.FrontRightDrive.setPower(0.5);
         robot.BackLeftDrive.setPower(0.5);
         robot.BackRightDrive.setPower(0.5);
+
+        runtime.reset();
+        while (runtime.seconds() < 0.2) {}
     }
 
     public void grab() {
@@ -425,6 +459,9 @@ public class AutonomousManager extends LinearOpMode {
     private void armHeight(int i) {
         robot.Arm0.setTargetPosition(robot.armHeight[i]);
         robot.Arm1.setTargetPosition(robot.armHeight[i]);
+
+        robot.Arm0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         if (robot.armHeight[i] + robot.Arm0.getCurrentPosition() > 2000) {
             robot.Arm0.setPower(0.6);
@@ -446,7 +483,7 @@ public class AutonomousManager extends LinearOpMode {
     }
 
     private void convertPositions() {
-        for (int i = 0; i <= robot.waypointBotPositionBaseX.length; i++) {
+        for (int i = 0; i < robot.waypointBotPositionBaseX.length; i++) {
             if (teamSelection.equals("Red")) { //Red Team
                 if (sideSelection.equals("Left")) { //Red Left
                     waypointBotPositionsX[i] = robot.waypointBotPositionBaseX[i];
