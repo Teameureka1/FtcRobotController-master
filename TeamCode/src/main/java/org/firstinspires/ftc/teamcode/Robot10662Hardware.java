@@ -40,6 +40,7 @@ public class Robot10662Hardware {
     public DigitalChannel armTouch;
     public BNO055IMU imu         = null;
 
+
     //Imu config
     Orientation angles;
     Acceleration gravity;
@@ -50,22 +51,43 @@ public class Robot10662Hardware {
     //Motor Related
     public final double ticksPerInch = 535 / (pi*4);
 
-    public final int armPos0 = 0;
-    public final int armPos1 = 0;
-    public final int armPos2 = 0;
-    public final int armPos3 = 0;
-    public final int armPos4 = 0;
-    public final int armPos5 = 0;
-    public final int armPos6 = 2000;
-    public final int armPos7 = 3200;
-    public final int armPos8 = 4400;
-
     //Servo Related
     public final double Claw0Open       = 0.6;
     public final double Claw1Open       = 0.7;
     public final double Claw0Close      = 0.8;
     public final double Claw1Close      = 0.9;
 
+    //Autonomous Related
+    //  Positions
+    public final double startPosX = 40;
+    public final double startPosY = 65;
+
+    public final double parkingPos1BaseX = 12;
+    public final double parkingPos2BaseX = 36;
+    public final double parkingPos3BaseX = 60;
+
+    public final double parkingPosBaseY = 12;
+
+    double[] waypointBotPositionBaseX = {
+            36,
+            36
+    };
+
+    double[] waypointBotPositionBaseY = {
+            0,
+            12
+    };
+
+    int[] armHeight = {
+            0,//Bottom
+            0,//Cone Stack2
+            0,//Cone Stack3
+            0,//Cone Stack4
+            0,//Cone Stack5
+            2000,//Small
+            3200,//Medium
+            4400,//Big
+    };
 
 
     //Local opMember
@@ -91,24 +113,24 @@ public class Robot10662Hardware {
         //FrontLeft
         FrontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         FrontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         //FrontRight
         FrontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         FrontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         //BackRight
         BackRightDrive.setDirection(DcMotor.Direction.REVERSE);
         BackRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         //BackLeft
         BackLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         BackLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         //ArmMotors
         Arm0.setDirection((DcMotorSimple.Direction.REVERSE));
-        Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         Arm1.setDirection((DcMotorSimple.Direction.FORWARD));
-        Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         //Define and initialize Servos.
         Claw0 = hwMap.get(Servo.class, "Claw0");
@@ -138,6 +160,8 @@ public class Robot10662Hardware {
         armTouch.setMode(DigitalChannel.Mode.INPUT);
 
         //Lowering arm until it is bottomed out and then setting the position.
+        Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //Temporarily sets mode
+        Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         while (armTouch.getState() == true) {//Lowering
             Arm0.setPower(-0.4);
             Arm1.setPower(-0.4);
@@ -148,6 +172,24 @@ public class Robot10662Hardware {
         Arm1.setPower(0);
         Arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+    }
+
+    public void setOpMode() {
+        FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void setAutonomosMode() {
+        FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Arm0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 

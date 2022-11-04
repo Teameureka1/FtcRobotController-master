@@ -37,6 +37,7 @@ public class MainOpMode extends OpMode{
     public void init() { //Runs ONCE when driver hits INIT <<
         //Use 'init' methods from Hardware class to Map hardware to match robot's config
         robot.init(hardwareMap);
+        robot.setOpMode();
 
         //Signals ready
         telemetry.addData("~>", "Robot Ready.  Press Play.  Or else...");
