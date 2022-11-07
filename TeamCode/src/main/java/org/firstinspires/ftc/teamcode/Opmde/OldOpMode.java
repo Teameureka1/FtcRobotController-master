@@ -17,9 +17,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Config.Robot10662Hardware;
 
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> MAIN <#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
-@TeleOp(name="Main :: Op Mode", group="Robot")
+@TeleOp(name="OldOpMode", group="Robot")
 //@Disabled
-public class MainOpMode extends OpMode{
+public class OldOpMode extends OpMode{
     //Instantiate the Hardware class
     Robot10662Hardware robot = new Robot10662Hardware();
 
