@@ -34,7 +34,7 @@ public class Level1Autonomous extends LinearOpMode {
         //Setting motors ect
         robot.init(hardwareMap);
 
-        //Asking driver
+        //Asking driver what side the robot is on
         if (opModeInInit()) {
             while (true) {
                 //Display
@@ -81,10 +81,22 @@ public class Level1Autonomous extends LinearOpMode {
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
         grab(); //Grabs preloaded code
-        moveInches(60,0,0); //Moving to the epik area
-        armHeightPreset(4); //All the way up
 
+        if (side.equals("Left")) { //Moves according to side
+            moveInches(0,24,0);
+        } else if (side.equals("Right")) {
+            moveInches(0,-24,0);
+        }
 
+        armHeightPreset(1); //Small tower thingy
+
+        moveInches(4,0,0); //Moves to small tower thingy
+
+        drop();
+
+        moveInches(-4,0,0); //Moving back
+
+        armHeightPreset(0); //Setting arm back down
     }
 
     ///////////////////////////////////////////////////////////////// MOVE INCHES //////////////////

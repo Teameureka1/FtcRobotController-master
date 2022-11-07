@@ -10,6 +10,7 @@
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> IMPORTS <#$##$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
 package org.firstinspires.ftc.teamcode.Testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -19,8 +20,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.Config.Robot10662Hardware;
 
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> MAIN <#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
-@TeleOp(name="Mr Tester", group="Robot")
-//@Disabled
+@TeleOp(name="Odometry Testing", group="Robot")
+@Disabled
 public class OdometryTesting extends OpMode{
     //Instantiate the Hardware class
     Robot10662Hardware robot = new Robot10662Hardware();
