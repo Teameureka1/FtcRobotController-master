@@ -8,16 +8,13 @@
  */
 
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> IMPORTS <#$##$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Opmde;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.Config.Robot10662Hardware;
 
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> MAIN <#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
 @TeleOp(name="Main :: Op Mode", group="Robot")
@@ -37,7 +34,6 @@ public class MainOpMode extends OpMode{
     public void init() { //Runs ONCE when driver hits INIT <<
         //Use 'init' methods from Hardware class to Map hardware to match robot's config
         robot.init(hardwareMap);
-        robot.setOpMode();
 
         //Signals ready
         telemetry.addData("~>", "Robot Ready.  Press Play.  Or else...");

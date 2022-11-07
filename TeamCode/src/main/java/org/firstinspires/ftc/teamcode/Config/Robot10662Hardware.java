@@ -11,7 +11,7 @@
  */
 
 //#$#$#$#$#$#$#$#$#>> IMPORTS <<#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Config;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -50,6 +50,7 @@ public class Robot10662Hardware {
 
     //Motor Related
     public final double ticksPerInch = 535 / (pi*4);
+    public final int[] armPositions = {0,2000,3200,4400};
 
     //Servo Related
     public final double Claw0Open       = 0.6;
@@ -65,29 +66,6 @@ public class Robot10662Hardware {
     public final double parkingPos1BaseX = 12;
     public final double parkingPos2BaseX = 36;
     public final double parkingPos3BaseX = 60;
-
-    public final double parkingPosBaseY = 12;
-
-    double[] waypointBotPositionBaseX = {
-            36,
-            36
-    };
-
-    double[] waypointBotPositionBaseY = {
-            0,
-            12
-    };
-
-    int[] armHeight = {
-            0,//Bottom
-            0,//Cone Stack2
-            0,//Cone Stack3
-            0,//Cone Stack4
-            0,//Cone Stack5
-            2000,//Small
-            3200,//Medium
-            4400,//Big
-    };
 
 
     //Local opMember
@@ -113,24 +91,24 @@ public class Robot10662Hardware {
         //FrontLeft
         FrontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         FrontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //FrontRight
         FrontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         FrontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //BackRight
         BackRightDrive.setDirection(DcMotor.Direction.REVERSE);
         BackRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //BackLeft
         BackLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         BackLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //ArmMotors
         Arm0.setDirection((DcMotorSimple.Direction.REVERSE));
-
+        Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Arm1.setDirection((DcMotorSimple.Direction.FORWARD));
-
+        Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Define and initialize Servos.
         Claw0 = hwMap.get(Servo.class, "Claw0");
@@ -173,24 +151,4 @@ public class Robot10662Hardware {
         Arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
-
-    public void setOpMode() {
-        FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void setAutonomosMode() {
-        FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Arm0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-
 }
