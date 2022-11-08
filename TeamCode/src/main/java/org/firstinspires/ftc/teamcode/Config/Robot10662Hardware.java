@@ -105,7 +105,7 @@ public class Robot10662Hardware {
         BackLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //ArmMotors
-        Arm0.setDirection((DcMotorSimple.Direction.REVERSE));
+        Arm0.setDirection((DcMotorSimple.Direction.FORWARD));
         Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Arm1.setDirection((DcMotorSimple.Direction.FORWARD));
         Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

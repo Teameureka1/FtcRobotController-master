@@ -52,7 +52,7 @@ import java.util.List;
  * is explained below.
  */
 @TeleOp(name = "Camera Testing", group = "Concept")
-@Disabled
+//@Disabled
 public class CameraTesting extends LinearOpMode {
 
     /*
