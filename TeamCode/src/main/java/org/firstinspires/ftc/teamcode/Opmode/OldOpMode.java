@@ -56,21 +56,21 @@ public class OldOpMode extends OpMode{
         double yaw;
 
 
-        axial = (-gamepad1.left_stick_y / 2) * ((gamepad1.right_trigger * 2) + 0.001);
-        lateral = (gamepad1.left_stick_x / 2) * ((gamepad1.right_trigger * 2) + 0.001);
-        yaw = (gamepad1.right_stick_x / 2) * ((gamepad1.right_trigger * 2) + 0.001);
+        axial = (-gamepad1.left_stick_y / 2.5) * (gamepad1.right_trigger + 1);
+        lateral = (gamepad1.left_stick_x / 2.5) * (gamepad1.right_trigger + 1);
+        yaw = (gamepad1.right_stick_x / 2.5) * (gamepad1.right_trigger + 1);
 
-        //Simple algebra to tell moters their speed for movement and strafe
+        //Simple algebra to tell motors their speed for movement and strafe
         double frontLeftPower = axial + lateral + yaw;
         double frontRightPower = axial - lateral - yaw;
         double backLeftPower = axial - lateral + yaw;
         double backRightPower = axial + lateral - yaw;
         
-        //Setting power to moters
+        //Setting power to motors
         //Front Left Motor
         if (frontLeftPower != 0) {//While the motor is not stopped
             if (FLHeld) {//Runs once
-                //Defualt settings
+                //Default settings
                 robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 FLHeld = false;
             }

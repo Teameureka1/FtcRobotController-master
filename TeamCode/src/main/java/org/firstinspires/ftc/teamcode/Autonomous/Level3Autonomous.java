@@ -132,6 +132,9 @@ public class Level3Autonomous extends LinearOpMode {
             }
         }
 
+        telemetry.addData("INIT ", " Vulforia + TFod"); //Telemtrykjzdsv
+        telemetry.update();
+
         initVuforia();
         initTfod();
 
@@ -181,7 +184,7 @@ public class Level3Autonomous extends LinearOpMode {
         }
 
         armHeightPreset(3); //Dropping cone
-        moveInches(5,0,0);
+        moveInches(6,0,0);
         armHeightPreset(2);
         drop();
 
