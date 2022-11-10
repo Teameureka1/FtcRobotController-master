@@ -10,17 +10,22 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.Config.Robot10662Hardware;
 
+import java.util.List;
+
 ///////////////////////////////////////////////////////////////////// CLASS ////////////////////////
-@Autonomous(name="CavemanAutonomous :: Level 1", group = "Robot")
-@Disabled
-public class Level1Autonomous extends LinearOpMode {
+@Autonomous(name="Autonomous :: Level 3", group = "Robot")
+public class Level3Autonomous extends LinearOpMode {
     //Defining the config files
     Robot10662Hardware robot = new Robot10662Hardware();
 
@@ -29,6 +34,30 @@ public class Level1Autonomous extends LinearOpMode {
 
     //Variables
     private String side = "Left";
+    private int parkingPos = 0;
+
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+
+    private static final String[] LABELS = {
+            "Pos 1",
+            "Pos 2",
+            "Pos 3"
+    };
+
+    private static final String VUFORIA_KEY =
+            "AS3eJNb/////AAABmZW+oXMs1UvbvQspLl6ESTk42fukxk9mH7yBB42bMCBv5PcjTcoDufjeE9Nv84UtCar6bi20b7RncpSLLfnB4uEk4WJel/+UcryTmrrCSrg0sTMuGjnTToDLFwM2iIyYFCg0CWaF5basGzUGIAISiNQou5wYYgFYMUd9pPoseL1HJ32JQ4054XhEvDRdo+tywvhM9NTHRaUK2e5lnSOXQW+TznS85crV/McgshAla0uuVndPYtXWDwNok7bwdST0ajAnTMUSVlEZXWlPQmsSE4H+wVO5j8DQro5JfPok/7jkk+n5hTdY+3ZqKa10jQZ37kU9yOCtV6ToOL0uNeef7oiMx8XXOUR83y3+0oKwXdw0";
+
+    /**
+     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+     * localization engine.
+     */
+    private VuforiaLocalizer vuforia;
+
+    /**
+     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
+     * Detection engine.
+     */
+    private TFObjectDetector tfod;
 
     ///////////////////////////////////////////////////////////////// OP MODE //////////////////////
     @Override
@@ -103,31 +132,78 @@ public class Level1Autonomous extends LinearOpMode {
             }
         }
 
+        initVuforia();
+        initTfod();
+
+        if (tfod != null) {
+            tfod.activate();
+            tfod.setZoom(1.0, 16.0/9.0);
+        }
+
         //Waiting for the user
         telemetry.addData(">>","LET IT RIP! Smack that play button!");
         telemetry.update();
         waitForStart();
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
-        grab(); //Grabs preloaded code
+        grab(); //Grabbing preloaded cone
+        armHeightPreset(1);
 
-        if (side.equals("Left")) { //Moves according to side
-            moveInches(0,12,0);
-        } else if (side.equals("Right")) {
-            moveInches(0,-12,0);
+        if (opModeIsActive()) { //Scanning cone
+            while (opModeIsActive() && parkingPos == 0) {
+                if (tfod != null) {
+                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                    if (updatedRecognitions != null) {
+                        for (Recognition recognition : updatedRecognitions) {
+
+                            if (recognition.getLabel().equals("Pos 1")) {
+                                parkingPos = 1;
+                            } else if (recognition.getLabel().equals("Pos 2")) {
+                                parkingPos = 2;
+                            } else if (recognition.getLabel().equals("Pos 3")) {
+                                parkingPos = 3;
+                            }
+
+                            telemetry.addData("Parking Position",parkingPos);
+                            telemetry.update();
+                        }
+                    }
+                }
+            }
         }
 
-        armHeightPreset(1); //Small tower thingy
+        moveInches(51,0,0);
 
-        moveInches(7,0,0); //Moves to small tower thingy
+        if (side.equals("Left")) { //Moving to junction
+            moveInches(0,15,0);
+        } else {
+            moveInches(0,-15,0);
+        }
 
-        drop(); //Drops cone onto junction
+        armHeightPreset(3); //Dropping cone
+        moveInches(5,0,0);
+        armHeightPreset(2);
+        drop();
 
-        waitTime(0.5); //Waiting for cone to drop
+        moveInches(-5,0,0);
+        if (side.equals("Left")) {
+            if (parkingPos == 1) {
+                moveInches(-41,0,0);
+            } else if (parkingPos == 2) {
+                moveInches(-15,0,0);
+            } else if (parkingPos == 1) {
+                moveInches(15,0,0);
+            }
+        } else {
+            if (parkingPos == 1) {
+                moveInches(15, 0, 0);
+            } else if (parkingPos == 2) {
+                moveInches(-15, 0, 0);
+            } else if (parkingPos == 1) {
+                moveInches(-41, 0, 0);
+            }
+        }
 
-        moveInches(-5,0,0); //Moving back
-
-        armHeightPreset(0); //Setting arm back down
     }
 
     ///////////////////////////////////////////////////////////////// MOVE INCHES //////////////////
@@ -221,4 +297,33 @@ public class Level1Autonomous extends LinearOpMode {
         runtime.reset(); //Resets timer
         while (runtime.seconds() <= time) {} //Waits until inputted time is met
     }
+
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+    }
+
+    private void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.75f;
+        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.inputSize = 300;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+
+        // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
+        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+    }
+
 }

@@ -146,8 +146,11 @@ public class Level2Autonomous extends LinearOpMode {
         waitForStart();
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
+        grab(); //Grabbing preloaded cone
+        armHeightPreset(1); //Raising cone
+
+        if (opModeIsActive()) { //Scanning cone
+            while (opModeIsActive() && parkingPos == 0) {
                 if (tfod != null) {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
@@ -169,35 +172,46 @@ public class Level2Autonomous extends LinearOpMode {
             }
         }
 
-        if (parkingPos == 1) {
-            moveInches(0,-24,0);
-        } else if (parkingPos == 2) {
-            moveInches(0,0,0);
-        } else if (parkingPos == 3) {
-            moveInches(0,24,0);
+        telemetry.addData("Made it","");
+        telemetry.update();
+        if (side.equals("Left")) { //Moving to the junction
+            moveInches(0,15,0);
+        } else {
+            moveInches(0,-15,0);
+        }
+        moveInches(6,0,0); //Getting closer
+        drop(); //Drops cone
+
+        moveInches(-4,0,0); //Moving back
+        armHeightPreset(0); //Dropping arm back down
+
+        if (side.equals("Left")) { //Moving to parking area
+            moveInches(0,-15,0);
+        } else {
+            moveInches(0,15,0);
+        }
+        moveInches(26,0,0);
+
+
+        if (side.equals("Left")) { //Parking
+            if (parkingPos == 1) {
+                moveInches(0,-26,0);
+            } else if (parkingPos == 2) {
+                moveInches(0,0,0);
+            } else if (parkingPos == 3) {
+                moveInches(0,26,0);
+            }
+        } else {
+            if (parkingPos == 1) { //Parking
+                moveInches(0,-26,0);
+            } else if (parkingPos == 2) {
+                moveInches(0,0,0);
+            } else if (parkingPos == 3) {
+                moveInches(0,26,0);
+            }
         }
 
 
-        /*
-        grab(); //Grabs preloaded code
-
-        if (side.equals("Left")) { //Moves according to side
-            moveInches(0,12,0);
-        } else if (side.equals("Right")) {
-            moveInches(0,-12,0);
-        }
-
-        armHeightPreset(1); //Small tower thingy
-
-        moveInches(7,0,0); //Moves to small tower thingy
-
-        drop(); //Drops cone onto junction
-
-        waitTime(0.5); //Waiting for cone to drop
-
-        moveInches(-5,0,0); //Moving back
-
-        armHeightPreset(0); //Setting arm back down*/
     }
 
     ///////////////////////////////////////////////////////////////// MOVE INCHES //////////////////

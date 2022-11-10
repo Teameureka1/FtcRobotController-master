@@ -10,6 +10,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Config.Robot10662Hardware;
 
 ///////////////////////////////////////////////////////////////////// CLASS ////////////////////////
 @Autonomous(name="CavemanAutonomous :: Level 0", group = "Robot")
+@Disabled
 public class Level0Autonomous extends LinearOpMode {
     //Defining the config files
     Robot10662Hardware robot = new Robot10662Hardware();

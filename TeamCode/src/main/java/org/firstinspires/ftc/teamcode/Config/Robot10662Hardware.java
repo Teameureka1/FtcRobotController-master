@@ -50,7 +50,7 @@ public class Robot10662Hardware {
 
     //Motor Related
     public final double ticksPerInch = 535 / (pi*4);
-    public final int[] armPositions = {0,2000,3200,4400};
+    public final int[] armPositions = {0,2000,3200,4450};
 
     //Servo Related
     public final double Claw0Open       = 0.6;

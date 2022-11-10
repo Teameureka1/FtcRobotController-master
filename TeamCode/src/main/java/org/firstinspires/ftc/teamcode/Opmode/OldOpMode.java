@@ -56,16 +56,9 @@ public class OldOpMode extends OpMode{
         double yaw;
 
 
-        //Doubles speed when right bumper 1 is pressed
-        if (gamepad1.right_bumper) { //Dividing by two to slow it down
-            axial = -gamepad1.left_stick_y;
-            lateral = gamepad1.left_stick_x;
-            yaw = gamepad1.right_stick_x;
-        } else {
-            axial = (-gamepad1.left_stick_y) / 2;
-            lateral = (gamepad1.left_stick_x) / 2;
-            yaw = (gamepad1.right_stick_x) / 2;
-        }
+        axial = (-gamepad1.left_stick_y / 2) * ((gamepad1.right_trigger * 2) + 0.001);
+        lateral = (gamepad1.left_stick_x / 2) * ((gamepad1.right_trigger * 2) + 0.001);
+        yaw = (gamepad1.right_stick_x / 2) * ((gamepad1.right_trigger * 2) + 0.001);
 
         //Simple algebra to tell moters their speed for movement and strafe
         double frontLeftPower = axial + lateral + yaw;
