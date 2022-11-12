@@ -36,7 +36,7 @@ public class Level2Autonomous extends LinearOpMode {
     private String side = "Left";
     private int parkingPos = 0;
 
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay3.tflite";
 
     private static final String[] LABELS = {
             "Pos 1",
