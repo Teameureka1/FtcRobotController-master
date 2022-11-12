@@ -105,18 +105,14 @@ public class Robot10662Hardware {
         BackLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //ArmMotors
-        Arm0.setDirection((DcMotorSimple.Direction.FORWARD));
+        Arm0.setDirection((DcMotorSimple.Direction.REVERSE));
         Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Arm1.setDirection((DcMotorSimple.Direction.FORWARD));
+        Arm1.setDirection((DcMotorSimple.Direction.REVERSE));
         Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Define and initialize Servos.
         Claw0 = hwMap.get(Servo.class, "Claw0");
         Claw1 = hwMap.get(Servo.class, "Claw1");
-
-        //Opening Claw at the Start to Prevent Problems
-        Claw0.setPosition(Claw0Open);
-        Claw1.setPosition(Claw1Open);
 
         //Define Sensors
         //Imu
@@ -137,6 +133,7 @@ public class Robot10662Hardware {
         //Setting Touch Sensor Mode
         armTouch.setMode(DigitalChannel.Mode.INPUT);
 
+
         //Lowering arm until it is bottomed out and then setting the position.
         Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //Temporarily sets mode
         Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -150,5 +147,28 @@ public class Robot10662Hardware {
         Arm1.setPower(0);
         Arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        //Opening Claw at the Start to Prevent Problems
+        Claw0.setPosition(Claw0Open);
+        Claw1.setPosition(Claw1Open);
     }
+/*
+    public void moveInit(HardwareMap ahwMap) {
+        hwMap = ahwMap;
+        //Lowering arm until it is bottomed out and then setting the position.
+        Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //Temporarily sets mode
+        Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        while (armTouch.getState() == true) {//Lowering
+            Arm0.setPower(-0.4);
+            Arm1.setPower(-0.4);
+        } //Stopping the motors
+        //Setting the position.
+        Arm0.setPower(0);
+        Arm0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Arm1.setPower(0);
+        Arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Opening Claw at the Start to Prevent Problems
+        Claw0.setPosition(Claw0Open);
+        Claw1.setPosition(Claw1Open);
+    }*/
 }

@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.Config.Robot10662Hardware;
 
 ///////////////////////////////////////////////////////////////////// CLASS ////////////////////////
 @Autonomous(name="CavemanAutonomous :: Level 1", group = "Robot")
-@Disabled
+//@Disabled
 public class Level1Autonomous extends LinearOpMode {
     //Defining the config files
     Robot10662Hardware robot = new Robot10662Hardware();
@@ -109,25 +109,28 @@ public class Level1Autonomous extends LinearOpMode {
         waitForStart();
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
-        grab(); //Grabs preloaded code
+        grab();
+        armHeightPreset(1);
 
-        if (side.equals("Left")) { //Moves according to side
-            moveInches(0,12,0);
-        } else if (side.equals("Right")) {
-            moveInches(0,-12,0);
+        if (side.equals("Left")) { //Moving to the junction
+            moveInches(0,15,0);
+        } else {
+            moveInches(0,-15,0);
         }
+        moveInches(6,0,0); //Getting closer
+        drop(); //Drops cone
+        waitTime(0.5);
 
-        armHeightPreset(1); //Small tower thingy
+        moveInches(-4,0,0); //Moving back
+        armHeightPreset(0); //Dropping arm back down
 
-        moveInches(7,0,0); //Moves to small tower thingy
+        if (side.equals("Left")) { //Moving to parking area
+            moveInches(0,-15,0);
+        } else {
+            moveInches(0,15,0);
+        }
+        moveInches(26,0,0);
 
-        drop(); //Drops cone onto junction
-
-        waitTime(0.5); //Waiting for cone to drop
-
-        moveInches(-5,0,0); //Moving back
-
-        armHeightPreset(0); //Setting arm back down
     }
 
     ///////////////////////////////////////////////////////////////// MOVE INCHES //////////////////

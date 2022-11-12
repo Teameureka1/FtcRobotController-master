@@ -36,7 +36,7 @@ public class Level2Autonomous extends LinearOpMode {
     private String side = "Left";
     private int parkingPos = 0;
 
-    private static final String TFOD_MODEL_ASSET = "PowerPlay3.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
 
     private static final String[] LABELS = {
             "Pos 1",
@@ -175,8 +175,6 @@ public class Level2Autonomous extends LinearOpMode {
             }
         }
 
-        telemetry.addData("Made it","");
-        telemetry.update();
         if (side.equals("Left")) { //Moving to the junction
             moveInches(0,15,0);
         } else {
