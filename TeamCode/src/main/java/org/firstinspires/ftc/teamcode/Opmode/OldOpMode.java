@@ -57,9 +57,9 @@ public class OldOpMode extends OpMode{
         double yaw;
 
 
-        axial = (-gamepad1.left_stick_y / 2.5) * (gamepad1.right_trigger + 1);
-        lateral = (gamepad1.left_stick_x / 2.5) * (gamepad1.right_trigger + 1);
-        yaw = (gamepad1.right_stick_x / 2.5) * (gamepad1.right_trigger + 1);
+        axial = (-gamepad1.left_stick_y / 2.5) * ((gamepad1.right_trigger * 1.5) + 1);
+        lateral = (gamepad1.left_stick_x / 2.5) * ((gamepad1.right_trigger * 1.5) + 1);
+        yaw = (gamepad1.right_stick_x / 2.5) * ((gamepad1.right_trigger * 1.5) + 1);
 
         //Simple algebra to tell motors their speed for movement and strafe
         double frontLeftPower = axial + lateral + yaw;
@@ -172,7 +172,7 @@ public class OldOpMode extends OpMode{
                     robot.Arm1.setPower(armPower);
                 }
             } else {//Button not presssed
-                if (robot.Arm0.getCurrentPosition() >= 4350) {//If the arm goes too high
+                if (robot.Arm0.getCurrentPosition() >= robot.armPositions[3]) {//If the arm goes too high
                     if (armPower >= 0) {//Stop the user from going any higher
                         robot.Arm0.setPower(0);
                         robot.Arm1.setPower(0);

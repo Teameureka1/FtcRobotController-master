@@ -65,6 +65,7 @@ public class Level2Autonomous extends LinearOpMode {
         //Setting motors ect
         robot.init(hardwareMap);
 
+
         //Asking driver what side the robot is on
         int tmp = 0; //Temporary value
         if (opModeInInit()) {
@@ -138,6 +139,7 @@ public class Level2Autonomous extends LinearOpMode {
         initVuforia();
         initTfod();
 
+
         if (tfod != null) {
             tfod.activate();
             tfod.setZoom(1.0, 16.0/9.0);
@@ -151,6 +153,26 @@ public class Level2Autonomous extends LinearOpMode {
 
         grab(); //Grabbing preloaded cone
         armHeightPreset(1); //Raising cone
+
+
+
+        if (side.equals("Left")) { //Moving to the junction
+            moveInches(0,15,0);
+        } else {
+            moveInches(0,-15,0);
+        }
+        moveInches(6,0,0); //Getting closer
+        drop(); //Drops cone
+        waitTime(0.5);
+
+        moveInches(-4,0,0); //Moving back
+        armHeightPreset(0); //Dropping arm back down
+
+        if (side.equals("Left")) { //Moving to parking area
+            moveInches(0,-15,0);
+        } else {
+            moveInches(0,15,0);
+        }
 
         if (opModeIsActive()) { //Scanning cone
             while (opModeIsActive() && parkingPos == 0) {
@@ -175,23 +197,6 @@ public class Level2Autonomous extends LinearOpMode {
             }
         }
 
-        if (side.equals("Left")) { //Moving to the junction
-            moveInches(0,15,0);
-        } else {
-            moveInches(0,-15,0);
-        }
-        moveInches(6,0,0); //Getting closer
-        drop(); //Drops cone
-        waitTime(0.5);
-
-        moveInches(-4,0,0); //Moving back
-        armHeightPreset(0); //Dropping arm back down
-
-        if (side.equals("Left")) { //Moving to parking area
-            moveInches(0,-15,0);
-        } else {
-            moveInches(0,15,0);
-        }
         moveInches(26,0,0);
 
 
@@ -333,7 +338,7 @@ public class Level2Autonomous extends LinearOpMode {
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+        //tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 
 }
