@@ -62,14 +62,16 @@ public class CameraTesting extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private static final String TFOD_MODEL_ASSET = "CustomSleeve.tflite";
+    //private static final String TFOD_MODEL_ASSET = "/storage/emulated/0/FIRST/tflitemodels/PowerPlay3.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
 
     private static final String[] LABELS = {
             "1 Bolt",
             "2 Bulb",
-            "3 Panel"
+            "3 Panel",
+            "4 what is happening"
     };
 
     /*

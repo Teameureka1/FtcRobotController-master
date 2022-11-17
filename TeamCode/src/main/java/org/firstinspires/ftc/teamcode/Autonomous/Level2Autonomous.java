@@ -36,12 +36,13 @@ public class Level2Autonomous extends LinearOpMode {
     private String side = "Left";
     private int parkingPos = 0;
 
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private static final String TFOD_MODEL_ASSET = "CustomSleeve.tflite";
 
     private static final String[] LABELS = {
+            "Pos No",
             "Pos 1",
             "Pos 2",
-            "Pos 3"
+            "Pos 3",
     };
 
     private static final String VUFORIA_KEY =
