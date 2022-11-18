@@ -163,11 +163,12 @@ public class Level2Autonomous extends LinearOpMode {
             moveInches(0,-15,0);
         }
         moveInches(6,0,0); //Getting closer
+        armHeightPreset(0);
         drop(); //Drops cone
         waitTime(0.5);
 
         moveInches(-4,0,0); //Moving back
-        armHeightPreset(0); //Dropping arm back down
+        //armHeightPreset(0); //Dropping arm back down
 
         if (side.equals("Left")) { //Moving to parking area
             moveInches(0,-15,0);
