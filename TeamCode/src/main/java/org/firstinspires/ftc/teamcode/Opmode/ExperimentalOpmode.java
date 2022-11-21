@@ -25,6 +25,12 @@ public class ExperimentalOpmode extends OpMode{
     public boolean BRHeld = false;
     public boolean AHeld = false;
 
+    //FCD
+    public boolean FCD = true;
+
+    //Debug booleans
+    public boolean armDebug = false;
+
     @Override /////////////////////////////////////////////////////// INIT /////////////////////////
     public void init() { //Runs ONCE when driver hits INIT <<
         //Use 'init' methods from Hardware class to Map hardware to match robot's config
@@ -145,13 +151,19 @@ public class ExperimentalOpmode extends OpMode{
         int currentPos = robot.Arm0.getCurrentPosition();
         double armPower;
 
+        if(armDebug && armControl <= 0) {
+            armDebug = false;
+        }
+
+        telemetry.addData("ArmDebug",armDebug);
+
         if (currentPos >= robot.armPositions[0]+300 && currentPos <= robot.armPositions[3]-300) {
             armPower = (armControl / 2.5) * ((throttle2 * 1.5) + 1);
         } else {
             armPower = (armControl / 2.5);
         }
 
-        if(armPower !=0) {
+        if(armPower !=0 && !armDebug) {
             if (robot.Arm0.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
                 robot.Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -167,6 +179,7 @@ public class ExperimentalOpmode extends OpMode{
                 }
             } else if (currentPos >= robot.armPositions[3]) {
                 if(armPower > 0) {
+                    armDebug = true;
                     robot.Arm0.setPower(0);
                     robot.Arm1.setPower(0);
                 } else {
