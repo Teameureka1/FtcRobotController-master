@@ -143,8 +143,13 @@ public class ExperimentalOpmode extends OpMode{
         boolean armTouch = robot.armTouch.getState();
 
         int currentPos = robot.Arm0.getCurrentPosition();
+        double armPower;
 
-        double armPower = (armControl / 2.5) * ((throttle2 * 1.5) + 1);
+        if (currentPos >= robot.armPositions[0]+300 && currentPos <= robot.armPositions[3]-300) {
+            armPower = (armControl / 2.5) * ((throttle2 * 1.5) + 1);
+        } else {
+            armPower = (armControl / 2.5);
+        }
 
         if(armPower !=0) {
             if (robot.Arm0.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
@@ -173,17 +178,29 @@ public class ExperimentalOpmode extends OpMode{
                 robot.Arm1.setPower(armPower);
             }
 
-
         } else {
             if (robot.Arm0.getMode() != DcMotor.RunMode.RUN_TO_POSITION) {
-
-                robot.Arm0.setTargetPosition(robot.Arm0.getCurrentPosition() + 10);
-                robot.Arm1.setTargetPosition(robot.Arm1.getCurrentPosition() + 10);
+                if(currentPos >= robot.armPositions[3]-25) {
+                    robot.Arm0.setTargetPosition(robot.armPositions[3]);
+                    robot.Arm1.setTargetPosition(robot.armPositions[3]);
+                } else {
+                    robot.Arm0.setTargetPosition(robot.Arm0.getCurrentPosition() + 10);
+                    robot.Arm1.setTargetPosition(robot.Arm1.getCurrentPosition() + 10);
+                }
                 robot.Arm0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.Arm0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.Arm0.setPower(0.5);
                 robot.Arm1.setPower(0.5);
             }
+        }
+
+        if(grabButton) {
+            robot.Claw0.setPosition(robot.Claw0Close);
+            robot.Claw1.setPosition(robot.Claw1Close);
+        }
+        if(dropButton) {
+            robot.Claw0.setPosition(robot.Claw0Open);
+            robot.Claw1.setPosition(robot.Claw1Open);
         }
     }
 }
