@@ -8,6 +8,7 @@ import android.widget.TabHost;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Config.Robot10662Hardware;
 
@@ -24,9 +25,6 @@ public class ExperimentalOpmode extends OpMode{
     public boolean BLHeld = false;
     public boolean BRHeld = false;
     public boolean AHeld = false;
-
-    //FCD
-    public boolean FCD = true;
 
     //Debug booleans
     public boolean armDebug = false;
@@ -85,6 +83,7 @@ public class ExperimentalOpmode extends OpMode{
         double frontRightPower = axial - lateral - yaw;
         double backLeftPower = axial - lateral + yaw;
         double backRightPower = axial + lateral - yaw;
+
 
         //Setting power to motors
         if (!holdButton || frontLeftPower != 0) { //FL
