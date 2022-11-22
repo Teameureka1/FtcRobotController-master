@@ -27,7 +27,7 @@ public class ExperimentalOpmode extends OpMode{
     public boolean AHeld = false;
 
     //Driving Mode
-    private boolean FOD = false;
+    private boolean FOD = true;
 
     //BRo make comprimise
     private double axial;
@@ -77,12 +77,12 @@ public class ExperimentalOpmode extends OpMode{
     private void mainController() {
         //Controls
         double xCoordinate = gamepad1.left_stick_x;
-        double yCoordinate = gamepad1.left_stick_y;
+        double yCoordinate = -gamepad1.left_stick_y;
         double zCoordinate = gamepad1.right_stick_x;
         double throttle1 = gamepad1.right_trigger;
         boolean holdButton = gamepad1.right_bumper;
 
-        double gamepadRadians = Math.atan2(xCoordinate, -yCoordinate);
+        double gamepadRadians = Math.atan2(xCoordinate, yCoordinate);
         double gamepadHypot = Range.clip(Math.hypot(xCoordinate, yCoordinate), 0, 1);
         double robotRadians = robot.getAngle() * (robot.pi/180);
         double xControl = Math.sin(gamepadRadians - robotRadians) * gamepadHypot;
@@ -98,7 +98,6 @@ public class ExperimentalOpmode extends OpMode{
             lateral = (xCoordinate / 2.5) * ((throttle1 * 1.5) + 1);
             yaw = (zCoordinate / 2.5) * ((throttle1 * 1.5) + 1);
         }
-        //Algebra calucation hwhwhha
 
         double frontLeftPower = axial + lateral + yaw;
         double frontRightPower = axial - lateral - yaw;
