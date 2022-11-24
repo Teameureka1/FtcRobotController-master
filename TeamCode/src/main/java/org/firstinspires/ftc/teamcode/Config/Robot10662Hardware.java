@@ -49,11 +49,12 @@ public class Robot10662Hardware {
     Acceleration gravity;
 
     //Other
-    public final double pi = 3.14159265358979323846;
+    public final double pi = Math.PI;
 
     //Motor Related
     public final double ticksPerInch = 535 / (pi*4);
-    public final int[] armPositions = {0,2000,3200,4400};
+    public final int[] armPositions = {0,2000,3200,4400,500};
+    public final int coneStackBase = 150;
 
     //Servo Related
     public final double Claw0Open       = 0.6;

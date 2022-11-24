@@ -27,7 +27,7 @@ public class ExperimentalOpmode extends OpMode{
     public boolean AHeld = false;
 
     //Driving Mode
-    private boolean FOD = true;
+    private boolean FCD = true;
 
     //BRo make comprimise
     private double axial;
@@ -36,6 +36,7 @@ public class ExperimentalOpmode extends OpMode{
 
     //Debug booleans
     public boolean armDebug = false;
+    private boolean driveDebug = false;
 
     @Override /////////////////////////////////////////////////////// INIT /////////////////////////
     public void init() { //Runs ONCE when driver hits INIT <<
@@ -81,15 +82,35 @@ public class ExperimentalOpmode extends OpMode{
         double zCoordinate = gamepad1.right_stick_x;
         double throttle1 = gamepad1.right_trigger;
         boolean holdButton = gamepad1.right_bumper;
+        boolean drivingButton = gamepad1.y;
+
+        if(drivingButton && !driveDebug) {
+            if(FCD) {
+                FCD = false;
+            } else {
+                FCD = true;
+            }
+            driveDebug = true;
+        } else if (!drivingButton && driveDebug) {
+            driveDebug = false;
+        }
 
         double gamepadRadians = Math.atan2(xCoordinate, yCoordinate);
         double gamepadHypot = Range.clip(Math.hypot(xCoordinate, yCoordinate), 0, 1);
         double robotRadians = robot.getAngle() * (robot.pi/180);
-        double xControl = Math.sin(gamepadRadians - robotRadians) * gamepadHypot;
-        double yControl = Math.cos(gamepadRadians - robotRadians) * gamepadHypot;
+        double targetRadians = gamepadRadians + robotRadians;
+        double xControl = Math.sin(targetRadians)*gamepadHypot;
+        double yControl = Math.cos(targetRadians)*gamepadHypot;
 
+        /*
+        telemetry.addData("Gamepad Radians", gamepadRadians);
+        telemetry.addData("Gamepad Hypotonuse", gamepadHypot);
+        telemetry.addData("Robot Radians", robotRadians);
+        telemetry.addData("Target Radians", targetRadians);
+        telemetry.addData("Y Axis", yControl);
+        telemetry.addData("X Axis", xControl);*/
 
-        if (FOD) {
+        if (FCD) {
             axial = (yControl / 2.5) * ((throttle1 * 1.5) + 1);
             lateral = (xControl / 2.5) * ((throttle1 * 1.5) + 1);
             yaw = (zCoordinate / 2.5) * ((throttle1 * 1.5) + 1);
@@ -174,7 +195,7 @@ public class ExperimentalOpmode extends OpMode{
             armDebug = false;
         }
 
-        telemetry.addData("ArmDebug",armDebug);
+        //telemetry.addData("ArmDebug",armDebug);
 
         if (currentPos >= robot.armPositions[0]+300 && currentPos <= robot.armPositions[3]-300) {
             armPower = (armControl / 2.5) * ((throttle2 * 1.5) + 1);
