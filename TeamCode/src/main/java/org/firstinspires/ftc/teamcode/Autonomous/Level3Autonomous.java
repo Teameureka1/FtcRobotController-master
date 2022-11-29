@@ -9,9 +9,12 @@
 ///////////////////////////////////////////////////////////////////// IMPORT ///////////////////////
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -206,18 +209,26 @@ public class Level3Autonomous extends LinearOpMode {
         } else {
             moveInches(0,0,22.5);
         }
+
+        centerToLine();
+
+        /*
         moveInches(16,0,0);
-        centerXToLine();
+        centerToLine();
         moveInches(7,0,0);
         grab();
         armToHeight(robot.armPositions[1]);
 
         moveInches(-23,0,0); //Moving back
 
-        moveInches(0,0,11);
+        if (side.equals("Left")) { //Lining up to next junction
+            moveInches(0,0,-11);
+        } else {
+            moveInches(0,0,11);
+        }
         moveInches(5,0,0);
         armToHeight(robot.armPositions[1]-200);
-        drop();
+        drop();*/
 
 
 
@@ -351,7 +362,23 @@ public class Level3Autonomous extends LinearOpMode {
         //tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 
-    private void centerXToLine() {
+    private void centerToLine() {
+        final float[] hsvValues0 = new float[3];
+        final float[] hsvValues1 = new float[3];
+        final float[] hsvValues2 = new float[3];
+
+        if(opModeIsActive()) {
+            while(opModeIsActive()) {
+                NormalizedRGBA colors0 = robot.colorSensor0.getNormalizedColors();
+                NormalizedRGBA colors1 = robot.colorSensor1.getNormalizedColors();
+                NormalizedRGBA colors2 = robot.colorSensor2.getNormalizedColors();
+                Color.colorToHSV(colors0.toColor(), hsvValues0);
+                Color.colorToHSV(colors1.toColor(), hsvValues1);
+                Color.colorToHSV(colors2.toColor(), hsvValues2);
+
+                telemetry.update();
+            }
+        }
 
     }
 

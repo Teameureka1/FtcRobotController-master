@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -41,6 +42,9 @@ public class Robot10662Hardware {
     public Servo   Claw0            = null;
     public Servo   Claw1            = null;
     public DigitalChannel armTouch;
+    public NormalizedColorSensor colorSensor0;
+    public NormalizedColorSensor colorSensor1;
+    public NormalizedColorSensor colorSensor2;
     public BNO055IMU imu         = null;
 
 
@@ -137,6 +141,18 @@ public class Robot10662Hardware {
         //Setting Touch Sensor Mode
         armTouch.setMode(DigitalChannel.Mode.INPUT);
 
+        //Color sensors
+        colorSensor0 = hwMap.get(NormalizedColorSensor.class, "colorSensor0");
+        colorSensor1 = hwMap.get(NormalizedColorSensor.class, "colorSensor1");
+        colorSensor2 = hwMap.get(NormalizedColorSensor.class, "colorSensor2");
+
+        colorSensor0.setGain(2);
+        colorSensor1.setGain(2);
+        colorSensor2.setGain(2);
+
+        //Opening Claw at the Start to Prevent Problems
+        Claw0.setPosition(Claw0Open);
+        Claw1.setPosition(Claw1Open);
 
         //Lowering arm until it is bottomed out and then setting the position.
         Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //Temporarily sets mode
@@ -150,31 +166,7 @@ public class Robot10662Hardware {
         Arm0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Arm1.setPower(0);
         Arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //Opening Claw at the Start to Prevent Problems
-        Claw0.setPosition(Claw0Open);
-        Claw1.setPosition(Claw1Open);
     }
-/*
-    public void moveInit(HardwareMap ahwMap) {
-        hwMap = ahwMap;
-        //Lowering arm until it is bottomed out and then setting the position.
-        Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //Temporarily sets mode
-        Arm1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        while (armTouch.getState() == true) {//Lowering
-            Arm0.setPower(-0.4);
-            Arm1.setPower(-0.4);
-        } //Stopping the motors
-        //Setting the position.
-        Arm0.setPower(0);
-        Arm0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Arm1.setPower(0);
-        Arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //Opening Claw at the Start to Prevent Problems
-        Claw0.setPosition(Claw0Open);
-        Claw1.setPosition(Claw1Open);
-    }*/
 
     public double getAngle() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
