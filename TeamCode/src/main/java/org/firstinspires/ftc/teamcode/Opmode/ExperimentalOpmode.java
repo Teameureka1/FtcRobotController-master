@@ -102,13 +102,6 @@ public class ExperimentalOpmode extends OpMode{
         double xControl = Math.sin(targetRadians)*gamepadHypot;
         double yControl = Math.cos(targetRadians)*gamepadHypot;
 
-        /*
-        telemetry.addData("Gamepad Radians", gamepadRadians);
-        telemetry.addData("Gamepad Hypotonuse", gamepadHypot);
-        telemetry.addData("Robot Radians", robotRadians);
-        telemetry.addData("Target Radians", targetRadians);
-        telemetry.addData("Y Axis", yControl);
-        telemetry.addData("X Axis", xControl);*/
 
         if (FCD) {
             axial = (yControl / 2.5) * ((throttle1 * 1.5) + 1);
@@ -186,6 +179,7 @@ public class ExperimentalOpmode extends OpMode{
         double throttle2 = gamepad2.right_trigger;
         boolean grabButton = gamepad2.x;
         boolean dropButton = gamepad2.y;
+        boolean wideButton = gamepad2.b;
         boolean armTouch = robot.armTouch.getState();
 
         int currentPos = robot.Arm0.getCurrentPosition();
@@ -254,6 +248,10 @@ public class ExperimentalOpmode extends OpMode{
         if(dropButton) {
             robot.Claw0.setPosition(robot.Claw0Open);
             robot.Claw1.setPosition(robot.Claw1Open);
+        }
+        if(wideButton) {
+            robot.Claw0.setPosition(robot.Claw0Wide);
+            robot.Claw1.setPosition(robot.Claw1Wide);
         }
     }
 }

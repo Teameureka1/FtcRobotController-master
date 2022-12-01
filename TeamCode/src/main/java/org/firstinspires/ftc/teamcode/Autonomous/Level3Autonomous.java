@@ -39,6 +39,10 @@ public class Level3Autonomous extends LinearOpMode {
     private String side = "Left";
     private int parkingPos = 0;
 
+    private boolean cs0 = false;
+    private boolean cs1 = false;
+    private boolean cs2 = false;
+
     private static final String TFOD_MODEL_ASSET = "CustomSleeve.tflite";
 
     private static final String[] LABELS = {
@@ -188,6 +192,7 @@ public class Level3Autonomous extends LinearOpMode {
         }
 
         armToHeight(robot.armPositions[1]); //To the small junction
+        turnToDegrees(0);
         moveInches(6,0,0);
 
         armToHeight(robot.armPositions[1] - 200); //Dropping cone
@@ -195,40 +200,41 @@ public class Level3Autonomous extends LinearOpMode {
 
         moveInches(-4,0,0); //Moving back
         if (side.equals("Left")) {
-            moveInches(0,-15,0);
+            moveInches(0,-16,0);
         } else {
-            moveInches(0,15,0);
+            moveInches(0,16,0);
         }
         armToHeight(robot.coneStackBase*5);
+        turnToDegrees(0);
 
-        moveInches(61,0,0); //Moving ahead
+        moveInches(30,0,0); //Moving ahead
+        turnToDegrees(0);
+        moveInches(31,0,0);
         moveInches(-10,0,0);
 
         if (side.equals("Left")) { //Approaching cone stack and grabbing cone
-            moveInches(0,0,-22.5);
+            turnToDegrees(-90);
         } else {
-            moveInches(0,0,22.5);
+            turnToDegrees(90);
         }
 
-        centerToLine();
-
-        /*
-        moveInches(16,0,0);
-        centerToLine();
-        moveInches(7,0,0);
+        centerToLine(); //Grabbing another cone
+        moveInches(3.5,0,0);
         grab();
-        armToHeight(robot.armPositions[1]);
+        armToHeight(robot.armPositions[2]);
 
-        moveInches(-23,0,0); //Moving back
+        //Backing up
+        moveInches(-28,0,0);
 
-        if (side.equals("Left")) { //Lining up to next junction
-            moveInches(0,0,-11);
+        if(side.equals("Left")) {
+            turnToDegrees(-135);
         } else {
-            moveInches(0,0,11);
+            turnToDegrees(135);
         }
         moveInches(5,0,0);
-        armToHeight(robot.armPositions[1]-200);
-        drop();*/
+        armToHeight(robot.armPositions[2]-200);
+        drop();
+
 
 
 
@@ -267,17 +273,8 @@ public class Level3Autonomous extends LinearOpMode {
         //Waiting until finished
         while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy() && robot.BackLeftDrive.isBusy() && robot.BackRightDrive.isBusy()) {}
 
-        //Stopping motors
-        robot.FrontLeftDrive.setTargetPosition(robot.FrontLeftDrive.getCurrentPosition());
-        robot.FrontRightDrive.setTargetPosition(robot.FrontRightDrive.getCurrentPosition());
-        robot.BackLeftDrive.setTargetPosition(robot.BackLeftDrive.getCurrentPosition());
-        robot.BackRightDrive.setTargetPosition(robot.BackRightDrive.getCurrentPosition());
-
-        //Setting power again
-        robot.FrontLeftDrive.setPower(0.5);
-        robot.FrontRightDrive.setPower(0.5);
-        robot.BackLeftDrive.setPower(0.5);
-        robot.BackRightDrive.setPower(0.5);
+        //STOP!!
+        stopAndHold();
 
         //Short pause to prevent bot from knocking itself around too much
         runtime.reset();
@@ -363,23 +360,124 @@ public class Level3Autonomous extends LinearOpMode {
     }
 
     private void centerToLine() {
+        while (opModeIsActive() && !(cs0||cs1||cs2)) {
+            updateColors();
+            drivePower(0.2,0,0);
+        }
+        stopAndHold();
+        waitTime(0.2);
+        while (opModeIsActive() && !(!cs0&&cs1&&!cs2)) {
+            updateColors();
+            if (cs0) {
+                drivePower(0,-0.2,0);
+            }
+            if (cs2) {
+                drivePower(0,0.2,0);
+            }
+        }
+        stopAndHold();
+        waitTime(0.2);
+    }
+
+    private void updateColors() {
         final float[] hsvValues0 = new float[3];
         final float[] hsvValues1 = new float[3];
         final float[] hsvValues2 = new float[3];
 
-        if(opModeIsActive()) {
-            while(opModeIsActive()) {
-                NormalizedRGBA colors0 = robot.colorSensor0.getNormalizedColors();
-                NormalizedRGBA colors1 = robot.colorSensor1.getNormalizedColors();
-                NormalizedRGBA colors2 = robot.colorSensor2.getNormalizedColors();
-                Color.colorToHSV(colors0.toColor(), hsvValues0);
-                Color.colorToHSV(colors1.toColor(), hsvValues1);
-                Color.colorToHSV(colors2.toColor(), hsvValues2);
+        NormalizedRGBA colors0 = robot.colorSensor0.getNormalizedColors();
+        NormalizedRGBA colors1 = robot.colorSensor1.getNormalizedColors();
+        NormalizedRGBA colors2 = robot.colorSensor2.getNormalizedColors();
+        Color.colorToHSV(colors0.toColor(), hsvValues0);
+        Color.colorToHSV(colors1.toColor(), hsvValues1);
+        Color.colorToHSV(colors2.toColor(), hsvValues2);
 
+        cs0 = hsvValues0[0] == 180 || hsvValues0[0] == 60;
+        cs1 = hsvValues1[0] == 180 || hsvValues1[0] == 60;
+        cs2 = hsvValues2[0] == 180 || hsvValues2[0] == 60;
+
+        telemetry.addData("sensor1", cs0 + " " + hsvValues0[0]);
+        telemetry.addData("sensor2", cs1 + " " + hsvValues1[0]);
+        telemetry.addData("sensor3", cs2 + " " + hsvValues2[0]);
+        telemetry.update();
+    }
+
+    private void drivePower(double axial, double lateral, double yaw) {
+        double frontLeftPower = axial + lateral + yaw;
+        double backLeftPower = axial - lateral - yaw;
+        double frontRightPower = axial - lateral + yaw;
+        double backRightPower = axial + lateral - yaw;
+
+        if(robot.FrontLeftDrive.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
+            robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+        robot.FrontLeftDrive.setPower(frontLeftPower);
+        robot.FrontRightDrive.setPower(frontRightPower);
+        robot.BackLeftDrive.setPower(backLeftPower);
+        robot.BackRightDrive.setPower(backRightPower);
+    }
+
+    private void stopAndHold() {
+        //Stopping motors
+        robot.FrontLeftDrive.setTargetPosition(robot.FrontLeftDrive.getCurrentPosition()+25);
+        robot.FrontRightDrive.setTargetPosition(robot.FrontRightDrive.getCurrentPosition()+25);
+        robot.BackLeftDrive.setTargetPosition(robot.BackLeftDrive.getCurrentPosition()-25);
+        robot.BackRightDrive.setTargetPosition(robot.BackRightDrive.getCurrentPosition()-25);
+
+        //Setting mode
+        robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //Setting power again
+        robot.FrontLeftDrive.setPower(0.5);
+        robot.FrontRightDrive.setPower(0.5);
+        robot.BackLeftDrive.setPower(0.5);
+        robot.BackRightDrive.setPower(0.5);
+    }
+
+    private void turnToDegrees(int degrees) {
+        double robotDegree = robot.getAngle();
+        double turnPower = 0.4;
+
+        if(robot.FrontLeftDrive.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
+            robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+        if (Math.abs(robotDegree) + degrees <= 0) {
+            robot.FrontLeftDrive.setPower(-turnPower);
+            robot.FrontRightDrive.setPower(turnPower);
+            robot.BackLeftDrive.setPower(-turnPower);
+            robot.BackRightDrive.setPower(turnPower);
+        } else {
+            robot.FrontLeftDrive.setPower(turnPower);
+            robot.FrontRightDrive.setPower(-turnPower);
+            robot.BackLeftDrive.setPower(turnPower);
+            robot.BackRightDrive.setPower(-turnPower);
+        }
+
+        if (Math.abs(robotDegree) - Math.abs(degrees) <= 20) {
+            while(Math.abs(robotDegree) <= Math.abs(degrees)-10) {
+                robotDegree = robot.getAngle();
+                telemetry.addData("Degrees",robotDegree);
+                telemetry.update();
+            }
+        } else {
+            while (Math.abs(robotDegree) <= Math.abs(degrees) + 25) {
+                robotDegree = robot.getAngle();
+                telemetry.addData("Degrees", robotDegree);
                 telemetry.update();
             }
         }
 
+        stopAndHold();
     }
 
 }

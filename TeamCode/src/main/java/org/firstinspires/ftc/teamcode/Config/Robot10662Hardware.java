@@ -55,25 +55,18 @@ public class Robot10662Hardware {
     //Other
     public final double pi = Math.PI;
 
-    //Motor Related
+    //Motor Relate
     public final double ticksPerInch = 535 / (pi*4);
     public final int[] armPositions = {0,2000,3200,4400,500};
     public final int coneStackBase = 150;
 
     //Servo Related
-    public final double Claw0Open       = 0.6;
-    public final double Claw1Open       = 0.7;
+    public final double Claw0Wide       = 0.65;
+    public final double Claw1Wide       = 0.65;
+    public final double Claw0Open       = 0.75;
+    public final double Claw1Open       = 0.75;
     public final double Claw0Close      = 0.8;
     public final double Claw1Close      = 0.9;
-
-    //Autonomous Related
-    //  Positions
-    public final double startPosX = 40;
-    public final double startPosY = 65;
-
-    public final double parkingPos1BaseX = 12;
-    public final double parkingPos2BaseX = 36;
-    public final double parkingPos3BaseX = 60;
 
 
     //Local opMember
@@ -147,12 +140,12 @@ public class Robot10662Hardware {
         colorSensor2 = hwMap.get(NormalizedColorSensor.class, "colorSensor2");
 
         colorSensor0.setGain(2);
-        colorSensor1.setGain(2);
+        colorSensor1.setGain(3);
         colorSensor2.setGain(2);
 
         //Opening Claw at the Start to Prevent Problems
-        Claw0.setPosition(Claw0Open);
-        Claw1.setPosition(Claw1Open);
+        Claw0.setPosition(Claw0Wide);
+        Claw1.setPosition(Claw1Wide);
 
         //Lowering arm until it is bottomed out and then setting the position.
         Arm0.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //Temporarily sets mode
