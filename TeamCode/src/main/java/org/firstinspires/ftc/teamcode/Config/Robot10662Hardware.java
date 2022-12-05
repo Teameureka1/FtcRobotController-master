@@ -61,9 +61,9 @@ public class Robot10662Hardware {
     public final int coneStackBase = 150;
 
     //Servo Related
-    public final double Claw0Wide       = 0.65;
+    public final double Claw0Wide       = 0.63;
     public final double Claw1Wide       = 0.65;
-    public final double Claw0Open       = 0.75;
+    public final double Claw0Open       = 0.73;
     public final double Claw1Open       = 0.75;
     public final double Claw0Close      = 0.8;
     public final double Claw1Close      = 0.9;
