@@ -19,7 +19,7 @@ public class ExperimentalOpmode extends OpMode{
     //Instantiate the Hardware class
     Robot10662Hardware robot = new Robot10662Hardware();
 
-    //Held Motors
+    //Held Motors Variables
     public boolean FLHeld = false;
     public boolean FRHeld = false;
     public boolean BLHeld = false;
@@ -27,15 +27,14 @@ public class ExperimentalOpmode extends OpMode{
     public boolean AHeld = false;
 
     //Driving Mode
-    private boolean FCD = true;
+    private boolean FCD = true; //FCD stands for Field Centric Driving
 
-    //BRo make comprimise
+    //Defining Variables
     private double axial;
     private double lateral;
     private double yaw;
 
     //Debug booleans
-    public boolean armDebug = false;
     private boolean driveDebug = false;
 
     @Override /////////////////////////////////////////////////////// INIT /////////////////////////
@@ -59,28 +58,13 @@ public class ExperimentalOpmode extends OpMode{
 
     @Override /////////////////////////////////////////////////////// LOOP /////////////////////////
     public void loop() { //Runs REPEATEDLY when driver hits PLAY <<
-
-        mainController();
-
-
-
-
-
-
-        telemetry.update();
-    }
-
-    @Override /////////////////////////////////////////////////////// STOP /////////////////////////
-    public void stop() { //Runs ONCE when driver hits STOP <<
-    }
-
-    private void mainController() {
+        //region ////////////// MAIN CONTROLS ////////////////////////////////////////////////////
         //Controls
         double xCoordinate = gamepad1.left_stick_x;
         double yCoordinate = -gamepad1.left_stick_y;
         double zCoordinate = gamepad1.right_stick_x;
         double throttle1 = gamepad1.right_trigger;
-        boolean holdButton = gamepad1.right_bumper;
+        boolean holdButton = gamepad1.left_bumper;
         boolean drivingButton = gamepad1.y;
 
         if(drivingButton && !driveDebug) {
@@ -170,5 +154,12 @@ public class ExperimentalOpmode extends OpMode{
                 robot.BackRightDrive.setPower(0.5);
             }
         }
+        //endregion
+
+
+    }
+
+    @Override /////////////////////////////////////////////////////// STOP /////////////////////////
+    public void stop() { //Runs ONCE when driver hits STOP <<
     }
 }
