@@ -26,8 +26,9 @@ public class ExperimentalOpmode extends OpMode{
     public boolean BRHeld = false;
     public boolean AHeld = false;
 
-    //Driving Mode
+    //Mode Variables
     private boolean FCD = true; //FCD stands for Field Centric Driving
+    private boolean DT = false; //DT stands for Debug Telemetry
 
     //Defining Variables
     private double axial;
@@ -58,7 +59,8 @@ public class ExperimentalOpmode extends OpMode{
 
     @Override /////////////////////////////////////////////////////// LOOP /////////////////////////
     public void loop() { //Runs REPEATEDLY when driver hits PLAY <<
-        //region ////////////// MAIN CONTROLS ////////////////////////////////////////////////////
+
+        //region ////////////// MAIN CONTROLS //////////////////////////////////////////////////// TODO: Add a imu reset button, possibly make a method for it in robot hardware.
         //Controls
         double xCoordinate = gamepad1.left_stick_x;
         double yCoordinate = -gamepad1.left_stick_y;
@@ -67,6 +69,7 @@ public class ExperimentalOpmode extends OpMode{
         boolean holdButton = gamepad1.left_bumper;
         boolean drivingButton = gamepad1.y;
 
+        //FCD Mode Switcher
         if(drivingButton && !driveDebug) {
             if(FCD) {
                 FCD = false;
@@ -78,6 +81,8 @@ public class ExperimentalOpmode extends OpMode{
             driveDebug = false;
         }
 
+        //Using a formula to get the robots current heading and convert the joystick heading to
+        // Allow the robot to always head forward when joystick pushed forward.
         double gamepadRadians = Math.atan2(xCoordinate, yCoordinate);
         double gamepadHypot = Range.clip(Math.hypot(xCoordinate, yCoordinate), 0, 1);
         double robotRadians = robot.getAngle() * (robot.pi/180);
@@ -86,16 +91,17 @@ public class ExperimentalOpmode extends OpMode{
         double yControl = Math.cos(targetRadians)*gamepadHypot;
 
 
-        if (FCD) {
+        if (FCD) { //When enabled use virtual joystick
             axial = (yControl / 2.5) * ((throttle1 * 1.5) + 1);
             lateral = (xControl / 2.5) * ((throttle1 * 1.5) + 1);
             yaw = (zCoordinate / 2.5) * ((throttle1 * 1.5) + 1);
-        } else {
+        } else { //Normal driving
             axial = (yCoordinate / 2.5) * ((throttle1 * 1.5) + 1);
             lateral = (xCoordinate / 2.5) * ((throttle1 * 1.5) + 1);
             yaw = (zCoordinate / 2.5) * ((throttle1 * 1.5) + 1);
         }
 
+        //Converting above to power for each motor
         double frontLeftPower = axial + lateral + yaw;
         double frontRightPower = axial - lateral - yaw;
         double backLeftPower = axial - lateral + yaw;
@@ -108,7 +114,7 @@ public class ExperimentalOpmode extends OpMode{
                 robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
             robot.FrontLeftDrive.setPower(frontLeftPower);
-        } else if (frontLeftPower == 0 && holdButton) {
+        } else if (frontLeftPower == 0 && holdButton) { //Stop and hold mode
             if (robot.FrontLeftDrive.getMode() == DcMotor.RunMode.RUN_USING_ENCODER) {
                 robot.FrontLeftDrive.setTargetPosition(robot.FrontLeftDrive.getCurrentPosition());
                 robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -156,7 +162,21 @@ public class ExperimentalOpmode extends OpMode{
         }
         //endregion
 
+        //region ////////////// TELEMETRY ////////////////////////////////////////////////////
+        //General telemetry
+        telemetry.addData(">",robot.robotName + " : " + robot.team + (DT?" : DEBUG MODE ENABLED":""));
+        //                      Look cool     Robot's name            Team name          If debug mode is enabled say
 
+        //Main telemetry
+        //TODO: Add tons of telemetry here that reports on the whole robot with a debug mode.
+
+
+
+        //Debug telemetry
+
+        //Updating telemetry
+        telemetry.update();
+        //endregion
     }
 
     @Override /////////////////////////////////////////////////////// STOP /////////////////////////

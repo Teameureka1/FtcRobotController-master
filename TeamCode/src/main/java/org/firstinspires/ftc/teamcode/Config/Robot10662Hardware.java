@@ -32,6 +32,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 //#$#$#$#$#$#$#$#$#>> DEFINING-OBJECTS + PUBLIC-VARIABLES <<#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 public class Robot10662Hardware {
+    //Some stuff to make cool.
+    public final String robotName = "Stevo V2";
+    public final String team = "#10662 Lazer Sharks In Space";
+
     //Defining motors and servos for later
     public DcMotor FrontLeftDrive   = null;
     public DcMotor FrontRightDrive  = null;
@@ -45,7 +49,7 @@ public class Robot10662Hardware {
     Acceleration gravity;
 
     //Other
-    public final double pi = Math.PI;
+    public final double pi = Math.PI; //TODO: Remove and replace all used instances with Math.PI.
 
     //Motor Relate
     public final double ticksPerInch = 535 / (pi*4);
