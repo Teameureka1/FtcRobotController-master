@@ -41,6 +41,7 @@ public class Robot10662Hardware {
     public DcMotor FrontRightDrive  = null;
     public DcMotor BackLeftDrive    = null;
     public DcMotor BackRightDrive   = null;
+    public DcMotor Arm              = null;
     public BNO055IMU imu         = null;
 
 
@@ -71,6 +72,7 @@ public class Robot10662Hardware {
         FrontRightDrive = hwMap.get(DcMotor.class, "FR");
         BackLeftDrive   = hwMap.get(DcMotor.class, "BL");
         BackRightDrive  = hwMap.get(DcMotor.class, "BR");
+        Arm             = hwMap.get(DcMotor.class, "Arm");
 
         //Setting Motor Directions + Mode
         //FrontLeft
@@ -82,13 +84,17 @@ public class Robot10662Hardware {
         FrontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //BackRight
-        BackRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        BackRightDrive.setDirection(DcMotor.Direction.FORWARD);
         BackRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //BackLeft
-        BackLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        BackLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         BackLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //Arm
+        Arm.setDirection(DcMotor.Direction.FORWARD);
+        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //TODO: Replacce with better fucntion
+        Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Define Sensors
         //Imu

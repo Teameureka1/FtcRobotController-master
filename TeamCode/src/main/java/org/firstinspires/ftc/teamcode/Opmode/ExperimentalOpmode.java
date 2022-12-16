@@ -162,12 +162,13 @@ public class ExperimentalOpmode extends OpMode{
         }
         //endregion
 	
-	//region ////////////// ARM CONTROLLER ///////////////////////////////////////////////
-	//Controls
-	double xArmControl = gamepad2.left_stick_x;
+	    //region ////////////// ARM CONTROLLER ///////////////////////////////////////////////
+	    //Controls
+	    double yArmControl = -gamepad2.left_stick_y;
 
-	robot.arm.setPower(xArmControl);
-	//endregion
+        robot.Arm.setPower(yArmControl);
+
+	    //endregion
 
         //region ////////////// TELEMETRY ////////////////////////////////////////////////////
         //General telemetry
