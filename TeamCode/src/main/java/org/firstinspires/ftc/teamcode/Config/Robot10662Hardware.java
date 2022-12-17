@@ -34,7 +34,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 public class Robot10662Hardware {
     //Some stuff to make cool.
     public final String robotName = "Stevo V2";
-    public final String team = "#10662 Lazer Sharks In Space";
+    public final String team = "#10662 Lazer Sharks In Space"; //Intentionally "mis-spelt" because that is our team name.
 
     //Defining motors and servos for later
     public DcMotor FrontLeftDrive   = null;
@@ -48,12 +48,10 @@ public class Robot10662Hardware {
     //Imu config
     Orientation angles;
     Acceleration gravity;
-
-    //Other
-    public final double pi = Math.PI; //TODO: Remove and replace all used instances with Math.PI.
+    private double imuAngleOffset = 0;
 
     //Motor Relate
-    public final double ticksPerInch = 535 / (pi*4);
+    public final double ticksPerInch = 535 / (Math.PI*4);
     public final int coneStackBase = 150;
 
     //Local opMember
@@ -65,7 +63,7 @@ public class Robot10662Hardware {
 
     //#$#$#$#$#$#$#>> MAPPING-OBJECTS + CONFIG <<#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
     public void init(HardwareMap ahwMap) {
-        hwMap = ahwMap;
+        hwMap = ahwMap; //Importing current opmode's hardware
 
         //Define and Initialize Motors (note: need to use reference to actual OpMode).
         FrontLeftDrive  = hwMap.get(DcMotor.class, "FL");
@@ -74,7 +72,7 @@ public class Robot10662Hardware {
         BackRightDrive  = hwMap.get(DcMotor.class, "BR");
         Arm             = hwMap.get(DcMotor.class, "Arm");
 
-        //Setting Motor Directions + Mode
+        //Setting Motor Directions + Mode + Resting Encoders if necessary
         //FrontLeft
         FrontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         FrontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -93,7 +91,7 @@ public class Robot10662Hardware {
         BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //Arm
         Arm.setDirection(DcMotor.Direction.FORWARD);
-        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //TODO: Replacce with better fucntion
+        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //TODO: Replace with better function
         Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Define Sensors
@@ -112,6 +110,10 @@ public class Robot10662Hardware {
     }
 
     public double getAngle() {
-        return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        return (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle) + imuAngleOffset;
+    }
+
+    public void setAngleZero() {
+        imuAngleOffset = getAngle();
     }
 }

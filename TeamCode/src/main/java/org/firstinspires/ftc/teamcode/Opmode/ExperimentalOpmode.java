@@ -3,7 +3,7 @@
 //#$#$#$#$#$#$#$#$#$#$#$#$#$> IMPORTS <#$##$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
 package org.firstinspires.ftc.teamcode.Opmode;
 
-import android.widget.TabHost;
+import android.media.DeniedByServerException;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -27,16 +27,17 @@ public class ExperimentalOpmode extends OpMode{
     public boolean AHeld = false;
 
     //Mode Variables
-    private boolean FCD = true; //FCD stands for Field Centric Driving
-    private boolean DT = false; //DT stands for Debug Telemetry
+    private boolean FieldCentricDriving = true;
+    private boolean DebugMode = false;
 
     //Defining Variables
     private double axial;
     private double lateral;
     private double yaw;
 
-    //Debug booleans
-    private boolean driveDebug = false;
+    //Bebounce booleans
+    private boolean driveModeDebounce = false;
+    private boolean debugModeDebounce = false;
 
     @Override /////////////////////////////////////////////////////// INIT /////////////////////////
     public void init() { //Runs ONCE when driver hits INIT <<
@@ -60,7 +61,24 @@ public class ExperimentalOpmode extends OpMode{
     @Override /////////////////////////////////////////////////////// LOOP /////////////////////////
     public void loop() { //Runs REPEATEDLY when driver hits PLAY <<
 
-        //region ////////////// MAIN CONTROLS //////////////////////////////////////////////////// TODO: Add a imu reset button, possibly make a method for it in robot hardware.
+        //region ////////////// GLOBAL CONTROLS //////////////////////////////////////////////////
+        //Controls
+        boolean debugModeButton = gamepad1.dpad_left || gamepad2.dpad_left;
+
+        //Toggle Debug Mode
+        if(debugModeButton && !debugModeDebounce) {
+            if(DebugMode) {
+                DebugMode = false;
+            } else {
+                DebugMode = true;
+            }
+            debugModeDebounce = true;
+        } else if (!debugModeButton && debugModeButton) {
+            debugModeDebounce = false;
+        }
+        //endregion
+
+        //region ////////////// MAIN CONTROLS ////////////////////////////////////////////////////
         //Controls
         double xCoordinate = gamepad1.left_stick_x;
         double yCoordinate = -gamepad1.left_stick_y;
@@ -68,30 +86,35 @@ public class ExperimentalOpmode extends OpMode{
         double throttle1 = gamepad1.right_trigger;
         boolean holdButton = gamepad1.left_bumper;
         boolean drivingButton = gamepad1.y;
+        boolean imuResetButton = gamepad1.dpad_up;
 
         //FCD Mode Switcher
-        if(drivingButton && !driveDebug) {
-            if(FCD) {
-                FCD = false;
+        if(drivingButton && !driveModeDebounce) {
+            if(FieldCentricDriving) {
+                FieldCentricDriving = false;
             } else {
-                FCD = true;
+                FieldCentricDriving = true;
             }
-            driveDebug = true;
-        } else if (!drivingButton && driveDebug) {
-            driveDebug = false;
+            driveModeDebounce = true;
+        } else if (!drivingButton && driveModeDebounce) {
+            driveModeDebounce = false;
+        }
+
+        //IMU Position Reset
+        if (imuResetButton) {
+            robot.setAngleZero();
         }
 
         //Using a formula to get the robots current heading and convert the joystick heading to
         // Allow the robot to always head forward when joystick pushed forward.
         double gamepadRadians = Math.atan2(xCoordinate, yCoordinate);
         double gamepadHypot = Range.clip(Math.hypot(xCoordinate, yCoordinate), 0, 1);
-        double robotRadians = robot.getAngle() * (robot.pi/180);
+        double robotRadians = (robot.getAngle() * (Math.PI/180));
         double targetRadians = gamepadRadians + robotRadians;
         double xControl = Math.sin(targetRadians)*gamepadHypot;
         double yControl = Math.cos(targetRadians)*gamepadHypot;
 
-
-        if (FCD) { //When enabled use virtual joystick
+        if (FieldCentricDriving) { //When enabled use virtual joystick
             axial = (yControl / 2.5) * ((throttle1 * 1.5) + 1);
             lateral = (xControl / 2.5) * ((throttle1 * 1.5) + 1);
             yaw = (zCoordinate / 2.5) * ((throttle1 * 1.5) + 1);
@@ -171,18 +194,24 @@ public class ExperimentalOpmode extends OpMode{
 	    //endregion
 
         //region ////////////// TELEMETRY ////////////////////////////////////////////////////
-        //General telemetry
-        telemetry.addData(">",robot.robotName + " : " + robot.team + (DT?" : DEBUG MODE ENABLED":""));
+        // General telemetry ////////////////////
+        telemetry.addData(">",robot.robotName + " : " + robot.team + (DebugMode ?" : DEBUG MODE ENABLED":""));
         //                      Look cool     Robot's name            Team name          If debug mode is enabled say
 
-        //Main telemetry
+        // Main telemetry ///////////////////////
         //TODO: Add tons of telemetry here that reports on the whole robot with a debug mode.
+        if (!DebugMode) { //Only displays if not in debug mode
 
 
+        }
 
-        //Debug telemetry
+        // Debug telemetry //////////////////////
+        if (DebugMode) { //Only displays if in debug mode
 
-        //Updating telemetry
+
+        }
+
+        // Updating telemetry ///////////////////
         telemetry.update();
         //endregion
     }
