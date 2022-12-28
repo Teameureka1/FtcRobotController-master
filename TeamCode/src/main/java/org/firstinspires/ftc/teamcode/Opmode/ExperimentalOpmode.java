@@ -189,7 +189,10 @@ public class ExperimentalOpmode extends OpMode{
 	    //Controls
 	    double yArmControl = -gamepad2.left_stick_y;
 
-        robot.Arm.setPower(yArmControl);
+
+        double armPower = yArmControl;
+
+        robot.Arm.setPower(armPower);
 
 	    //endregion
 
@@ -207,8 +210,17 @@ public class ExperimentalOpmode extends OpMode{
 
         // Debug telemetry //////////////////////
         if (DebugMode) { //Only displays if in debug mode
+            telemetry.addData("Driver 1", "------------------------");
+            telemetry.addData("Gamepad",  "Radian-" + gamepadRadians + " X-" + xCoordinate + " Y-" + yCoordinate);
+            telemetry.addData("Throttle", gamepadHypot + " + " + throttle1 + " --> " + (gamepadHypot / 2.5) * ((throttle1 * 1.5) + 1));
+            telemetry.addData("FcdConversions", "TargetRadians-"+ targetRadians +" X-" + xControl + " Y-" + yControl);
 
-
+            telemetry.addData("","");
+            telemetry.addData("Driver 2", "------------------------");
+            telemetry.addData("ArmControllerPower", yArmControl);
+            telemetry.addData("ArmTargetPower", yArmControl);
+            telemetry.addData("ArmCurrentPower", robot.Arm.getPower());
+            telemetry.addData("ArmCurrentPosition", robot.Arm.getCurrentPosition());
         }
 
         // Updating telemetry ///////////////////
