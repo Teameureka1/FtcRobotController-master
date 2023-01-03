@@ -1,9 +1,5 @@
 ///////////////////////////////////////////////////////////////////// IMPORT ///////////////////////
-
-//#$#$#$#$#$#$#$#$#$#$#$#$#$> IMPORTS <#$##$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
 package org.firstinspires.ftc.teamcode.Opmode;
-
-import android.media.DeniedByServerException;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -13,9 +9,9 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Config.Robot10662Hardware;
 
 ///////////////////////////////////////////////////////////////////// CLASS ////////////////////////
-@TeleOp(name="MainOpmode (Experimental)", group="Robot")
+@TeleOp(name="MainTeleop", group="Robot")
 //@Disabled
-public class ExperimentalOpmode extends OpMode{
+public class MainTeleop extends OpMode{
     //Instantiate the Hardware class
     Robot10662Hardware robot = new Robot10662Hardware();
 
@@ -213,7 +209,7 @@ public class ExperimentalOpmode extends OpMode{
             telemetry.addData("Driver 1", "------------------------");
             telemetry.addData("Gamepad",  "Radian-" + gamepadRadians + " X-" + xCoordinate + " Y-" + yCoordinate);
             telemetry.addData("Throttle", gamepadHypot + " + " + throttle1 + " --> " + (gamepadHypot / 2.5) * ((throttle1 * 1.5) + 1));
-            telemetry.addData("FcdConversions", "TargetRadians-"+ targetRadians +" X-" + xControl + " Y-" + yControl);
+            telemetry.addData("FcdConversions", "TargetRadians-"+ targetRadians +" X-" + xControl + " Y-" + yControl); //TODO: Finish the telemetry.
 
             telemetry.addData("","");
             telemetry.addData("Driver 2", "------------------------");

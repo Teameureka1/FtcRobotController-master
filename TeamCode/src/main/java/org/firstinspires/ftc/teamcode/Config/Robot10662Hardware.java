@@ -1,15 +1,3 @@
-/**
- * Welcome to the super awesome Hardware Configuration for team 10662's comptetion robot!
- *
- * This file will set up all of the robots motors, servos, ect, with one simple class that can
- * be called from any script for easy syncing and updates.
- *
- * The following program is structured into three secotions:
- * #IMPORTS
- * #DEFINING-OBJECTS + PUBLIC-VARIABLES
- * #MAPPING-OBJECTS + CONFIG
- */
-
 //#$#$#$#$#$#$#$#$#>> IMPORTS <<#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 package org.firstinspires.ftc.teamcode.Config;
 
@@ -52,6 +40,7 @@ public class Robot10662Hardware {
 
     //Motor Relate
     public final double ticksPerInch = 535 / (Math.PI*4);
+    public final double ticksPerCM = 535 / (Math.PI* 10.16);
     public final int coneStackBase = 150;
 
     //Local opMember
