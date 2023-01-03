@@ -209,7 +209,10 @@ public class MainTeleop extends OpMode{
             telemetry.addData("Driver 1", "------------------------");
             telemetry.addData("Gamepad",  "Radian-" + gamepadRadians + " X-" + xCoordinate + " Y-" + yCoordinate);
             telemetry.addData("Throttle", gamepadHypot + " + " + throttle1 + " --> " + (gamepadHypot / 2.5) * ((throttle1 * 1.5) + 1));
-            telemetry.addData("FcdConversions", "TargetRadians-"+ targetRadians +" X-" + xControl + " Y-" + yControl); //TODO: Finish the telemetry.
+	    telemetry.addData("FcdEnabled", FieldCentricDriving);
+	    if(FieldCentricDriving) {
+            	telemetry.addData("FcdConversions", "TargetRadians-"+ targetRadians +" X-" + xControl + " Y-" + yControl);
+	    }
 
             telemetry.addData("","");
             telemetry.addData("Driver 2", "------------------------");
@@ -221,6 +224,7 @@ public class MainTeleop extends OpMode{
 
         // Updating telemetry ///////////////////
         telemetry.update();
+	telemetry.clearAll();
         //endregion
     }
 
