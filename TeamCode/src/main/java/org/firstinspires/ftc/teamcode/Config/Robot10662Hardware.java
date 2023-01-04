@@ -1,6 +1,8 @@
 //#$#$#$#$#$#$#$#$#>> IMPORTS <<#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 package org.firstinspires.ftc.teamcode.Config;
 
+import android.content.Context;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,6 +20,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
 //#$#$#$#$#$#$#$#$#>> DEFINING-OBJECTS + PUBLIC-VARIABLES <<#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 public class Robot10662Hardware {
     //Some stuff to make cool.
@@ -30,13 +35,14 @@ public class Robot10662Hardware {
     public DcMotor BackLeftDrive    = null;
     public DcMotor BackRightDrive   = null;
     public DcMotor Arm              = null;
-    public BNO055IMU imu         = null;
+    public BNO055IMU imu            = null;
+    public DigitalChannel ArmLimitSwitch  = null;
 
 
     //Imu config
     Orientation angles;
     Acceleration gravity;
-    private double imuAngleOffset = 0;
+    public double imuAngleOffset = 0;
 
     //Motor Relate
     public final double ticksPerInch = 535 / (Math.PI*4);
@@ -60,6 +66,7 @@ public class Robot10662Hardware {
         BackLeftDrive   = hwMap.get(DcMotor.class, "BL");
         BackRightDrive  = hwMap.get(DcMotor.class, "BR");
         Arm             = hwMap.get(DcMotor.class, "Arm");
+        ArmLimitSwitch  = hwMap.get(DigitalChannel.class,"ArmLimitSwitch");
 
         //Setting Motor Directions + Mode + Resting Encoders if necessary
         //FrontLeft
@@ -80,7 +87,6 @@ public class Robot10662Hardware {
         BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //Arm
         Arm.setDirection(DcMotor.Direction.FORWARD);
-        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //TODO: Replace with better function
         Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Define Sensors
@@ -96,6 +102,22 @@ public class Robot10662Hardware {
         imu.initialize(parameters);
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+    }
+
+    public void resetArm() {
+        while(ArmLimitSwitch.getState()) { //Runs until switch is touched
+            Arm.setPower(-0.4);
+        }
+        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    
+    public boolean readArmPosition() {
+        return true;
+    }
+
+    public boolean saveArmPosition() {
+        return true;
     }
 
     public double getAngle() {

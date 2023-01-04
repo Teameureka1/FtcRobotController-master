@@ -26,11 +26,6 @@ public class MainTeleop extends OpMode{
     private boolean FieldCentricDriving = true;
     private boolean DebugMode = false;
 
-    //Defining Variables
-    private double axial;
-    private double lateral;
-    private double yaw;
-
     //Bebounce booleans
     private boolean driveModeDebounce = false;
     private boolean debugModeDebounce = false;
@@ -110,15 +105,19 @@ public class MainTeleop extends OpMode{
         double xControl = Math.sin(targetRadians)*gamepadHypot;
         double yControl = Math.cos(targetRadians)*gamepadHypot;
 
+        //Defining Variables
+        double axial;
+        double lateral;
+        double yaw;
+
         if (FieldCentricDriving) { //When enabled use virtual joystick
             axial = (yControl / 2.5) * ((throttle1 * 1.5) + 1);
             lateral = (xControl / 2.5) * ((throttle1 * 1.5) + 1);
-            yaw = (zCoordinate / 2.5) * ((throttle1 * 1.5) + 1);
         } else { //Normal driving
             axial = (yCoordinate / 2.5) * ((throttle1 * 1.5) + 1);
             lateral = (xCoordinate / 2.5) * ((throttle1 * 1.5) + 1);
-            yaw = (zCoordinate / 2.5) * ((throttle1 * 1.5) + 1);
         }
+        yaw = (zCoordinate / 2.5) * ((throttle1 * 1.5) + 1);
 
         //Converting above to power for each motor
         double frontLeftPower = axial + lateral + yaw;
@@ -194,25 +193,28 @@ public class MainTeleop extends OpMode{
 
         //region ////////////// TELEMETRY ////////////////////////////////////////////////////
         // General telemetry ////////////////////
-        telemetry.addData(">",robot.robotName + " : " + robot.team + (DebugMode ?" : DEBUG MODE ENABLED":""));
+        telemetry.addData(">",robot.robotName + " : " + robot.team + (DebugMode?" : DEBUG MODE ENABLED":""));
         //                      Look cool     Robot's name            Team name          If debug mode is enabled say
 
         // Main telemetry ///////////////////////
-        //TODO: Add tons of telemetry here that reports on the whole robot with a debug mode.
+        //TODO: Finnish telemetry.
         if (!DebugMode) { //Only displays if not in debug mode
-
-
+            telemetry.addData("Don't mind me", "Easily readable telemetry not added yet, please use debug mode, dpad_left");
         }
 
         // Debug telemetry //////////////////////
         if (DebugMode) { //Only displays if in debug mode
+            telemetry.addData("WARNING", "DEBUG MODE HAS EXTRA FUNCTIONS THAT CAN POTENTIALLY BREAK THE ROBOT, PLEASE PROCEED WITH CAUTION.");
+
+            telemetry.addData("","");
             telemetry.addData("Driver 1", "------------------------");
             telemetry.addData("Gamepad",  "Radian-" + gamepadRadians + " X-" + xCoordinate + " Y-" + yCoordinate);
             telemetry.addData("Throttle", gamepadHypot + " + " + throttle1 + " --> " + (gamepadHypot / 2.5) * ((throttle1 * 1.5) + 1));
-	    telemetry.addData("FcdEnabled", FieldCentricDriving);
-	    if(FieldCentricDriving) {
-            	telemetry.addData("FcdConversions", "TargetRadians-"+ targetRadians +" X-" + xControl + " Y-" + yControl);
-	    }
+            telemetry.addData("FcdEnabled", FieldCentricDriving);
+            if(FieldCentricDriving) {
+                    telemetry.addData("FcdConversions", "TargetRadians-"+ targetRadians +" X-" + xControl + " Y-" + yControl);
+                    telemetry.addData("IMUOffset", robot.imuAngleOffset);
+            }
 
             telemetry.addData("","");
             telemetry.addData("Driver 2", "------------------------");
@@ -224,7 +226,7 @@ public class MainTeleop extends OpMode{
 
         // Updating telemetry ///////////////////
         telemetry.update();
-	telemetry.clearAll();
+	    telemetry.clearAll();
         //endregion
     }
 

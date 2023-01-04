@@ -151,8 +151,11 @@ public class AutonomousController2 extends LinearOpMode {
         int brtp = (int)((y + x - z) * robot.ticksPerInch) + robot.BackRightDrive.getCurrentPosition();
         int atp  = (int)(armY        * robot.ticksPerInch) + robot.Arm.getCurrentPosition();
 
-        //Defining distance for later
-        double distance;
+        //Resting encoders
+        robot.FrontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.FrontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.BackLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.BackRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Setting positions to motors
         robot.FrontLeftDrive.setTargetPosition(fltp);
@@ -172,8 +175,87 @@ public class AutonomousController2 extends LinearOpMode {
         while (robot.FrontLeftDrive.isBusy() || robot.FrontRightDrive.isBusy() ||
                 robot.BackLeftDrive.isBusy() || robot.BackRightDrive.isBusy() ||
                 robot.Arm.isBusy()) {
-//TODO: Continue.
+            //Main drive train
+            double distance = distance(robotX(),x,robotY(),y); //Distance to target
+            double threshold = 200; //Maximum distance for adjustable speed
+            double minimum = 20; //Minimum distance for adjustable speed
+            double speed;
+            if(distance > threshold) { //Max speed
+                speed = 1;
+            } else if (distance < minimum) { //Min speed
+                speed = 0.2;
+            } else { //In between
+                speed = distance/threshold;
+            }
+
+            //Setting speed to motors
+            robot.FrontLeftDrive.setPower(speed);
+            robot.FrontRightDrive.setPower(speed);
+            robot.BackLeftDrive.setPower(speed);
+            robot.BackRightDrive.setPower(speed);
+
+            //Arm
+            double distance2 = distance(robotX(),x,robotY(),y); //Distance to target
+            double threshold2 = 200; //Maximum distance for adjustable speed
+            double minimum2 = 20; //Minimum distance for adjustable speed
+            double speed2;
+            if(distance > threshold) { //Max speed
+                speed2 = 1;
+            } else if (distance < minimum) { //Min speed
+                speed2 = 0.2;
+            } else { //In between
+                speed2 = distance/threshold;
+            }
+            robot.Arm.setPower(speed2);
         }
+
+
+    }
+
+    private double robotX() {
+        double FL = robot.FrontLeftDrive.getCurrentPosition();
+        double FR = robot.FrontRightDrive.getCurrentPosition();
+        double BL = robot.BackLeftDrive.getCurrentPosition();
+        double BR = robot.BackRightDrive.getCurrentPosition();
+
+
+        double posX = ((FL + (-FR)) + (-((BL + (-BR))))/4) / robot.ticksPerInch;
+        double posY = ((((FL + BL) + posX) + ((FR + BR) + posX))/4) / robot.ticksPerInch;
+        double posZ = (-(-((FL + BL) - (posX)) + ((FR+BR) + (posX)))/4) / robot.ticksPerInch;
+
+        return posX;
+    }
+
+    private double robotY() {
+        double FL = robot.FrontLeftDrive.getCurrentPosition();
+        double FR = robot.FrontRightDrive.getCurrentPosition();
+        double BL = robot.BackLeftDrive.getCurrentPosition();
+        double BR = robot.BackRightDrive.getCurrentPosition();
+
+
+        double posX = ((FL + (-FR)) + (-((BL + (-BR))))/4) / robot.ticksPerInch;
+        double posY = ((((FL + BL) + posX) + ((FR + BR) + posX))/4) / robot.ticksPerInch;
+        double posZ = (-(-((FL + BL) - (posX)) + ((FR+BR) + (posX)))/4) / robot.ticksPerInch;
+
+        return posY;
+    }
+
+    private double robotZ() {
+        double FL = robot.FrontLeftDrive.getCurrentPosition();
+        double FR = robot.FrontRightDrive.getCurrentPosition();
+        double BL = robot.BackLeftDrive.getCurrentPosition();
+        double BR = robot.BackRightDrive.getCurrentPosition();
+
+
+        double posX = ((FL + (-FR)) + (-((BL + (-BR))))/4) / robot.ticksPerInch;
+        double posY = ((((FL + BL) + posX) + ((FR + BR) + posX))/4) / robot.ticksPerInch;
+        double posZ = (-(-((FL + BL) - (posX)) + ((FR+BR) + (posX)))/4) / robot.ticksPerInch;
+
+        return posZ;
+    }
+
+    private double distance(double x1, double x2, double y1, double y2) {
+        return Math.sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
     }
 
     ///////////////////////////////////////////////////////////////////// TENSORFLOW RELATED ///////
