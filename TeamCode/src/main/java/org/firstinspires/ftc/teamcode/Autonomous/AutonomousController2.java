@@ -196,7 +196,7 @@ public class AutonomousController2 extends LinearOpMode {
             robot.BackRightDrive.setPower(speed);
 
             //Arm
-            double distance2 = iuhkrjgebfdv; //Distance to target
+            double distance2 = distance(robot.Arm.getCurrentPosition(), apt, 0, 0); //Distance to target
             double threshold2 = 200; //Maximum distance for adjustable speed
             double minimum2 = 20; //Minimum distance for adjustable speed
             double speed2;
