@@ -135,8 +135,9 @@ public class AutonomousController2 extends LinearOpMode {
         waitForStart();
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
-        newRobotPosition(5,0,0,false,92304,false);
-
+        newRobotPosition(0,-5,0,false,0,false);
+        newRobotPosition(35,-25,0,false,500,false);
+        while (opModeIsActive()){}
 
 
 
@@ -150,7 +151,7 @@ public class AutonomousController2 extends LinearOpMode {
         int frtp = (int)((y - x - z) * robot.ticksPerInch) + robot.FrontRightDrive.getCurrentPosition();
         int bltp = (int)((y - x + z) * robot.ticksPerInch) + robot.BackLeftDrive.getCurrentPosition();
         int brtp = (int)((y + x - z) * robot.ticksPerInch) + robot.BackRightDrive.getCurrentPosition();
-        int atp  = (int)(armY * robot.ticksPerInch);
+        int atp  = (armY);
 
         //Resting encoders
         robot.FrontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -176,38 +177,13 @@ public class AutonomousController2 extends LinearOpMode {
         while (robot.FrontLeftDrive.isBusy() || robot.FrontRightDrive.isBusy() ||
                 robot.BackLeftDrive.isBusy() || robot.BackRightDrive.isBusy() ||
                 robot.Arm.isBusy()) {
-            //Main drive train
-            double distance = distance(robotX(),x,robotY(),y); //Distance to target
-            double threshold = 200; //Maximum distance for adjustable speed
-            double minimum = 20; //Minimum distance for adjustable speed
-            double speed;
-            if(distance > threshold) { //Max speed
-                speed = 1;
-            } else if (distance < minimum) { //Min speed
-                speed = 0.2;
-            } else { //In between
-                speed = distance/threshold;
-            }
-
-            //Setting speed to motors
+            double speed = 0.5;
             robot.FrontLeftDrive.setPower(speed);
             robot.FrontRightDrive.setPower(speed);
             robot.BackLeftDrive.setPower(speed);
             robot.BackRightDrive.setPower(speed);
 
-            //Arm
-            double distance2 = distance(robot.Arm.getCurrentPosition(), apt, 0, 0); //Distance to target
-            double threshold2 = 200; //Maximum distance for adjustable speed
-            double minimum2 = 20; //Minimum distance for adjustable speed
-            double speed2;
-            if(distance > threshold) { //Max speed
-                speed2 = 1;
-            } else if (distance < minimum) { //Min speed
-                speed2 = 0.2;
-            } else { //In between
-                speed2 = distance/threshold;
-            }
-            robot.Arm.setPower(speed2);
+            robot.Arm.setPower(speed);
         }
 
 

@@ -40,6 +40,10 @@ public class Robot10662Hardware {
     public final double ticksPerInch = 535 / (Math.PI*4);
     public final double ticksPerCM = 535 / (Math.PI* 10.16);
     public final int coneStackBase = 150;
+    public final int[] armPositions = {1,2,3,4,5};
+
+    public final double[] clawOpen = {0,1};
+    public final double[] clawClose = {0,1};
 
     //Local opMember
     HardwareMap hwMap = null;
@@ -94,22 +98,17 @@ public class Robot10662Hardware {
         imu.initialize(parameters);
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+        resetArm();
     }
 
     public void resetArm() {
         while(ArmLimitSwitch.getState()) { //Runs until switch is touched
             Arm.setPower(-0.4);
         }
+        
+        Arm.setPower(0);
         Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    
-    public double readArmPosition() {
-        return true;
-    }
-
-    public boolean saveArmPosition() {
-        return true;
     }
 
     public double getAngle() {
