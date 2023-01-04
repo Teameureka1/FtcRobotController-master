@@ -135,6 +135,7 @@ public class AutonomousController2 extends LinearOpMode {
         waitForStart();
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
+        newRobotPosition(5,0,0,false,92304,false);
 
 
 
@@ -149,7 +150,7 @@ public class AutonomousController2 extends LinearOpMode {
         int frtp = (int)((y - x - z) * robot.ticksPerInch) + robot.FrontRightDrive.getCurrentPosition();
         int bltp = (int)((y - x + z) * robot.ticksPerInch) + robot.BackLeftDrive.getCurrentPosition();
         int brtp = (int)((y + x - z) * robot.ticksPerInch) + robot.BackRightDrive.getCurrentPosition();
-        int atp  = (int)(armY        * robot.ticksPerInch) + robot.Arm.getCurrentPosition();
+        int atp  = (int)(armY * robot.ticksPerInch);
 
         //Resting encoders
         robot.FrontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -195,7 +196,7 @@ public class AutonomousController2 extends LinearOpMode {
             robot.BackRightDrive.setPower(speed);
 
             //Arm
-            double distance2 = distance(robotX(),x,robotY(),y); //Distance to target
+            double distance2 = iuhkrjgebfdv; //Distance to target
             double threshold2 = 200; //Maximum distance for adjustable speed
             double minimum2 = 20; //Minimum distance for adjustable speed
             double speed2;
