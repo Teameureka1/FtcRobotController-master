@@ -29,6 +29,7 @@ public class MainTeleop extends OpMode{
     //Bebounce booleans
     private boolean driveModeDebounce = false;
     private boolean debugModeDebounce = false;
+    private boolean armDebounce       = false;
 
     @Override /////////////////////////////////////////////////////// INIT /////////////////////////
     public void init() { //Runs ONCE when driver hits INIT <<
@@ -181,13 +182,76 @@ public class MainTeleop extends OpMode{
         //endregion
 	
 	    //region ////////////// ARM CONTROLLER ///////////////////////////////////////////////
-	    //Controls
-	    double yArmControl = -gamepad2.left_stick_y;
+        //Controls
+        double armControl = -gamepad2.left_stick_y;
+        double throttle2 = gamepad2.right_trigger;
+        boolean grabButton = gamepad2.x;
+        boolean dropButton = gamepad2.y;
+        boolean armTouch = robot.ArmLimitSwitch.getState();
 
+        int currentPos = robot.Arm.getCurrentPosition();
+        double armPower;
 
-        double armPower = yArmControl;
+        if(!armTouch && currentPos != 0) {
+            robot.Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
 
-        robot.Arm.setPower(armPower);
+        if(armDebounce && armControl <= 0) {
+            armDebounce = false;
+        }
+
+        if (currentPos >= robot.armPositions[0]+300 && currentPos <= robot.armPositions[3]-300) {
+            armPower = (armControl / 2.5) * ((throttle2 * 1.5) + 1);
+        } else {
+            armPower = (armControl / 2.5);
+        }
+
+        if(armPower !=0 && !armDebounce) {
+            if (robot.Arm.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
+                robot.Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+
+            if (!armTouch) {
+                if(armPower < 0) {
+                    robot.Arm.setPower(0);
+                } else {
+                    robot.Arm.setPower(armPower);
+                }
+            } else if (currentPos >= robot.armPositions[3]) {
+                if(armPower > 0) {
+                    armDebounce = true;
+                    robot.Arm.setPower(0);
+                } else {
+                    robot.Arm.setPower(armPower);
+                }
+            } else {
+                robot.Arm.setPower(armPower);
+            }
+
+        } else {
+            if (robot.Arm.getMode() != DcMotor.RunMode.RUN_TO_POSITION) {
+                if(currentPos >= robot.armPositions[3]-25) {
+                    robot.Arm.setTargetPosition(robot.armPositions[3]);
+                } else {
+                    robot.Arm.setTargetPosition(robot.Arm.getCurrentPosition() + 10);
+                }
+                robot.Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.Arm.setPower(0.5);
+            }
+        }
+
+        //Claw
+        if(dropButton) {
+            robot.Claw0.setPosition(robot.clawOpen[0]);
+            robot.Claw1.setPosition(robot.clawOpen[1]);
+        }
+        if (grabButton) {
+            robot.Claw0.setPosition(robot.clawClose[0]);
+            robot.Claw1.setPosition(robot.clawClose[1]);
+        }
 
 	    //endregion
 
@@ -218,10 +282,12 @@ public class MainTeleop extends OpMode{
 
             telemetry.addData("","");
             telemetry.addData("Driver 2", "------------------------");
-            telemetry.addData("ArmControllerPower", yArmControl);
-            telemetry.addData("ArmTargetPower", yArmControl);
+            telemetry.addData("ArmControllerPower", armControl);
+            telemetry.addData("ArmTargetPower", armControl);
             telemetry.addData("ArmCurrentPower", robot.Arm.getPower());
             telemetry.addData("ArmCurrentPosition", robot.Arm.getCurrentPosition());
+            telemetry.addData("ArmDebounce", armDebounce);
+            telemetry.addData("ClawPositions", "L:" + robot.Claw0.getPosition() + " R:" + robot.Claw1.getPosition());
         }
 
         // Updating telemetry ///////////////////

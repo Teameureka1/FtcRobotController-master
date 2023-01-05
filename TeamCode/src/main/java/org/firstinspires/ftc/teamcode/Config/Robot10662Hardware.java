@@ -6,6 +6,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -29,6 +30,8 @@ public class Robot10662Hardware {
     public DcMotor Arm              = null;
     public BNO055IMU imu            = null;
     public DigitalChannel ArmLimitSwitch  = null;
+    public Servo Claw0              = null;
+    public Servo Claw1              = null;
 
 
     //Imu config
@@ -40,10 +43,10 @@ public class Robot10662Hardware {
     public final double ticksPerInch = 535 / (Math.PI*4);
     public final double ticksPerCM = 535 / (Math.PI* 10.16);
     public final int coneStackBase = 150;
-    public final int[] armPositions = {1,2,3,4,5};
+    public final int[] armPositions = {0,1600,3000,4250};
 
-    public final double[] clawOpen = {0,1};
-    public final double[] clawClose = {0,1};
+    public final double[] clawOpen = {0.825,0.775};
+    public final double[] clawClose = {0.625,0.575};
 
     //Local opMember
     HardwareMap hwMap = null;
@@ -63,6 +66,8 @@ public class Robot10662Hardware {
         BackRightDrive  = hwMap.get(DcMotor.class, "BR");
         Arm             = hwMap.get(DcMotor.class, "Arm");
         ArmLimitSwitch  = hwMap.get(DigitalChannel.class,"ArmLimitSwitch");
+        Claw0           = hwMap.get(Servo.class, "Claw0");
+        Claw1           = hwMap.get(Servo.class, "Claw1");
 
         //Setting Motor Directions + Mode + Resting Encoders if necessary
         //FrontLeft
@@ -98,6 +103,9 @@ public class Robot10662Hardware {
         imu.initialize(parameters);
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+        //Open Claw
+        Claw0.setPosition(clawClose[0]);
+        Claw1.setPosition(clawClose[1]);
         resetArm();
     }
 
@@ -105,7 +113,7 @@ public class Robot10662Hardware {
         while(ArmLimitSwitch.getState()) { //Runs until switch is touched
             Arm.setPower(-0.4);
         }
-        
+
         Arm.setPower(0);
         Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
