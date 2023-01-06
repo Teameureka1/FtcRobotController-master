@@ -2,6 +2,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,6 +19,7 @@ import java.util.List;
 
 ///////////////////////////////////////////////////////////////////// CLASS ////////////////////////
 @Autonomous(name="Autonomous (Experimental)", group = "Robot")
+@Disabled
 public class AutonomousController2 extends LinearOpMode {
     //Defining robot config file
     Robot10662Hardware robot = new Robot10662Hardware();
@@ -135,9 +137,17 @@ public class AutonomousController2 extends LinearOpMode {
         waitForStart();
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
-        newRobotPosition(0,-5,0,false,0,false);
-        newRobotPosition(35,-25,0,false,500,false);
-        while (opModeIsActive()){}
+        newRobotPosition(0,0,0,true,0,true);
+        scanObjects();
+        newRobotPosition(23,0,0,true,robot.armPositions[3],true);
+        if(startingSide.equals("Left")) {
+            newRobotPosition(14,12.1,0,true,robot.armPositions[3],false);
+            newRobotPosition(-5,0,0,true,0,false);
+        } else {
+            newRobotPosition(14,-12.1,0,true,robot.armPositions[3],false);
+        }
+
+        while (opModeIsActive()){} //Purely for testing purposes so data can be displayed once finished.
 
 
 
@@ -147,10 +157,10 @@ public class AutonomousController2 extends LinearOpMode {
     private void newRobotPosition(double y, double x, double z, boolean addRotation, int armY, boolean endClawGrip) {
         //Converting above to positions for every motor (FORMAT: *motor*TargetPosition)
         //  Wheel | PerWheelConversion | ConvertingToTicks  |  AddedCurrentPosition
-        int fltp = (int)((y + x + z) * robot.ticksPerInch) + robot.FrontLeftDrive.getCurrentPosition();
-        int frtp = (int)((y - x - z) * robot.ticksPerInch) + robot.FrontRightDrive.getCurrentPosition();
-        int bltp = (int)((y - x + z) * robot.ticksPerInch) + robot.BackLeftDrive.getCurrentPosition();
-        int brtp = (int)((y + x - z) * robot.ticksPerInch) + robot.BackRightDrive.getCurrentPosition();
+        int fltp = (int)((y + x) * robot.ticksPerInch) + robot.FrontLeftDrive.getCurrentPosition();
+        int frtp = (int)((y - x) * robot.ticksPerInch) + robot.FrontRightDrive.getCurrentPosition();
+        int bltp = (int)((y - x) * robot.ticksPerInch) + robot.BackLeftDrive.getCurrentPosition();
+        int brtp = (int)((y + x) * robot.ticksPerInch) + robot.BackRightDrive.getCurrentPosition();
         int atp  = (armY);
 
         //Resting encoders
@@ -186,54 +196,65 @@ public class AutonomousController2 extends LinearOpMode {
             robot.Arm.setPower(speed);
         }
 
+        if(addRotation && z != 0) {
+            //Turning using imu
+            double currentAngle = -robot.getAngle();
+            double targetAngle;
+            double turnSpeed = 0.5;
+            if(addRotation) {
+                targetAngle = currentAngle + z;
+            } else {
+                targetAngle = z;
+            }
+
+            //Other variables to help the code
+            boolean turnRight = (targetAngle > currentAngle);
+            targetAngle = (turnRight)?targetAngle-10:targetAngle+10;
+
+            //Changing mode
+            robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //Turning whatever direction it needs
+            if(turnRight) {
+                robot.FrontLeftDrive.setPower(turnSpeed);
+                robot.FrontRightDrive.setPower(-turnSpeed);
+                robot.BackLeftDrive.setPower(turnSpeed);
+                robot.BackRightDrive.setPower(-turnSpeed);
+            } else {
+                robot.FrontLeftDrive.setPower(-turnSpeed);
+                robot.FrontRightDrive.setPower(turnSpeed);
+                robot.BackLeftDrive.setPower(-turnSpeed);
+                robot.BackRightDrive.setPower(turnSpeed);
+            }
+
+            //Turning to length
+            while((turnRight)?(currentAngle <= targetAngle):(currentAngle >= targetAngle)) {
+                currentAngle = -robot.getAngle();
+            }
+
+            //Changing modes and holding for the final time
+            robot.FrontLeftDrive.setPower(0);
+            robot.FrontRightDrive.setPower(0);
+            robot.BackLeftDrive.setPower(0);
+            robot.BackRightDrive.setPower(0);
+        }
+        if(!endClawGrip) {
+            robot.Claw0.setPosition(robot.clawOpen[0]);
+            robot.Claw1.setPosition(robot.clawOpen[1]);
+        } else {
+            robot.Claw0.setPosition(robot.clawClose[0]);
+            robot.Claw1.setPosition(robot.clawClose[1]);
+        }
+
+        runtime.reset();
+        while (runtime.seconds() <= 0.2) {}
+
 
     }
 
-    private double robotX() {
-        double FL = robot.FrontLeftDrive.getCurrentPosition();
-        double FR = robot.FrontRightDrive.getCurrentPosition();
-        double BL = robot.BackLeftDrive.getCurrentPosition();
-        double BR = robot.BackRightDrive.getCurrentPosition();
 
-
-        double posX = ((FL + (-FR)) + (-((BL + (-BR))))/4) / robot.ticksPerInch;
-        double posY = ((((FL + BL) + posX) + ((FR + BR) + posX))/4) / robot.ticksPerInch;
-        double posZ = (-(-((FL + BL) - (posX)) + ((FR+BR) + (posX)))/4) / robot.ticksPerInch;
-
-        return posX;
-    }
-
-    private double robotY() {
-        double FL = robot.FrontLeftDrive.getCurrentPosition();
-        double FR = robot.FrontRightDrive.getCurrentPosition();
-        double BL = robot.BackLeftDrive.getCurrentPosition();
-        double BR = robot.BackRightDrive.getCurrentPosition();
-
-
-        double posX = ((FL + (-FR)) + (-((BL + (-BR))))/4) / robot.ticksPerInch;
-        double posY = ((((FL + BL) + posX) + ((FR + BR) + posX))/4) / robot.ticksPerInch;
-        double posZ = (-(-((FL + BL) - (posX)) + ((FR+BR) + (posX)))/4) / robot.ticksPerInch;
-
-        return posY;
-    }
-
-    private double robotZ() {
-        double FL = robot.FrontLeftDrive.getCurrentPosition();
-        double FR = robot.FrontRightDrive.getCurrentPosition();
-        double BL = robot.BackLeftDrive.getCurrentPosition();
-        double BR = robot.BackRightDrive.getCurrentPosition();
-
-
-        double posX = ((FL + (-FR)) + (-((BL + (-BR))))/4) / robot.ticksPerInch;
-        double posY = ((((FL + BL) + posX) + ((FR + BR) + posX))/4) / robot.ticksPerInch;
-        double posZ = (-(-((FL + BL) - (posX)) + ((FR+BR) + (posX)))/4) / robot.ticksPerInch;
-
-        return posZ;
-    }
-
-    private double distance(double x1, double x2, double y1, double y2) {
-        return Math.sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
-    }
 
     ///////////////////////////////////////////////////////////////////// TENSORFLOW RELATED ///////
     private void scanObjects() {

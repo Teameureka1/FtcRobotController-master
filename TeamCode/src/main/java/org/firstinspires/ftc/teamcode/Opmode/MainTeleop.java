@@ -185,8 +185,8 @@ public class MainTeleop extends OpMode{
         //Controls
         double armControl = -gamepad2.left_stick_y;
         double throttle2 = gamepad2.right_trigger;
-        boolean grabButton = gamepad2.x;
-        boolean dropButton = gamepad2.y;
+        boolean grabButton = gamepad2.y;
+        boolean dropButton = gamepad2.x;
         boolean armTouch = robot.ArmLimitSwitch.getState();
 
         int currentPos = robot.Arm.getCurrentPosition();
@@ -243,14 +243,17 @@ public class MainTeleop extends OpMode{
             }
         }
 
+        boolean clawOpen;
         //Claw
         if(dropButton) {
             robot.Claw0.setPosition(robot.clawOpen[0]);
             robot.Claw1.setPosition(robot.clawOpen[1]);
+            clawOpen = true;
         }
         if (grabButton) {
             robot.Claw0.setPosition(robot.clawClose[0]);
             robot.Claw1.setPosition(robot.clawClose[1]);
+            clawOpen = false;
         }
 
 	    //endregion
