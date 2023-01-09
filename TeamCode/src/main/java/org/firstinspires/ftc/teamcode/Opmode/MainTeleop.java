@@ -77,7 +77,7 @@ public class MainTeleop extends OpMode{
         double zCoordinate = gamepad1.right_stick_x;
         double throttle1 = gamepad1.right_trigger;
         boolean holdButton = gamepad1.left_bumper;
-        boolean drivingButton = gamepad1.y;
+        boolean drivingButton = gamepad1.dpad_up;
         boolean imuResetButton = gamepad1.dpad_up;
 
         //FCD Mode Switcher
@@ -90,11 +90,6 @@ public class MainTeleop extends OpMode{
             driveModeDebounce = true;
         } else if (!drivingButton && driveModeDebounce) {
             driveModeDebounce = false;
-        }
-
-        //IMU Position Reset
-        if (imuResetButton) {
-            robot.setAngleZero();
         }
 
         //Using a formula to get the robots current heading and convert the joystick heading to
@@ -183,10 +178,10 @@ public class MainTeleop extends OpMode{
 	
 	    //region ////////////// ARM CONTROLLER ///////////////////////////////////////////////
         //Controls
-        double armControl = -gamepad2.left_stick_y;
-        double throttle2 = gamepad2.right_trigger;
-        boolean grabButton = gamepad2.y;
-        boolean dropButton = gamepad2.x;
+        double armControl = DebugMode?(-gamepad1.right_stick_y):(-gamepad2.left_stick_y);
+        double throttle2 = DebugMode?(gamepad1.right_trigger):(gamepad2.right_trigger);
+        boolean grabButton = DebugMode?(gamepad1.y):(gamepad2.y);
+        boolean dropButton = DebugMode?(gamepad1.x):(gamepad2.x);
         boolean armTouch = robot.ArmLimitSwitch.getState();
 
         int currentPos = robot.Arm.getCurrentPosition();

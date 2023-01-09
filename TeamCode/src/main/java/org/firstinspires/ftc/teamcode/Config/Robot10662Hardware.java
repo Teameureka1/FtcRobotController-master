@@ -43,7 +43,7 @@ public class Robot10662Hardware {
     public final double ticksPerInch = 535 / (Math.PI*4);
     public final double ticksPerCM = 535 / (Math.PI* 10.16);
     public final int coneStackBase = 150;
-    public final int[] armPositions = {0,1860,3000,4250};
+    public final int[] armPositions = {0,1860,3000,4300};
 
     public final double[] clawClose = {0.825,0.775};
     public final double[] clawOpen = {0.625,0.575};
