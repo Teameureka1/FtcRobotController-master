@@ -184,7 +184,7 @@ public class AutonomousLevel2 extends LinearOpMode {
         } else {
             moveInches(0,-14,0);
         }
-        moveInches(10,0,0); //Getting closer
+        moveInches(11,0,0); //Getting closer
         drop(); //Drops cone
         waitTime(0.5);
 
