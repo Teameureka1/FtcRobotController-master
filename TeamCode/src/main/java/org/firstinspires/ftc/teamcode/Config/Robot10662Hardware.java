@@ -45,8 +45,8 @@ public class Robot10662Hardware {
     public final int coneStackBase = 150;
     public final int[] armPositions = {0,1860,3000,4300};
 
-    public final double[] clawClose = {0.825,0.775};
-    public final double[] clawOpen = {0.625,0.575};
+    public final double[] clawClose = {0.7,0.7};
+    public final double[] clawOpen = {0.6,0.6};
 
     //Local opMember
     HardwareMap hwMap = null;
@@ -88,7 +88,7 @@ public class Robot10662Hardware {
         BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //Arm
         Arm.setDirection(DcMotor.Direction.FORWARD);
-        Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Define Sensors
         //Imu

@@ -203,9 +203,9 @@ public class MainTeleop extends OpMode{
         }
 
         if(armPower !=0 && !armDebounce) {
-            if (robot.Arm.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
-                robot.Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            if (robot.Arm.getMode() != DcMotor.RunMode.RUN_WITHOUT_ENCODER) {
+                robot.Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot.Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
             if (!armTouch) {
