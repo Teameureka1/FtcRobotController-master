@@ -26,6 +26,11 @@ import java.util.List;
 ///////////////////////////////////////////////////////////////////// CLASS ////////////////////////
 @Autonomous(name="Autonomous :: Level 3", group = "Robot")
 public class AutonomousLevel3 extends LinearOpMode {
+    ///////////////////////////////////////////////////////////////////// CONFIGURATION ////////////
+    private final double movementSpeed = 0.5;
+
+
+    ///////////////////////////////////////////////////////////////////// SETUP ////////////////////
     //Defining the config files
     Robot10662Hardware robot = new Robot10662Hardware();
 
@@ -152,7 +157,82 @@ public class AutonomousLevel3 extends LinearOpMode {
         waitForStart();
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
-        grab(); //Grabbing preloaded cone
+
+
+
+    }
+
+    ///////////////////////////////////////////////////////////////////// MOVEMENT /////////////////
+    //XY Movement
+    private void moveXY(double x, double y) {
+        //Getting robot target position
+        int frontLeftPos = (int)((x + y) * robot.ticksPerInch) + robot.FrontLeftDrive.getCurrentPosition();
+        int frontRightPos = (int)((x - y) * robot.ticksPerInch) + robot.FrontRightDrive.getCurrentPosition();
+        int backLeftPos = (int)((x - y) * robot.ticksPerInch) + robot.BackLeftDrive.getCurrentPosition();
+        int backRightPos = (int)((x + y) * robot.ticksPerInch) + robot.BackRightDrive.getCurrentPosition();
+
+        //Setting target position to motors
+        robot.FrontLeftDrive.setTargetPosition(frontLeftPos);
+        robot.FrontRightDrive.setTargetPosition(frontRightPos);
+        robot.BackLeftDrive.setTargetPosition(backLeftPos);
+        robot.BackRightDrive.setTargetPosition(backRightPos);
+
+        //Setting mode
+        robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //Setting power
+        robot.FrontLeftDrive.setPower(movementSpeed);
+        robot.FrontRightDrive.setPower(movementSpeed);
+        robot.BackLeftDrive.setPower(movementSpeed);
+        robot.BackRightDrive.setPower(movementSpeed);
+
+        //Waiting until finished
+        while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy() && robot.BackLeftDrive.isBusy() && robot.BackRightDrive.isBusy()) {}
+
+        //Adds a little buffer before the next action
+        waitTime(0.2);
+    }
+
+    //Z Movement
+    private void moveZ(double z) {
+
+    }
+
+    //Arm Y Movement
+    private void armMoveY(double y) {
+        //Getting target position
+        int targetY = (int)(y * robot.ticksPerInch) + robot.Arm.getCurrentPosition();
+
+        //Setting target position
+        robot.Arm.setTargetPosition(targetY);
+
+        //Setting mode
+        robot.Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //Setting power
+        robot.Arm.setPower(movementSpeed);
+
+        //Waiting until finished
+        while (robot.Arm.isBusy()) {}
+    }
+
+    //Claw Grab
+    private void grab() {
+        robot.Claw0.setPosition(robot.clawClose[0]);
+        robot.Claw1.setPosition(robot.clawClose[0]);
+    }
+
+    //Claw Drop
+    private void drop() {
+        robot.Claw0.setPosition(robot.clawOpen[0]);
+        robot.Claw1.setPosition(robot.clawOpen[1]);
+    }
+
+    //Scan Objects
+    private void scanObjects() {
         if (opModeIsActive()) { //Scanning cone
             while (opModeIsActive() && parkingPos == 0) {
                 if (tfod != null) {
@@ -175,140 +255,15 @@ public class AutonomousLevel3 extends LinearOpMode {
                 }
             }
         }
-        armHeightPreset(1); //Raising cone
-
-
-
-        if (side.equals("Left")) { //Moving to the junction
-            moveInches(0,14,0);
-        } else {
-            moveInches(0,-14,0);
-        }
-        moveInches(11,0,0); //Getting closer
-        drop(); //Drops cone
-        waitTime(0.5);
-
-        moveInches(-4,0,0); //Moving back
-        armHeightPreset(0); //Dropping arm back down
-
-        if (side.equals("Left")) { //Moving to parking area
-            moveInches(0,-15,0);
-        } else {
-            moveInches(0,15,0);
-        }
-
-
-        moveInches(26,0,0);
-
-
-        if (side.equals("Left")) { //Parking
-            if (parkingPos == 1) {
-                moveInches(0,-29,0);
-            } else if (parkingPos == 2) {
-                moveInches(0,0,0);
-            } else if (parkingPos == 3) {
-                moveInches(0,26,0);
-            }
-        } else {
-            if (parkingPos == 1) { //Parking
-                moveInches(0,-26,0);
-            } else if (parkingPos == 2) {
-                moveInches(0,0,0);
-            } else if (parkingPos == 3) {
-                moveInches(0,29,0);
-            }
-        }
-
-
     }
 
-    ///////////////////////////////////////////////////////////////// MOVE INCHES //////////////////
-    private void moveInches(double axial, double lateral, double yaw) {
-        //Changing above to code readable format
-        int frontLeftPos = (int)((axial + lateral + yaw) * robot.ticksPerInch) + robot.FrontLeftDrive.getCurrentPosition();
-        int frontRightPos = (int)((axial - lateral - yaw) * robot.ticksPerInch) + robot.FrontRightDrive.getCurrentPosition();
-        int backLeftPos = (int)((axial - lateral + yaw) * robot.ticksPerInch) + robot.BackLeftDrive.getCurrentPosition();
-        int backRightPos = (int)((axial + lateral - yaw) * robot.ticksPerInch) + robot.BackRightDrive.getCurrentPosition();
-
-        //Setting target position to motors
-        robot.FrontLeftDrive.setTargetPosition(frontLeftPos);
-        robot.FrontRightDrive.setTargetPosition(frontRightPos);
-        robot.BackLeftDrive.setTargetPosition(backLeftPos);
-        robot.BackRightDrive.setTargetPosition(backRightPos);
-
-        //Setting mode
-        robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //Setting power
-        robot.FrontLeftDrive.setPower(0.5);
-        robot.FrontRightDrive.setPower(0.5);
-        robot.BackLeftDrive.setPower(0.5);
-        robot.BackRightDrive.setPower(0.5);
-
-        //Waiting until finished
-        while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy() && robot.BackLeftDrive.isBusy() && robot.BackRightDrive.isBusy()) {}
-
-        //Stopping motors
-        robot.FrontLeftDrive.setTargetPosition(robot.FrontLeftDrive.getCurrentPosition());
-        robot.FrontRightDrive.setTargetPosition(robot.FrontRightDrive.getCurrentPosition());
-        robot.BackLeftDrive.setTargetPosition(robot.BackLeftDrive.getCurrentPosition());
-        robot.BackRightDrive.setTargetPosition(robot.BackRightDrive.getCurrentPosition());
-
-        //Setting power again
-        robot.FrontLeftDrive.setPower(0.5);
-        robot.FrontRightDrive.setPower(0.5);
-        robot.BackLeftDrive.setPower(0.5);
-        robot.BackRightDrive.setPower(0.5);
-
-        //Short pause to prevent bot from knocking itself around too much
-        runtime.reset();
-        while (runtime.seconds() < 0.2) {}
-    }
-
-    ///////////////////////////////////////////////////////////////// ARM HEIGHT ///////////////////
-    private void armHeightPreset(int pos) {
-        //Grabbing height from table
-        int targetHeight = robot.armPositions[pos];
-
-        //Setting positions
-        robot.Arm.setTargetPosition(targetHeight);
-
-        //Setting mode
-        robot.Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //Setting power
-        robot.Arm.setPower(0.5);
-
-        //Waiting until finished
-        while (robot.Arm.isBusy()) {}
-
-        //Stopping
-        robot.Arm.setTargetPosition(robot.Arm.getCurrentPosition());
-
-        //Setting power again
-        robot.Arm.setPower(0.5);
-    }
-
-    ///////////////////////////////////////////////////////////////// GRAB /////////////////////////
-    private void grab() {
-        robot.Claw0.setPosition(robot.clawClose[0]);
-        robot.Claw1.setPosition(robot.clawClose[0]);
-    }
-
-    ///////////////////////////////////////////////////////////////// DROP /////////////////////////
-    private void drop() {
-        robot.Claw0.setPosition(robot.clawOpen[0]);
-        robot.Claw1.setPosition(robot.clawOpen[1]);
-    }
-
+    ///////////////////////////////////////////////////////////////////// OTHER ////////////////////
     private void waitTime(double time) {
         runtime.reset(); //Resets timer
         while (runtime.seconds() <= time) {} //Waits until inputted time is met
     }
 
+    ///////////////////////////////////////////////////////////////////// TFOD /////////////////////
     private void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
