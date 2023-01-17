@@ -28,6 +28,7 @@ import java.util.List;
 public class AutonomousLevel3 extends LinearOpMode {
     ///////////////////////////////////////////////////////////////////// CONFIGURATION ////////////
     private final double movementSpeed = 0.5;
+    private final double pauseBetweenActions = 0.2;
 
 
     ///////////////////////////////////////////////////////////////////// SETUP ////////////////////
@@ -158,18 +159,22 @@ public class AutonomousLevel3 extends LinearOpMode {
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
 
+        //moveXY(10,0);
+        moveZ(180);
 
+        //Wait forever for debug purposes
+        while (opModeIsActive()) {}
 
     }
 
     ///////////////////////////////////////////////////////////////////// MOVEMENT /////////////////
     //XY Movement
-    private void moveXY(double x, double y) {
+    private void moveXY(double y, double x) {
         //Getting robot target position
-        int frontLeftPos = (int)((x + y) * robot.ticksPerInch) + robot.FrontLeftDrive.getCurrentPosition();
-        int frontRightPos = (int)((x - y) * robot.ticksPerInch) + robot.FrontRightDrive.getCurrentPosition();
-        int backLeftPos = (int)((x - y) * robot.ticksPerInch) + robot.BackLeftDrive.getCurrentPosition();
-        int backRightPos = (int)((x + y) * robot.ticksPerInch) + robot.BackRightDrive.getCurrentPosition();
+        int frontLeftPos = (int)((y + x) * robot.ticksPerInch) + robot.FrontLeftDrive.getCurrentPosition();
+        int frontRightPos = (int)((y - x) * robot.ticksPerInch) + robot.FrontRightDrive.getCurrentPosition();
+        int backLeftPos = (int)((y - x) * robot.ticksPerInch) + robot.BackLeftDrive.getCurrentPosition();
+        int backRightPos = (int)((y + x) * robot.ticksPerInch) + robot.BackRightDrive.getCurrentPosition();
 
         //Setting target position to motors
         robot.FrontLeftDrive.setTargetPosition(frontLeftPos);
@@ -193,12 +198,57 @@ public class AutonomousLevel3 extends LinearOpMode {
         while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy() && robot.BackLeftDrive.isBusy() && robot.BackRightDrive.isBusy()) {}
 
         //Adds a little buffer before the next action
-        waitTime(0.2);
+        waitTime(pauseBetweenActions);
     }
 
     //Z Movement
     private void moveZ(double z) {
+        //Getting Values
+        double robotCurrentZ = robot.getAngle();
+        //double imuOffsetDeg = 10;
+        double targetZ = (robotCurrentZ + z);
+        String turnDirection = (targetZ<robotCurrentZ)?"Left":"Right";
 
+        //Setting mode
+        robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Turning Direction
+        if (turnDirection.equals("Left")) {
+            robot.FrontLeftDrive.setPower(-movementSpeed);
+            robot.FrontRightDrive.setPower(movementSpeed);
+            robot.BackLeftDrive.setPower(-movementSpeed);
+            robot.BackRightDrive.setPower(movementSpeed);
+            //Stopping
+            while(opModeIsActive()) {
+                robotCurrentZ = robot.getAngle();
+                telemetry.addData("Stuff", robotCurrentZ + " " + targetZ);
+                telemetry.update();
+                if(robotCurrentZ <= targetZ) {
+                    break;
+                }
+            }
+        } else {
+            robot.FrontLeftDrive.setPower(movementSpeed);
+            robot.FrontRightDrive.setPower(-movementSpeed);
+            robot.BackLeftDrive.setPower(movementSpeed);
+            robot.BackRightDrive.setPower(-movementSpeed);
+            //Stopping
+            while(opModeIsActive()) {
+                robotCurrentZ = robot.getAngle();
+                telemetry.addData("Stuff", robotCurrentZ + " " + targetZ);
+                telemetry.update();
+                if(robotCurrentZ >= targetZ) {
+                    break;
+                }
+            }
+        }
+        robot.FrontLeftDrive.setPower(0);
+        robot.FrontRightDrive.setPower(0);
+        robot.BackLeftDrive.setPower(0);
+        robot.BackRightDrive.setPower(0);
     }
 
     //Arm Y Movement
