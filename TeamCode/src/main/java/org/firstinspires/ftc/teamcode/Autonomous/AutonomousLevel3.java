@@ -158,6 +158,16 @@ public class AutonomousLevel3 extends LinearOpMode {
         waitForStart();
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
+        grab();
+        scanObjects();
+        moveXY(24,0);
+        if(side.equals("Left")) {
+            moveZ(90, true);
+            moveXY(0,-30);
+        } else {
+            moveZ(-90,true);
+        }
+
 
         //Wait forever for debug purposes
         while (opModeIsActive()) {}
@@ -202,10 +212,9 @@ public class AutonomousLevel3 extends LinearOpMode {
     private void moveZ(double z, boolean toAbs) {
         //Getting Values
         double robotCurrentZ = robot.getAngle(); //Getting robots current position (will be reset later in the code to its current)
-        double targetZ = toAbs?z:-(robotCurrentZ + z); //Target z angle for the end result
+        double targetZ = toAbs?-z:-(robotCurrentZ + z); //Target z angle for the end result
         String turnDirection = (targetZ<robotCurrentZ)?"Left":"Right"; //Checks if the robot needs to turn left or right
-        telemetry.addData("Checkpoint1","");
-        telemetry.update();
+
         //Setting mode
         robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
