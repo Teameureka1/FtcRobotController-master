@@ -159,9 +159,6 @@ public class AutonomousLevel3 extends LinearOpMode {
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
 
-        //moveXY(10,0);
-        moveZ(180);
-
         //Wait forever for debug purposes
         while (opModeIsActive()) {}
 
@@ -202,49 +199,42 @@ public class AutonomousLevel3 extends LinearOpMode {
     }
 
     //Z Movement
-    private void moveZ(double z) {
+    private void moveZ(double z, boolean toAbs) {
         //Getting Values
-        double robotCurrentZ = robot.getAngle();
-        //double imuOffsetDeg = 10;
-        double targetZ = (robotCurrentZ + z);
-        String turnDirection = (targetZ<robotCurrentZ)?"Left":"Right";
-
+        double robotCurrentZ = robot.getAngle(); //Getting robots current position (will be reset later in the code to its current)
+        double targetZ = toAbs?z:-(robotCurrentZ + z); //Target z angle for the end result
+        String turnDirection = (targetZ<robotCurrentZ)?"Left":"Right"; //Checks if the robot needs to turn left or right
+        telemetry.addData("Checkpoint1","");
+        telemetry.update();
         //Setting mode
         robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //Turning Direction
+        //Turning Direction indicated
         if (turnDirection.equals("Left")) {
-            robot.FrontLeftDrive.setPower(-movementSpeed);
-            robot.FrontRightDrive.setPower(movementSpeed);
-            robot.BackLeftDrive.setPower(-movementSpeed);
-            robot.BackRightDrive.setPower(movementSpeed);
-            //Stopping
-            while(opModeIsActive()) {
-                robotCurrentZ = robot.getAngle();
-                telemetry.addData("Stuff", robotCurrentZ + " " + targetZ);
-                telemetry.update();
-                if(robotCurrentZ <= targetZ) {
-                    break;
-                }
-            }
-        } else {
             robot.FrontLeftDrive.setPower(movementSpeed);
             robot.FrontRightDrive.setPower(-movementSpeed);
             robot.BackLeftDrive.setPower(movementSpeed);
             robot.BackRightDrive.setPower(-movementSpeed);
-            //Stopping
-            while(opModeIsActive()) {
-                robotCurrentZ = robot.getAngle();
-                telemetry.addData("Stuff", robotCurrentZ + " " + targetZ);
-                telemetry.update();
-                if(robotCurrentZ >= targetZ) {
-                    break;
-                }
-            }
+        } else {
+            robot.FrontLeftDrive.setPower(-movementSpeed);
+            robot.FrontRightDrive.setPower(movementSpeed);
+            robot.BackLeftDrive.setPower(-movementSpeed);
+            robot.BackRightDrive.setPower(movementSpeed);
         }
+
+        //Robot needs to turn left
+        //  robotCurrentZ >= targetZ
+        //Robot needs to turn right
+        //  robotCurrentZ <= targetZ
+        while ((turnDirection.equals("Left"))?(robotCurrentZ >= targetZ):(robotCurrentZ <= targetZ)) {
+            //Setting angle
+            robotCurrentZ = robot.getAngle();
+        }
+
+        //Stopping Bot
         robot.FrontLeftDrive.setPower(0);
         robot.FrontRightDrive.setPower(0);
         robot.BackLeftDrive.setPower(0);
