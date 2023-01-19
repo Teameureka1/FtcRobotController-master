@@ -59,13 +59,9 @@ public class MainTeleop extends OpMode{
 
         //Toggle Debug Mode
         if(debugModeButton && !debugModeDebounce) {
-            if(DebugMode) {
-                DebugMode = false;
-            } else {
-                DebugMode = true;
-            }
+            DebugMode = !DebugMode;
             debugModeDebounce = true;
-        } else if (!debugModeButton && debugModeButton) {
+        } else if (!debugModeButton && debugModeDebounce) {
             debugModeDebounce = false;
         }
         //endregion
@@ -82,11 +78,7 @@ public class MainTeleop extends OpMode{
 
         //FCD Mode Switcher
         if(drivingButton && !driveModeDebounce) {
-            if(FieldCentricDriving) {
-                FieldCentricDriving = false;
-            } else {
-                FieldCentricDriving = true;
-            }
+            FieldCentricDriving = !FieldCentricDriving;
             driveModeDebounce = true;
         } else if (!drivingButton && driveModeDebounce) {
             driveModeDebounce = false;
