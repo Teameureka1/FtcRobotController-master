@@ -27,44 +27,38 @@ import java.util.List;
 @Autonomous(name="Autonomous :: Level 3", group = "Robot")
 public class AutonomousLevel3 extends LinearOpMode {
     ///////////////////////////////////////////////////////////////////// CONFIGURATION ////////////
-    private final double movementSpeed = 0.5;
-    private final double pauseBetweenActions = 0.2;
+    private final double movementSpeed = 0.5; //Global speed for the robots movment seped during actions
+    private final double pauseBetweenActions = 0.2; //Amount of seconds the robot will pause for some actions
+    private final double tfodTimeout = 5; //Seconds until tfod will time out
+
+    private final boolean sideSelectorEnabled = true; //If disabled robot will default to the left side of the field
 
 
     ///////////////////////////////////////////////////////////////////// SETUP ////////////////////
     //Defining the config files
-    Robot10662Hardware robot = new Robot10662Hardware();
+    Robot10662Hardware robot = new Robot10662Hardware(); //Creating hardwareclass
 
     //Timers
-    ElapsedTime runtime = new ElapsedTime();
+    ElapsedTime runtime = new ElapsedTime(); //Used to keep track of time
 
     //Variables
-    private String side = "Left";
-    private int parkingPos = 0;
+    private String side = "Left"; //Robots position on field, later modified, defualts to left
+    private int parkingPos = 0; //Position for robot to park in signaled by cone, later changed
 
-    private static final String TFOD_MODEL_ASSET = "CustomSleeve.tflite";
+    private static final String TFOD_MODEL_ASSET = "CustomSleeve.tflite"; //Tflite file used for object detection
 
-    private static final String[] LABELS = {
+    private static final String[] LABELS = { //Possibile parking positions
             "Pos No",
             "Pos 1",
             "Pos 2",
             "Pos 3",
     };
 
-    private static final String VUFORIA_KEY =
+    private static final String VUFORIA_KEY = //Validation key for vulforia
             "AS3eJNb/////AAABmZW+oXMs1UvbvQspLl6ESTk42fukxk9mH7yBB42bMCBv5PcjTcoDufjeE9Nv84UtCar6bi20b7RncpSLLfnB4uEk4WJel/+UcryTmrrCSrg0sTMuGjnTToDLFwM2iIyYFCg0CWaF5basGzUGIAISiNQou5wYYgFYMUd9pPoseL1HJ32JQ4054XhEvDRdo+tywvhM9NTHRaUK2e5lnSOXQW+TznS85crV/McgshAla0uuVndPYtXWDwNok7bwdST0ajAnTMUSVlEZXWlPQmsSE4H+wVO5j8DQro5JfPok/7jkk+n5hTdY+3ZqKa10jQZ37kU9yOCtV6ToOL0uNeef7oiMx8XXOUR83y3+0oKwXdw0";
+    private VuforiaLocalizer vuforia; //Initializing vulforia
 
-    /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
-     */
-    private VuforiaLocalizer vuforia;
-
-    /**
-     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
-     * Detection engine.
-     */
-    private TFObjectDetector tfod;
+    private TFObjectDetector tfod; //Initializing tfod
 
     ///////////////////////////////////////////////////////////////// OP MODE //////////////////////
     @Override
@@ -74,69 +68,76 @@ public class AutonomousLevel3 extends LinearOpMode {
 
 
         //Asking driver what side the robot is on
-        int tmp = 0; //Temporary value
-        if (opModeInInit()) {
-            while (true) {
-                //Display
-                telemetry.addData(">>", "Are you on the left or right side?");
+        if(sideSelectorEnabled) { //Only runs if enabled
+            int tmp = 0; //Temporary value
+            if (opModeInInit() || opModeIsActive()) { //Runs forever, but makes sure that the robot is still running
+                while (opModeIsActive() || opModeInInit()) {
+                    //Break if robot quit
+                    if (!(opModeIsActive() || opModeInInit())) {
+                        break;
+                    }
 
-                //Display
-                if (tmp == 0) {
-                    telemetry.addData("   *", "Left Side");
-                    telemetry.addData("    ", "Right Side");
-                } else {
-                    telemetry.addData("    ", "Left Side");
-                    telemetry.addData("   *", "Right Side");
-                }
+                    //Display
+                    telemetry.addData(">>", "Are you on the left or right side?");
 
-                //Keymapping to navigate and select
-                if (gamepad1.a || gamepad2.a) {
+                    //Display
                     if (tmp == 0) {
-                        runtime.reset(); //Conformation
-                        while (runtime.seconds() <= 2) {
-                            if (!gamepad1.a && !gamepad2.a) {
-                                break;
-                            } else {
-                                telemetry.addData("Continue to hold for ", " 2 Seconds, to select the Left Side");
-                                telemetry.update();
-                                telemetry.clearAll();
-                            }
-                        }
-                        if (runtime.seconds() >= 2) {
-                            side = "Left";
-                            telemetry.clearAll();
-                            break;
-                        }
+                        telemetry.addData("   *", "Left Side");
+                        telemetry.addData("    ", "Right Side");
                     } else {
-                        runtime.reset(); //Conformation
-                        while (runtime.seconds() <= 2) {
-                            if (!gamepad1.a && !gamepad2.a) {
-                                break;
-                            } else {
-                                telemetry.addData("Continue to hold for ", " 2 Seconds, to select the Right Side");
-                                telemetry.update();
-                                telemetry.clearAll();
+                        telemetry.addData("    ", "Left Side");
+                        telemetry.addData("   *", "Right Side");
+                    }
+
+                    //Keymapping to navigate and select
+                    if (gamepad1.a || gamepad2.a) {
+                        if (tmp == 0) {
+                            runtime.reset(); //Conformation
+                            while (runtime.seconds() <= 2) {
+                                if (!gamepad1.a && !gamepad2.a) {
+                                    break;
+                                } else {
+                                    telemetry.addData("Continue to hold for ", " 2 Seconds, to select the Left Side");
+                                    telemetry.update();
+                                    telemetry.clearAll();
+                                }
                             }
-                        }
-                        if (runtime.seconds() >= 2) {
-                            side = "Right";
-                            telemetry.clearAll();
-                            break;
+                            if (runtime.seconds() >= 2) {
+                                side = "Left";
+                                telemetry.clearAll();
+                                break;
+                            }
+                        } else {
+                            runtime.reset(); //Conformation
+                            while (runtime.seconds() <= 2) {
+                                if (!gamepad1.a && !gamepad2.a) {
+                                    break;
+                                } else {
+                                    telemetry.addData("Continue to hold for ", " 2 Seconds, to select the Right Side");
+                                    telemetry.update();
+                                    telemetry.clearAll();
+                                }
+                            }
+                            if (runtime.seconds() >= 2) {
+                                side = "Right";
+                                telemetry.clearAll();
+                                break;
+                            }
                         }
                     }
+
+                    //Debug values for selecting
+                    if (gamepad1.dpad_up || gamepad2.dpad_up) {
+                        tmp = 0;
+                    }
+
+                    if (gamepad1.dpad_down || gamepad2.dpad_down) {
+                        tmp = 1;
+                    }
+
+                    //Updating telemetry/info
+                    telemetry.update();
                 }
-
-                if (gamepad1.dpad_up || gamepad2.dpad_up) {
-                    tmp = 0;
-
-                }
-
-                if (gamepad1.dpad_down || gamepad2.dpad_down) {
-                    tmp = 1;
-                }
-
-                //Updating telemetry
-                telemetry.update();
             }
         }
 
@@ -204,7 +205,7 @@ public class AutonomousLevel3 extends LinearOpMode {
         //Waiting until finished
         while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy() && robot.BackLeftDrive.isBusy() && robot.BackRightDrive.isBusy()) {}
 
-        //Adds a little buffer before the next action
+        //Short wait to let the robot fully stop
         waitTime(pauseBetweenActions);
     }
 
@@ -248,6 +249,9 @@ public class AutonomousLevel3 extends LinearOpMode {
         robot.FrontRightDrive.setPower(0);
         robot.BackLeftDrive.setPower(0);
         robot.BackRightDrive.setPower(0);
+
+        //Short wait to let the robot fully stop
+        waitTime(pauseBetweenActions);
     }
 
     //Arm Y Movement
@@ -266,24 +270,39 @@ public class AutonomousLevel3 extends LinearOpMode {
 
         //Waiting until finished
         while (robot.Arm.isBusy()) {}
+
+        //Short wait to let the robot fully stop
+        waitTime(0.1);
     }
 
     //Claw Grab
     private void grab() {
         robot.Claw0.setPosition(robot.clawClose[0]);
         robot.Claw1.setPosition(robot.clawClose[0]);
+
+        //Waiting to allow claw to close before next action
+        waitTime(0.2);
     }
 
     //Claw Drop
     private void drop() {
         robot.Claw0.setPosition(robot.clawOpen[0]);
         robot.Claw1.setPosition(robot.clawOpen[1]);
+
+        //Waiting to allow claw to open before next action
+        waitTime(0.2);
     }
 
     //Scan Objects
     private void scanObjects() {
+        //Reseting timer for later
+        runtime.reset();
         if (opModeIsActive()) { //Scanning cone
             while (opModeIsActive() && parkingPos == 0) {
+                if(runtime.seconds() >= tfodTimeout || !opModeIsActive()) { //Timeout reached or program quit
+                    parkingPos = 2; //Setting parking pos to 2 and quiting
+                    break;
+                }
                 if (tfod != null) {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {

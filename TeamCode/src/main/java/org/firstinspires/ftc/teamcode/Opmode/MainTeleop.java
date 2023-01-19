@@ -92,6 +92,8 @@ public class MainTeleop extends OpMode{
             driveModeDebounce = false;
         }
 
+        //TODO: Correct and implement imu reset.
+
         //Using a formula to get the robots current heading and convert the joystick heading to
         // Allow the robot to always head forward when joystick pushed forward.
         double gamepadRadians = Math.atan2(xCoordinate, yCoordinate);
@@ -259,7 +261,7 @@ public class MainTeleop extends OpMode{
         //                      Look cool     Robot's name            Team name          If debug mode is enabled say
 
         // Main telemetry ///////////////////////
-        //TODO: Finnish telemetry.
+        //TODO: Finish telemetry.
         if (!DebugMode) { //Only displays if not in debug mode
             telemetry.addData("Don't mind me", "Easily readable telemetry not added yet, please use debug mode, dpad_left");
         }
