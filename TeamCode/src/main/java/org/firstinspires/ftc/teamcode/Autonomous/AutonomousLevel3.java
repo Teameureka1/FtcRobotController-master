@@ -30,7 +30,7 @@ public class AutonomousLevel3 extends LinearOpMode {
     private final double movementSpeed = 0.5; //Global speed for the robots movment seped during actions
     private final double armMovementSPeed = 1; //Global speed for the robots arm movemeny speed durring actions
     private final double pauseBetweenActions = 0.2; //Amount of seconds the robot will pause for some actions
-    private final double tfodTimeout = 5; //Seconds until tfod will time out
+    private final double tfodTimeout = 0.5; //Seconds until tfod will time out
 
     private final boolean sideSelectorEnabled = false; //If disabled robot will default to the left side of the field
     //TODO: DONT FORGET TO ENAbLE
@@ -160,12 +160,16 @@ public class AutonomousLevel3 extends LinearOpMode {
         waitForStart();
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
-        grab();
-        scanObjects();
-        moveXY(50,0);
-        moveZ(45, true);
-        armHeightPreset(3);
-        moveXY(10,0);
+        grab(); //Grabs preloaded Cone
+        scanObjects(); //Scans signal cone
+        moveXYandArmY(50,0,robot.armPositions[3]); //Raising arm and moving to tall junction
+        moveZ(45, true); //Turning towards junction
+        moveXY(19,0); //Aproching junction
+        moveArmY(robot.armPositions[3]-500); //Lowers arm
+        drop(); //Drops cone
+        moveXY(-15,0); //Backs away from junction
+
+
 
 
         //Wait forever for debug purposes
@@ -270,9 +274,9 @@ public class AutonomousLevel3 extends LinearOpMode {
     }
 
     //Arm Y Movement
-    private void armMoveY(double y) {
+    private void moveArmY(int y) {
         //Getting target position
-        int targetY = (int)(y * robot.ticksPerInch) + robot.Arm.getCurrentPosition();
+        int targetY = (y);
 
         //Setting target position
         robot.Arm.setTargetPosition(targetY);
@@ -283,35 +287,54 @@ public class AutonomousLevel3 extends LinearOpMode {
         //Setting power
         robot.Arm.setPower(armMovementSPeed);
 
-        //Waiting until finished
-        while (robot.Arm.isBusy() && opModeIsActive()) {}
-
         //Short wait to let the robot fully stop
         waitTime(pauseBetweenActions);
     }
 
-    private void armHeightPreset(int pos) {
-        //Grabbing height from table
-        int targetHeight = robot.armPositions[pos];
+    private void moveXYandArmY(double y, double x, int armY) {
+        //Getting robot target position
+        int frontLeftPos = (int)((y + x) * robot.ticksPerInch) + robot.FrontLeftDrive.getCurrentPosition();
+        int frontRightPos = (int)((y - x) * robot.ticksPerInch) + robot.FrontRightDrive.getCurrentPosition();
+        int backLeftPos = (int)((y - x) * robot.ticksPerInch) + robot.BackLeftDrive.getCurrentPosition();
 
-        //Setting positions
-        robot.Arm.setTargetPosition(targetHeight);
+        int backRightPos = (int)((y + x) * robot.ticksPerInch) + robot.BackRightDrive.getCurrentPosition();
+
+        //Arm target position
+        int targetY = (armY);
+
+        //Setting target position to motors
+        robot.FrontLeftDrive.setTargetPosition(frontLeftPos);
+        robot.FrontRightDrive.setTargetPosition(frontRightPos);
+        robot.BackLeftDrive.setTargetPosition(backLeftPos);
+        robot.BackRightDrive.setTargetPosition(backRightPos);
+
+        //Setting arm target position
+        robot.Arm.setTargetPosition(targetY);
+
 
         //Setting mode
+        robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //Setting arm mode
         robot.Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //Setting power
-        robot.Arm.setPower(0.5);
+        robot.FrontLeftDrive.setPower(movementSpeed);
+        robot.FrontRightDrive.setPower(movementSpeed);
+        robot.BackLeftDrive.setPower(movementSpeed);
+        robot.BackRightDrive.setPower(movementSpeed);
+
+        //Setting arm speed
+        robot.Arm.setPower(armMovementSPeed);
 
         //Waiting until finished
-        runtime.reset();
-        while (robot.Arm.isBusy() && opModeIsActive(telemetry.addData("Time arm waiting", runtime.seconds());)) {}
+        while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy() && robot.BackLeftDrive.isBusy() && robot.BackRightDrive.isBusy() && opModeIsActive()) {}
 
-        //Stopping
-        robot.Arm.setTargetPosition(robot.Arm.getCurrentPosition());
-
-        //Setting power again
-        robot.Arm.setPower(0.5);
+        //Short wait to let the robot fully stop
+        waitTime(pauseBetweenActions);
     }
 
     //Claw Grab
