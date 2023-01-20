@@ -201,7 +201,7 @@ public class AutonomousLevel3 extends LinearOpMode {
         robot.BackRightDrive.setPower(movementSpeed);
 
         //Waiting until finished
-        while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy() && robot.BackLeftDrive.isBusy() && robot.BackRightDrive.isBusy()) {}
+        while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy() && robot.BackLeftDrive.isBusy() && robot.BackRightDrive.isBusy() && opModeIsActive()) {}
 
         //Short wait to let the robot fully stop
         waitTime(pauseBetweenActions);
@@ -242,7 +242,7 @@ public class AutonomousLevel3 extends LinearOpMode {
         //  robotCurrentZ >= targetZ
         //Robot needs to turn right
         //  robotCurrentZ <= targetZ
-        while ((turnDirection.equals("Left"))?(robotCurrentZ >= targetZ):(robotCurrentZ <= targetZ)) {
+        while ((turnDirection.equals("Left"))?(robotCurrentZ >= targetZ):(robotCurrentZ <= targetZ) && opModeIsActive()) {
             //Setting angle
             robotCurrentZ = robot.getAngle();
         }
@@ -284,7 +284,7 @@ public class AutonomousLevel3 extends LinearOpMode {
         robot.Arm.setPower(armMovementSPeed);
 
         //Waiting until finished
-        while (robot.Arm.isBusy()) {telemetry.addData("IM BUSY",""); telemetry.update();}
+        while (robot.Arm.isBusy() && opModeIsActive()) {}
 
         //Short wait to let the robot fully stop
         waitTime(pauseBetweenActions);
@@ -304,7 +304,8 @@ public class AutonomousLevel3 extends LinearOpMode {
         robot.Arm.setPower(0.5);
 
         //Waiting until finished
-        while (robot.Arm.isBusy()) {}
+        runtime.reset();
+        while (robot.Arm.isBusy() && opModeIsActive(telemetry.addData("Time arm waiting", runtime.seconds());)) {}
 
         //Stopping
         robot.Arm.setTargetPosition(robot.Arm.getCurrentPosition());
@@ -366,7 +367,7 @@ public class AutonomousLevel3 extends LinearOpMode {
     ///////////////////////////////////////////////////////////////////// OTHER ////////////////////
     private void waitTime(double time) {
         runtime.reset(); //Resets timer
-        while (runtime.seconds() <= time) {} //Waits until inputted time is met
+        while (runtime.seconds() <= time && opModeIsActive()) {} //Waits until inputted time is met
     }
 
     ///////////////////////////////////////////////////////////////////// TFOD /////////////////////
