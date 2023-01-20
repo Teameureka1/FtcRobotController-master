@@ -31,6 +31,7 @@ public class AutonomousLevel3 extends LinearOpMode {
     private final double armMovementSPeed = 1; //Global speed for the robots arm movemeny speed durring actions
     private final double pauseBetweenActions = 0.2; //Amount of seconds the robot will pause for some actions
     private final double tfodTimeout = 0.5; //Seconds until tfod will time out
+    private final double waitForArmTimeout = 3; //Seconds until arm will time out
 
     private final boolean sideSelectorEnabled = false; //If disabled robot will default to the left side of the field
     //TODO: DONT FORGET TO ENAbLE
@@ -168,6 +169,13 @@ public class AutonomousLevel3 extends LinearOpMode {
         moveArmY(robot.armPositions[3]-500); //Lowers arm
         drop(); //Drops cone
         moveXY(-15,0); //Backs away from junction
+
+        moveZ(-90,true);
+        //moveXY(27,0);
+        moveXYandArmY(18,0, robot.coneStackBase*5);
+        waitForArm();
+        moveXY(10,0);
+
 
 
 
@@ -335,6 +343,12 @@ public class AutonomousLevel3 extends LinearOpMode {
 
         //Short wait to let the robot fully stop
         waitTime(pauseBetweenActions);
+    }
+
+    //Wait for Arm
+    private void waitForArm() {
+        runtime.reset();
+        while (robot.Arm.isBusy() && runtime.seconds() <= waitForArmTimeout) {}
     }
 
     //Claw Grab
