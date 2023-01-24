@@ -1,11 +1,15 @@
 //#$#$#$#$#$#$#$#$#>> IMPORTS <<#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 package org.firstinspires.ftc.teamcode.Config;
 
+import android.graphics.Color;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -19,7 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 //#$#$#$#$#$#$#$#$#>> DEFINING-OBJECTS + PUBLIC-VARIABLES <<#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 public class Robot10662Hardware {
     //Some stuff to make cool.
-    public final String robotName = "Stevo V2";
+    public final String robotName = "ST33V-0 V2";
     public final String team = "#10662 Lazer Sharks In Space"; //Intentionally "mis-spelt" because that is our team name.
 
     //Defining motors and servos for later
@@ -33,6 +37,9 @@ public class Robot10662Hardware {
     public Servo Claw0              = null;
     public Servo Claw1              = null;
 
+    //Sensors
+    NormalizedColorSensor colorSensor;
+
 
     //Imu config
     Orientation angles;
@@ -45,8 +52,12 @@ public class Robot10662Hardware {
     public final int coneStackBase = 150;
     public final int[] armPositions = {0,1860,3000,4500};
 
+    //Servo Related
     public final double[] clawClose = {0.7,0.7};
     public final double[] clawOpen = {0.6,0.6};
+
+    //Sensor Related
+    public final float colorSensorGain = 4;
 
     //Local opMember
     HardwareMap hwMap = null;
@@ -91,6 +102,10 @@ public class Robot10662Hardware {
         Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Define Sensors
+        //Color sensor
+        colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
+        colorSensor.setGain(colorSensorGain);
+
         //Imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
@@ -119,11 +134,15 @@ public class Robot10662Hardware {
         Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public double getAngle() {
-        return (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle) + imuAngleOffset;
+    public boolean onLine() {
+        //Getting colors
+        NormalizedRGBA colors = colorSensor.getNormalizedColors();
+        Color.colorToHSV(colors.toColor(), hsvValues);
     }
 
-    public void setAngleZero() {
-        imuAngleOffset = getAngle();
+    public double getAngle() {
+        return (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
     }
+
+
 }
