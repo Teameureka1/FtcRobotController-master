@@ -27,7 +27,9 @@ import java.util.List;
 @Autonomous(name="Autonomous :: Level 3", group = "Robot")
 public class AutonomousLevel3 extends LinearOpMode {
     ///////////////////////////////////////////////////////////////////// CONFIGURATION ////////////
-    private final double movementSpeed = 0.5; //Global speed for the robots movment seped during actions
+    private final double movementSpeed = 0.7; //Global speed for the robots movment seped during actions
+    private final double slowMovementSpeed = 0.5; //Global slow speed for the robots movement speed durring actions
+    private final double normalSpeedDistance = 20; //If under inches will activate slow speed
     private final double armMovementSPeed = 1; //Global speed for the robots arm movemeny speed durring actions
     private final double pauseBetweenActions = 0.2; //Amount of seconds the robot will pause for some actions
     private final double tfodTimeout = 0.5; //Seconds until tfod will time out
@@ -163,20 +165,33 @@ public class AutonomousLevel3 extends LinearOpMode {
 
         grab(); //Grabs preloaded Cone
         scanObjects(); //Scans signal cone
-        moveXYandArmY(50,0,robot.armPositions[3]); //Raising arm and moving to tall junction
-        moveZ(45, true); //Turning towards junction
+        moveXYandArmY(51,0,robot.armPositions[3]); //Raising arm and moving to tall junction
+        moveZ(40, true); //Turning towards junction
         moveXY(19,0); //Aproching junction
         moveArmY(robot.armPositions[3]-500); //Lowers arm
+        waitTime(0.5); //Waiting for arm to stabilize
         drop(); //Drops cone
-        moveXY(-15,0); //Backs away from junction
+        moveXY(-15.5,0); //Backs away from junction
 
-        moveZ(-90,true);
-        //moveXY(27,0);
-        moveXYandArmY(18,0, robot.coneStackBase*5);
-        waitForArm();
-        moveXY(10,0);
+        for(int i = 1; i <= 2; i++) {
+            moveZ(-84,true);
+            moveXYandArmY(18,0, robot.coneStackBase*(5-(i-1)));
+            waitForArm();
+            moveXY(10,0);
+            grab();
+            moveArmY(robot.armPositions[1]);
+            waitForArm();
+            moveXY(-10,0);
+            moveXYandArmY(-16,0, robot.armPositions[3]);
+            moveZ(40,true);
+            moveXY(19,0);
+            moveArmY(robot.armPositions[3]-500);
+            drop();
+            drop(); //Drops cone
+            moveXY(-16,0);
+        }
 
-
+        moveZ(0,true);
 
 
 
@@ -207,10 +222,17 @@ public class AutonomousLevel3 extends LinearOpMode {
         robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //Setting power
-        robot.FrontLeftDrive.setPower(movementSpeed);
-        robot.FrontRightDrive.setPower(movementSpeed);
-        robot.BackLeftDrive.setPower(movementSpeed);
-        robot.BackRightDrive.setPower(movementSpeed);
+        if(Math.abs(y) + Math.abs(x) >= normalSpeedDistance) {
+            robot.FrontLeftDrive.setPower(movementSpeed);
+            robot.FrontRightDrive.setPower(movementSpeed);
+            robot.BackLeftDrive.setPower(movementSpeed);
+            robot.BackRightDrive.setPower(movementSpeed);
+        } else {
+            robot.FrontLeftDrive.setPower(slowMovementSpeed);
+            robot.FrontRightDrive.setPower(slowMovementSpeed);
+            robot.BackLeftDrive.setPower(slowMovementSpeed);
+            robot.BackRightDrive.setPower(slowMovementSpeed);
+        }
 
         //Waiting until finished
         while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy() && robot.BackLeftDrive.isBusy() && robot.BackRightDrive.isBusy() && opModeIsActive()) {}
@@ -320,7 +342,7 @@ public class AutonomousLevel3 extends LinearOpMode {
         robot.Arm.setTargetPosition(targetY);
 
 
-        //Setting mode
+        //Setting mode0
         robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -330,10 +352,17 @@ public class AutonomousLevel3 extends LinearOpMode {
         robot.Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //Setting power
-        robot.FrontLeftDrive.setPower(movementSpeed);
-        robot.FrontRightDrive.setPower(movementSpeed);
-        robot.BackLeftDrive.setPower(movementSpeed);
-        robot.BackRightDrive.setPower(movementSpeed);
+        if(Math.abs(y) + Math.abs(x) >= normalSpeedDistance) {
+            robot.FrontLeftDrive.setPower(movementSpeed);
+            robot.FrontRightDrive.setPower(movementSpeed);
+            robot.BackLeftDrive.setPower(movementSpeed);
+            robot.BackRightDrive.setPower(movementSpeed);
+        } else {
+            robot.FrontLeftDrive.setPower(slowMovementSpeed);
+            robot.FrontRightDrive.setPower(slowMovementSpeed);
+            robot.BackLeftDrive.setPower(slowMovementSpeed);
+            robot.BackRightDrive.setPower(slowMovementSpeed);
+        }
 
         //Setting arm speed
         robot.Arm.setPower(armMovementSPeed);

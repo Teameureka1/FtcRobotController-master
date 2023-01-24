@@ -269,7 +269,7 @@ public class MainTeleop extends OpMode{
             telemetry.addData("FcdEnabled", FieldCentricDriving);
             if(FieldCentricDriving) {
                     telemetry.addData("FcdConversions", "TargetRadians-"+ targetRadians +" X-" + xControl + " Y-" + yControl);
-                    telemetry.addData("IMUOffset", robot.imuAngleOffset);
+                    //telemetry.addData("IMUOffset", robot.imuAngleOffset);
             }
 
             telemetry.addData("","");

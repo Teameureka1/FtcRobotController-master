@@ -43,7 +43,7 @@ public class Robot10662Hardware {
     //Imu config
     Orientation angles;
     Acceleration gravity;
-    public double imuAngleOffset = 0;
+    //public double imuAngleOffset = 0;
 
     //Motor Relate
     public final double ticksPerInch = 535 / (Math.PI*4);
@@ -56,8 +56,8 @@ public class Robot10662Hardware {
     public final double[] clawOpen = {0.6,0.6};
 
     //Sensor Related
-    public final float colorSensorGain = 4;
-    public final float saturationOnMat = 150;
+    //public final float colorSensorGain = 4;
+    //public final float hueOnMat = 150;
 
     //Local opMember
     HardwareMap hwMap = null;
@@ -103,8 +103,9 @@ public class Robot10662Hardware {
 
         //Define Sensors
         //Color sensor
-        colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
-        colorSensor.setGain(colorSensorGain);
+        //colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
+        //colorSensor.setGain(colorSensorGain);
+
 
         //Imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -134,14 +135,15 @@ public class Robot10662Hardware {
         Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public boolean onLine() {
+    /*public boolean onLine() {
         //Getting colors
+        final float[] hsvValues = new float[3];
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
         Color.colorToHSV(colors.toColor(), hsvValues);
 
         //Output
-        return((hsvValues[1] = saturationOnMat)?false:true);
-    }
+        return(hsvValues[0] != hueOnMat);
+    }*/
 
     public double getAngle() {
         return (imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
