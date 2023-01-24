@@ -40,7 +40,6 @@ public class Robot10662Hardware {
     //Sensors
     NormalizedColorSensor colorSensor;
 
-
     //Imu config
     Orientation angles;
     Acceleration gravity;
@@ -58,6 +57,7 @@ public class Robot10662Hardware {
 
     //Sensor Related
     public final float colorSensorGain = 4;
+    public final float saturationOnMat = 150;
 
     //Local opMember
     HardwareMap hwMap = null;
@@ -138,6 +138,9 @@ public class Robot10662Hardware {
         //Getting colors
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
         Color.colorToHSV(colors.toColor(), hsvValues);
+
+        //Output
+        return((hsvValues[1] = saturationOnMat)?false:true);
     }
 
     public double getAngle() {
