@@ -1,5 +1,4 @@
 /* !CAVEMAN AUTONOMOUS LEVEL 0
-
     Ever wondered why this is a level one caveman script, well the only thing it dose is drive
     forward. Yup, for those dyer situations like the first scrimmage where we had super big bugs with
     autonomous to the point that it did not even work! This script simply parks the bot one square
@@ -27,12 +26,12 @@ import java.util.List;
 @Autonomous(name="Autonomous :: Level 3", group = "Robot")
 public class AutonomousLevel3 extends LinearOpMode {
     ///////////////////////////////////////////////////////////////////// CONFIGURATION ////////////
-    private final double movementSpeed = 0.7; //Global speed for the robots movment seped during actions
+    private final double movementSpeed = 0.70; //Global speed for the robots movment seped during actions
     private final double slowMovementSpeed = 0.5; //Global slow speed for the robots movement speed durring actions
     private final double normalSpeedDistance = 20; //If under inches will activate slow speed
     private final double armMovementSPeed = 1; //Global speed for the robots arm movemeny speed durring actions
     private final double pauseBetweenActions = 0.2; //Amount of seconds the robot will pause for some actions
-    private final double tfodTimeout = 0.5; //Seconds until tfod will time out
+    private final double tfodTimeout = 1; //Seconds until tfod will time out
     private final double waitForArmTimeout = 3; //Seconds until arm will time out
 
     private final boolean sideSelectorEnabled = false; //If disabled robot will default to the left side of the field
@@ -165,38 +164,36 @@ public class AutonomousLevel3 extends LinearOpMode {
 
         grab(); //Grabs preloaded Cone
         scanObjects(); //Scans signal cone
-        moveXYandArmY(51,0,robot.armPositions[3]); //Raising arm and moving to tall junction
+        moveXYandArmY(61,0,robot.armPositions[2]); //Pushing signal sleeve out of the way and raising
+        waitTime(0.2); //Small wait to prevent the bot from being knocked off of track
+        moveZ(-2,true);
+        moveXYandArmY(-10,0,robot.armPositions[3]); //Backup up and raising arm to the high junction
         moveZ(40, true); //Turning towards junction
         moveXY(19,0); //Aproching junction
-        moveArmY(robot.armPositions[3]-500); //Lowers arm
-        waitTime(0.5); //Waiting for arm to stabilize
+        moveArmY(robot.armPositions[3]-600); //Lowers arm
         drop(); //Drops cone
         moveXY(-15.5,0); //Backs away from junction
 
         for(int i = 1; i <= 2; i++) {
-            moveZ(-84,true);
-            moveXYandArmY(18,0, robot.coneStackBase*(5-(i-1)));
-            waitForArm();
-            moveXY(10,0);
+            moveArmY(robot.coneStackBase*(5-(i-1)));
+            moveZ(-81,true);
+            moveXY(26,0);
             grab();
             moveArmY(robot.armPositions[1]);
             waitForArm();
-            moveXY(-10,0);
-            moveXYandArmY(-16,0, robot.armPositions[3]);
-            moveZ(40,true);
-            moveXY(19,0);
-            moveArmY(robot.armPositions[3]-500);
-            drop();
+            moveXYandArmY(-24,0, robot.armPositions[3]);
+            moveZ(38,true);
+            moveXY(18,0);
+            moveArmY(robot.armPositions[3]-600);
             drop(); //Drops cone
-            moveXY(-16,0);
+            moveXY(-15.5,0);
         }
 
-        moveZ(0,true);
+        moveArmY(0);
+        moveZ(2,true);
+        waitForArm();
 
 
-
-        //Wait forever for debug purposes
-        while (opModeIsActive()) {}
 
     }
 
@@ -234,11 +231,7 @@ public class AutonomousLevel3 extends LinearOpMode {
             robot.BackRightDrive.setPower(slowMovementSpeed);
         }
 
-        //Waiting until finished
-        while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy() && robot.BackLeftDrive.isBusy() && robot.BackRightDrive.isBusy() && opModeIsActive()) {}
-
-        //Short wait to let the robot fully stop
-        waitTime(pauseBetweenActions);
+        waitForArm();
     }
 
     //Z Movement
