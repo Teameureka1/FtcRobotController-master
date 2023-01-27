@@ -26,15 +26,15 @@ import java.util.List;
 @Autonomous(name="Autonomous :: Level 3", group = "Robot")
 public class AutonomousLevel3 extends LinearOpMode {
     ///////////////////////////////////////////////////////////////////// CONFIGURATION ////////////
-    private final double movementSpeed = 0.70; //Global speed for the robots movment seped during actions
+    private final double movementSpeed = 0.60; //Global speed for the robots movment seped during actions
     private final double slowMovementSpeed = 0.5; //Global slow speed for the robots movement speed durring actions
     private final double normalSpeedDistance = 20; //If under inches will activate slow speed
     private final double armMovementSPeed = 1; //Global speed for the robots arm movemeny speed durring actions
     private final double pauseBetweenActions = 0.2; //Amount of seconds the robot will pause for some actions
-    private final double tfodTimeout = 1; //Seconds until tfod will time out
+    private final double tfodTimeout = 3; //Seconds until tfod will time out
     private final double waitForArmTimeout = 3; //Seconds until arm will time out
 
-    private final boolean sideSelectorEnabled = false; //If disabled robot will default to the left side of the field
+    private final boolean sideSelectorEnabled = true; //If disabled robot will default to the left side of the field
     //TODO: DONT FORGET TO ENAbLE
 
     ///////////////////////////////////////////////////////////////////// SETUP ////////////////////
@@ -162,44 +162,103 @@ public class AutonomousLevel3 extends LinearOpMode {
         waitForStart();
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
-        grab(); //Grabs preloaded Cone
-        scanObjects(); //Scans signal cone
-        moveXYandArmY(61,0,robot.armPositions[2]); //Pushing signal sleeve out of the way and raising
-        waitTime(0.2); //Small wait to prevent the bot from being knocked off of track
-        moveZ(-2,true);
-        moveXYandArmY(-10,0,robot.armPositions[3]); //Backup up and raising arm to the high junction
-        moveZ(40, true); //Turning towards junction
-        moveXY(19,0); //Aproching junction
-        moveArmY(robot.armPositions[3]-600); //Lowers arm
-        drop(); //Drops cone
-        moveXY(-15.5,0); //Backs away from junction
+        grab(); //Grabs preloaded cone
+        scanObjects(); //Scans parking cone
 
-        for(int i = 1; i <= 2; i++) {
-            moveArmY(robot.coneStackBase*(5-(i-1)));
-            moveZ(-81,true);
-            moveXY(26,0);
-            grab();
-            moveArmY(robot.armPositions[1]);
-            waitForArm();
-            moveXYandArmY(-24,0, robot.armPositions[3]);
-            moveZ(38,true);
-            moveXY(18,0);
-            moveArmY(robot.armPositions[3]-600);
+        if(side.equals("Left")) { //Beginning movements based on side
+            moveArmY(robot.armPositions[2]); //Begin raising arm half way
+            moveXY(62,0); //Pushing signal cone
+            moveArmY(robot.armPositions[3]); //Raising arm the rest of the way
+            waitTime(0.2); //Small wait to avoid robot tweaking at an angle
+            moveZ(2, true); //Re-centering robot to zero
+            moveXY(-10,0); //Backs up to original position
+
+            moveZ(40, true); //Turning to junction
+            moveXY(16,0); //Approaching junction
+            moveArmY(robot.armPositions[3]-600); //Lowers arm onto junction
+            waitForArm(); //Making sure arm is all the way down
             drop(); //Drops cone
-            moveXY(-15.5,0);
+            moveXY(-12,0); //Backs away from junction
+
+            moveArmY(robot.coneStackBase*5); //Lowering arm to cone
+            moveZ(-85,true); //Turning to cone stack
+            moveXY(30,0); //Approaching cone stack
+            grab(); //Grabbing cone
+            moveArmY(robot.armPositions[1]); //Raising arm above cone stack
+            waitForArm(); //Waiting to avoid knocking over the cone stack
+            moveArmY(robot.armPositions[3]); //Beginning to raise arm to tall junction
+            moveXY(-29,0); //Backing up
+            moveZ(40,true); //Turning to junction
+            moveXY(15,0); //Approaching junction
+            waitTime(0.5);
+            moveArmY(robot.armPositions[3]-600); //Lowering cone onto junction
+            waitForArm(); //Making sure arm is all the way down
+            drop(); //Drops cone
+            moveXY(-15,0); //Backs away from junction
+
+            moveArmY(robot.coneStackBase*4); //Lowering arm to cone
+            moveZ(-85,true); //Turning to cone stack
+            moveXY(30,0); //Approaching cone stack
+            grab(); //Grabbing cone
+            moveArmY(robot.armPositions[1]); //Raising arm above cone stack
+            waitForArm(); //Waiting to avoid knocking over the cone stack
+            moveArmY(0); //Beginning to lower arm to floor
+            moveXY(-29,0); //Backing up
+            moveZ(-2,true); //Turning back to zero
+        } else {
+            moveArmY(robot.armPositions[2]); //Begin raising arm half way
+            moveXY(62,0); //Pushing signal cone
+            moveArmY(robot.armPositions[3]); //Raising arm the rest of the way
+            waitTime(0.2); //Small wait to avoid robot tweaking at an angle
+            moveZ(-2, true); //Re-centering robot to zero
+            moveXY(-10,0); //Backs up to original position
+
+            moveZ(-40, true); //Turning to junction
+            moveXY(16,0); //Approaching junction
+            moveArmY(robot.armPositions[3]-600); //Lowers arm onto junction
+            waitForArm(); //Making sure arm is all the way down
+            drop(); //Drops cone
+            moveXY(-12,0); //Backs away from junction
+
+            moveArmY(robot.coneStackBase*5); //Lowering arm to cone
+            moveZ(85,true); //Turning to cone stack
+            moveXY(30,0); //Approaching cone stack
+            grab(); //Grabbing cone
+            moveArmY(robot.armPositions[1]); //Raising arm above cone stack
+            waitForArm(); //Waiting to avoid knocking over the cone stack
+            moveArmY(robot.armPositions[3]); //Beginning to raise arm to tall junction
+            moveXY(-29,0); //Backing up
+            moveZ(-40,true); //Turning to junction
+            moveXY(15,0); //Approaching junction
+            waitTime(0.5);
+            moveArmY(robot.armPositions[3]-600); //Lowering cone onto junction
+            waitForArm(); //Making sure arm is all the way down
+            drop(); //Drops cone
+            moveXY(-15,0); //Backs away from junction
+
+            moveArmY(robot.coneStackBase*4); //Lowering arm to cone
+            moveZ(85,true); //Turning to cone stack
+            moveXY(30,0); //Approaching cone stack
+            grab(); //Grabbing cone
+            moveArmY(robot.armPositions[1]); //Raising arm above cone stack
+            waitForArm(); //Waiting to avoid knocking over the cone stack
+            moveArmY(0); //Beginning to lower arm to floor
+            moveXY(-29,0); //Backing up
+            moveZ(2,true); //Turning back to zero
         }
 
-        moveArmY(0);
-        moveZ(2,true);
-        waitForArm();
-
-
-
+        if(parkingPos == 1) {
+            moveXY(0,-30);
+        } else if (parkingPos == 3) {
+            moveXY(0,30);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////// MOVEMENT /////////////////
-    //XY Movement
     private void moveXY(double y, double x) {
+        //Saving starting angle
+        double startingAngle = robot.getAngle(); //Currently unused
+
         //Getting robot target position
         int frontLeftPos = (int)((y + x) * robot.ticksPerInch) + robot.FrontLeftDrive.getCurrentPosition();
         int frontRightPos = (int)((y - x) * robot.ticksPerInch) + robot.FrontRightDrive.getCurrentPosition();
@@ -221,7 +280,7 @@ public class AutonomousLevel3 extends LinearOpMode {
         //Setting power
         if(Math.abs(y) + Math.abs(x) >= normalSpeedDistance) {
             robot.FrontLeftDrive.setPower(movementSpeed);
-            robot.FrontRightDrive.setPower(movementSpeed);
+            robot.FrontRightDrive.setPower(movementSpeed+((y > 0)?(0.01):(-0.01)));
             robot.BackLeftDrive.setPower(movementSpeed);
             robot.BackRightDrive.setPower(movementSpeed);
         } else {
@@ -231,8 +290,20 @@ public class AutonomousLevel3 extends LinearOpMode {
             robot.BackRightDrive.setPower(slowMovementSpeed);
         }
 
-        waitForArm();
+        while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy() && robot.BackLeftDrive.isBusy() && robot.BackRightDrive.isBusy() && opModeIsActive()) {
+
+            //Telemetry
+            telemetry.addData("Current Action:","moveXY");
+            telemetry.addData("Input", "Y:" + y + " X:" + x);
+            telemetry.addData("","");
+            telemetry.addData("FL", "TargetPos:" + frontLeftPos + " CurrentPos:" + robot.FrontLeftDrive.getCurrentPosition() + " CurrentPower:" + robot.FrontLeftDrive.getPower());
+            telemetry.addData("FR", "TargetPos:" + frontRightPos + " CurrentPos:" + robot.FrontRightDrive.getCurrentPosition() + " CurrentPower:" + robot.FrontRightDrive.getPower());
+            telemetry.addData("BL", "TargetPos:" + backLeftPos + " CurrentPos:" + robot.BackLeftDrive.getCurrentPosition() + " CurrentPower:" + robot.BackLeftDrive.getPower());
+            telemetry.addData("BR", "TargetPos:" + backRightPos + " CurrentPos:" + robot.BackRightDrive.getCurrentPosition() + " CurrentPower:" + robot.BackRightDrive.getPower());
+            telemetry.update();
+        }
     }
+
 
     //Z Movement
     private void moveZ(double z, boolean toAbs) {
@@ -272,6 +343,16 @@ public class AutonomousLevel3 extends LinearOpMode {
         while ((turnDirection.equals("Left"))?(robotCurrentZ >= targetZ):(robotCurrentZ <= targetZ) && opModeIsActive()) {
             //Setting angle
             robotCurrentZ = robot.getAngle();
+
+            //Telemetry
+            telemetry.addData("Current Action:","moveZ");
+            telemetry.addData("Input", "Z:" + z + " TurnDirection:" + turnDirection);
+            telemetry.addData("","");
+            telemetry.addData("FL", "CurrentPower:" + robot.FrontLeftDrive.getPower());
+            telemetry.addData("FR", "CurrentPower:" + robot.FrontRightDrive.getPower());
+            telemetry.addData("BL", "CurrentPower:" + robot.BackLeftDrive.getPower());
+            telemetry.addData("BR", "CurrentPower:" + robot.BackRightDrive.getPower());
+            telemetry.update();
         }
 
         //Stop n Hold
@@ -309,68 +390,16 @@ public class AutonomousLevel3 extends LinearOpMode {
 
         //Setting power
         robot.Arm.setPower(armMovementSPeed);
-
-        //Short wait to let the robot fully stop
-        waitTime(pauseBetweenActions);
-    }
-
-    private void moveXYandArmY(double y, double x, int armY) {
-        //Getting robot target position
-        int frontLeftPos = (int)((y + x) * robot.ticksPerInch) + robot.FrontLeftDrive.getCurrentPosition();
-        int frontRightPos = (int)((y - x) * robot.ticksPerInch) + robot.FrontRightDrive.getCurrentPosition();
-        int backLeftPos = (int)((y - x) * robot.ticksPerInch) + robot.BackLeftDrive.getCurrentPosition();
-
-        int backRightPos = (int)((y + x) * robot.ticksPerInch) + robot.BackRightDrive.getCurrentPosition();
-
-        //Arm target position
-        int targetY = (armY);
-
-        //Setting target position to motors
-        robot.FrontLeftDrive.setTargetPosition(frontLeftPos);
-        robot.FrontRightDrive.setTargetPosition(frontRightPos);
-        robot.BackLeftDrive.setTargetPosition(backLeftPos);
-        robot.BackRightDrive.setTargetPosition(backRightPos);
-
-        //Setting arm target position
-        robot.Arm.setTargetPosition(targetY);
-
-
-        //Setting mode0
-        robot.FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //Setting arm mode
-        robot.Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //Setting power
-        if(Math.abs(y) + Math.abs(x) >= normalSpeedDistance) {
-            robot.FrontLeftDrive.setPower(movementSpeed);
-            robot.FrontRightDrive.setPower(movementSpeed);
-            robot.BackLeftDrive.setPower(movementSpeed);
-            robot.BackRightDrive.setPower(movementSpeed);
-        } else {
-            robot.FrontLeftDrive.setPower(slowMovementSpeed);
-            robot.FrontRightDrive.setPower(slowMovementSpeed);
-            robot.BackLeftDrive.setPower(slowMovementSpeed);
-            robot.BackRightDrive.setPower(slowMovementSpeed);
-        }
-
-        //Setting arm speed
-        robot.Arm.setPower(armMovementSPeed);
-
-        //Waiting until finished
-        while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy() && robot.BackLeftDrive.isBusy() && robot.BackRightDrive.isBusy() && opModeIsActive()) {}
-
-        //Short wait to let the robot fully stop
-        waitTime(pauseBetweenActions);
     }
 
     //Wait for Arm
     private void waitForArm() {
         runtime.reset();
-        while (robot.Arm.isBusy() && runtime.seconds() <= waitForArmTimeout) {}
+        while (robot.Arm.isBusy() && runtime.seconds() <= waitForArmTimeout && opModeIsActive()) {
+           //Telemetry
+           telemetry.addData("Current Action:", "waitForArm");
+
+        }
     }
 
     //Claw Grab
@@ -395,10 +424,14 @@ public class AutonomousLevel3 extends LinearOpMode {
     private void scanObjects() {
         //Reseting timer for later
         runtime.reset();
+        telemetry.addData("Current Action:","TFOD");
+        telemetry.update();
         if (opModeIsActive()) { //Scanning cone
             while (opModeIsActive() && parkingPos == 0) {
-                if(runtime.seconds() >= tfodTimeout || !opModeIsActive()) { //Timeout reached or program quit
-                    parkingPos = 2; //Setting parking pos to 2 and quiting
+                if(runtime.seconds() >= tfodTimeout) { //Timeout reached or program quit
+                    parkingPos = 3; //Setting parking pos to 3 and quiting
+                    telemetry.addData("ERROR", "Cone not scanned within '" + tfodTimeout + "' seconds, defaulting to 3");
+                    telemetry.update();
                     break;
                 }
                 if (tfod != null) {
@@ -414,7 +447,7 @@ public class AutonomousLevel3 extends LinearOpMode {
                                 parkingPos = 3;
                             }
 
-                            telemetry.addData("Parking Position",parkingPos);
+                            telemetry.addData("Parking Position:",parkingPos);
                             telemetry.update();
                         }
                     }
