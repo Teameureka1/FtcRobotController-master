@@ -255,7 +255,7 @@ public class MainTeleop extends OpMode{
         // Main telemetry ///////////////////////
         //TODO: Finish telemetry.
         if (!DebugMode) { //Only displays if not in debug mode
-            telemetry.addData("Don't mind me", "Easily readable telemetry not added yet, please use debug mode, dpad_left");
+
         }
 
         // Debug telemetry //////////////////////
@@ -266,6 +266,10 @@ public class MainTeleop extends OpMode{
             telemetry.addData("Driver 1", "------------------------");
             telemetry.addData("Gamepad",  "Radian-" + gamepadRadians + " X-" + xCoordinate + " Y-" + yCoordinate);
             telemetry.addData("Throttle", gamepadHypot + " + " + throttle1 + " --> " + (gamepadHypot / 2.5) * ((throttle1 * 1.5) + 1));
+            telemetry.addData("FL", "Position:" + robot.FrontLeftDrive.getCurrentPosition()/robot.ticksPerInch + " Power:" + robot.FrontLeftDrive.getPower());
+            telemetry.addData("FR", "Position:" + robot.FrontRightDrive.getCurrentPosition()/robot.ticksPerInch + " Power:" + robot.FrontRightDrive.getPower());
+            telemetry.addData("BL", "Position:" + robot.BackLeftDrive.getCurrentPosition()/robot.ticksPerInch + " Power:" + robot.BackLeftDrive.getPower());
+            telemetry.addData("BR", "Position:" + robot.BackRightDrive.getCurrentPosition()/robot.ticksPerInch + " Power:" + robot.BackRightDrive.getPower());
             telemetry.addData("FcdEnabled", FieldCentricDriving);
             if(FieldCentricDriving) {
                     telemetry.addData("FcdConversions", "TargetRadians-"+ targetRadians +" X-" + xControl + " Y-" + yControl);
