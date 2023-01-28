@@ -10,6 +10,7 @@
 package org.firstinspires.ftc.teamcode.Testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,7 +25,8 @@ import org.firstinspires.ftc.teamcode.Config.Robot10662Hardware;
 import java.util.List;
 
 ///////////////////////////////////////////////////////////////////// CLASS ////////////////////////
-@Autonomous(name="Autonomous IMU Turning Test", group = "Robot")
+@Autonomous(name="Autonomous IMU Turning Test (OUTDATED)", group = "Robot")
+@Disabled
 public class ImuTurningTest extends LinearOpMode {
     ///////////////////////////////////////////////////////////////////// CONFIGURATION ////////////
     private final double movementSpeed = 0.5; //Global speed for the robot when completing actions
