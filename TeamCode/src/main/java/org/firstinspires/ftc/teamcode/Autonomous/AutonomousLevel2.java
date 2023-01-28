@@ -36,7 +36,7 @@ public class AutonomousLevel2 extends LinearOpMode {
     private String side = "Left";
     private int parkingPos = 0;
 
-    private static final String TFOD_MODEL_ASSET = "CustomSleeve.tflite";
+    private static final String TFOD_MODEL_ASSET = "CustomSleeveV2.tflite";
 
     private static final String[] LABELS = {
             "Pos No",

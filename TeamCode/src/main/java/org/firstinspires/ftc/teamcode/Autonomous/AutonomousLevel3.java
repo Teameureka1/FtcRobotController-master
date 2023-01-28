@@ -48,7 +48,7 @@ public class AutonomousLevel3 extends LinearOpMode {
     private String side = "Left"; //Robots position on field, later modified, defualts to left
     private int parkingPos = 0; //Position for robot to park in signaled by cone, later changed
 
-    private static final String TFOD_MODEL_ASSET = "CustomSleeve.tflite"; //Tflite file used for object detection
+    private static final String TFOD_MODEL_ASSET = "CustomSleeveV2.tflite"; //Tflite file used for object detection
 
     private static final String[] LABELS = { //Possibile parking positions
             "Pos No",
