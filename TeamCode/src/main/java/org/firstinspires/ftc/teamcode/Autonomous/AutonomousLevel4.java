@@ -30,7 +30,7 @@ public class AutonomousLevel4 extends LinearOpMode {
     private final double slowMovementSpeed = 0.5; //Global slow speed for the robots movement speed durring actions
     private final double normalSpeedDistance = 20; //If under inches will activate slow speed
     private final double armMovementSPeed = 1; //Global speed for the robots arm movemeny speed durring actions
-    private final double pauseBetweenActions = 0.3; //Amount of seconds the robot will pause for some actions
+    private final double pauseBetweenActions = 0.2; //Amount of seconds the robot will pause for some actions
     private final double tfodTimeout = 3; //Seconds until tfod will time out
     private final double waitForArmTimeout = 3; //Seconds until arm will time out
 
@@ -169,6 +169,7 @@ public class AutonomousLevel4 extends LinearOpMode {
             moveArmY(200); //Raising arm to prevent cone from dragging
             moveXY(54,0); //Pushing signal cone
             moveArmY(robot.armPositions[3]); //Raising arm to high junction
+            moveZ(0,true);
             moveXY(0,15); //Strafing over to high junction
             waitForArm(); //Making sure arm is all the way up
             moveZ(0,true); //Recentering the robot
@@ -182,17 +183,40 @@ public class AutonomousLevel4 extends LinearOpMode {
             moveZ(-85, true);
             moveXY(26,0);
             grab();
+            moveZ(-90,true);
             moveArmY((robot.coneStackBase*5)+800);
             waitForArm();
             moveXY(-26,0);
             moveArmY(robot.armPositions[2]);
-            moveZ(135,true);
+            moveZ(132,true);
             moveXY(14,0);
             moveArmY(robot.armPositions[2]-600);
             waitForArm();
             drop();
             moveXY(-14,0);
-            moveZ(0,true);
+            moveZ(-85, true);
+            moveArmY(robot.coneStackBase*4);
+            moveXY(26,0);
+            grab();
+            moveZ(-90,true);
+            moveArmY((robot.coneStackBase*4)+800);
+            waitForArm();
+            moveXY(-26,0);
+            moveArmY(robot.armPositions[2]);
+            moveZ(130,true);
+            moveXY(14,0);
+            moveArmY(robot.armPositions[2]-600);
+            waitForArm();
+            drop();
+            moveXY(-13,0);
+            moveZ(2,true);
+
+            if(parkingPos == 1) {
+                moveXY(-28,0);
+            } else if (parkingPos == 3) {
+                moveXY(28,0);
+            }
+
         } else {
 
         }
