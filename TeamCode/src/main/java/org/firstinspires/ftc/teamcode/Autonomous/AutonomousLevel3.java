@@ -182,7 +182,7 @@ public class AutonomousLevel3 extends LinearOpMode {
 
             moveArmY(robot.coneStackBase*5); //Lowering arm to cone
             moveZ(-85,true); //Turning to cone stack
-            moveXY(30,0); //Approaching cone stack
+            moveXY(29,0); //Approaching cone stack
             grab(); //Grabbing cone
             moveArmY(robot.armPositions[1]); //Raising arm above cone stack
             waitForArm(); //Waiting to avoid knocking over the cone stack
@@ -198,7 +198,7 @@ public class AutonomousLevel3 extends LinearOpMode {
 
             moveArmY(robot.coneStackBase*4); //Lowering arm to cone
             moveZ(-85,true); //Turning to cone stack
-            moveXY(30,0); //Approaching cone stack
+            moveXY(29,0); //Approaching cone stack
             grab(); //Grabbing cone
             moveArmY(robot.armPositions[1]); //Raising arm above cone stack
             waitForArm(); //Waiting to avoid knocking over the cone stack

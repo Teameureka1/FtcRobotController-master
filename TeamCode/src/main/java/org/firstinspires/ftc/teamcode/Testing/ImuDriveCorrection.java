@@ -46,7 +46,7 @@ public class ImuDriveCorrection extends LinearOpMode {
         waitForStart();
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
 
-        moveXY(0,100);
+        moveXY(100,0);
 
     }
 
@@ -74,38 +74,38 @@ public class ImuDriveCorrection extends LinearOpMode {
         robot.BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //Define ing base power
-        double flSpeed;
-        double frSpeed;
-        double blSpeed;
-        double brSpeed;
+        double rawFlSpeed;
+        double rawFrSpeed;
+        double rawBlSpeed;
+        double rawBrSpeed;
         //Setting base power
         if(Math.abs(y) + Math.abs(x) >= normalSpeedDistance) {
-            flSpeed = movementSpeed;
-            frSpeed = movementSpeed;
-            blSpeed = movementSpeed;
-            brSpeed = movementSpeed;
+            rawFlSpeed = movementSpeed;
+            rawFrSpeed = movementSpeed;
+            rawBlSpeed = movementSpeed;
+            rawBrSpeed = movementSpeed;
         } else {
-            flSpeed = slowMovementSpeed;
-            frSpeed = slowMovementSpeed;
-            blSpeed = slowMovementSpeed;
-            brSpeed = slowMovementSpeed;
+            rawFlSpeed = slowMovementSpeed;
+            rawFrSpeed = slowMovementSpeed;
+            rawBlSpeed = slowMovementSpeed;
+            rawBrSpeed = slowMovementSpeed;
         }
 
         while (robot.FrontLeftDrive.isBusy() && robot.FrontRightDrive.isBusy() && robot.BackLeftDrive.isBusy() && robot.BackRightDrive.isBusy() && opModeIsActive()) {
             //Finding distance off center
-            double distanceOffCenter = robot.getAngle() - startingAngle;
+            double distanceOffCenter = (robot.getAngle() - startingAngle) * y+x!=0?y+x/Math.abs(y+x):1;
 
             //Defining heading offset for each motor
-            double flOffset = (distanceOffCenter/50);
-            double frOffset = (-distanceOffCenter/50);
-            double blOffset = (distanceOffCenter/50);
-            double brOffset = (-distanceOffCenter/50);
+            double flSpeed = rawFlSpeed + 0 + (distanceOffCenter/30);
+            double frSpeed = rawFrSpeed - 0 - (distanceOffCenter/30);
+            double blSpeed = rawBlSpeed - 0 + (distanceOffCenter/30);
+            double brSpeed = rawBrSpeed + 0 - (distanceOffCenter/30);
 
             //Using above to correct speed
-            robot.FrontLeftDrive.setPower(flSpeed + flOffset);
-            robot.FrontRightDrive.setPower(frSpeed + frOffset);
-            robot.BackLeftDrive.setPower(blSpeed + blOffset);
-            robot.BackRightDrive.setPower(brSpeed + brOffset);
+            robot.FrontLeftDrive.setPower(flSpeed);
+            robot.FrontRightDrive.setPower(frSpeed);
+            robot.BackLeftDrive.setPower(blSpeed);
+            robot.BackRightDrive.setPower(brSpeed);
 
             //Telemetry
             telemetry.addData("Current Action:","moveXY");
@@ -114,12 +114,20 @@ public class ImuDriveCorrection extends LinearOpMode {
             telemetry.addData("Current Heading", robot.getAngle());
             telemetry.addData("Heading Offset", distanceOffCenter);
             telemetry.addData("","");
-            telemetry.addData("FL", "TargetPos:" + frontLeftPos + " CurrentPos:" + robot.FrontLeftDrive.getCurrentPosition() + " CurrentPower:" + robot.FrontLeftDrive.getPower() + " Heading Offset" + flOffset);
-            telemetry.addData("FR", "TargetPos:" + frontRightPos + " CurrentPos:" + robot.FrontRightDrive.getCurrentPosition() + " CurrentPower:" + robot.FrontRightDrive.getPower() + " Heading Offset" + frOffset);
-            telemetry.addData("BL", "TargetPos:" + backLeftPos + " CurrentPos:" + robot.BackLeftDrive.getCurrentPosition() + " CurrentPower:" + robot.BackLeftDrive.getPower() + " Heading Offset" + blOffset);
-            telemetry.addData("BR", "TargetPos:" + backRightPos + " CurrentPos:" + robot.BackRightDrive.getCurrentPosition() + " CurrentPower:" + robot.BackRightDrive.getPower() + " Heading Offset" + brOffset);
+            telemetry.addData("FL", "TargetPos:" + frontLeftPos + " CurrentPos:" + robot.FrontLeftDrive.getCurrentPosition() + " CurrentPower:" + robot.FrontLeftDrive.getPower() + " Heading Offset" + flSpeed);
+            telemetry.addData("FR", "TargetPos:" + frontRightPos + " CurrentPos:" + robot.FrontRightDrive.getCurrentPosition() + " CurrentPower:" + robot.FrontRightDrive.getPower() + " Heading Offset" + frSpeed);
+            telemetry.addData("BL", "TargetPos:" + backLeftPos + " CurrentPos:" + robot.BackLeftDrive.getCurrentPosition() + " CurrentPower:" + robot.BackLeftDrive.getPower() + " Heading Offset" + blSpeed);
+            telemetry.addData("BR", "TargetPos:" + backRightPos + " CurrentPos:" + robot.BackRightDrive.getCurrentPosition() + " CurrentPower:" + robot.BackRightDrive.getPower() + " Heading Offset" + brSpeed);
             telemetry.update();
         }
+
+        //Setting speed equal to all to prevent the robot tweaking at an angle
+        robot.FrontLeftDrive.setPower(rawFlSpeed);
+        robot.BackRightDrive.setPower(rawBrSpeed);
+        robot.BackLeftDrive.setPower(rawBlSpeed);
+        robot.FrontRightDrive.setPower(rawFrSpeed);
+
+        //waitTime(pauseBetweenActions);
     }
 
 }

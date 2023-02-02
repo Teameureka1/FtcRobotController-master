@@ -26,11 +26,11 @@ import java.util.List;
 @Autonomous(name="Autonomous :: Level 4", group = "Robot")
 public class AutonomousLevel4 extends LinearOpMode {
     ///////////////////////////////////////////////////////////////////// CONFIGURATION ////////////
-    private final double movementSpeed = 0.60; //Global speed for the robots movment seped during actions
+    private final double movementSpeed = 0.70; //Global speed for the robots movment seped during actions
     private final double slowMovementSpeed = 0.5; //Global slow speed for the robots movement speed durring actions
     private final double normalSpeedDistance = 20; //If under inches will activate slow speed
     private final double armMovementSPeed = 1; //Global speed for the robots arm movemeny speed durring actions
-    private final double pauseBetweenActions = 0.2; //Amount of seconds the robot will pause for some actions
+    private final double pauseBetweenActions = 0.3; //Amount of seconds the robot will pause for some actions
     private final double tfodTimeout = 3; //Seconds until tfod will time out
     private final double waitForArmTimeout = 3; //Seconds until arm will time out
 
@@ -166,20 +166,33 @@ public class AutonomousLevel4 extends LinearOpMode {
         scanObjects();
 
         if(side.equals("Left")) { //Beginning movements based on side
-            moveArmY(200);
-            moveXY(52,0);
-            waitTime(0.1);
-            moveXY(-2,0);
-            moveArmY(robot.armPositions[2]);
-            moveZ(129,true);
+            moveArmY(200); //Raising arm to prevent cone from dragging
+            moveXY(54,0); //Pushing signal cone
+            moveArmY(robot.armPositions[3]); //Raising arm to high junction
+            moveXY(0,15); //Strafing over to high junction
+            waitForArm(); //Making sure arm is all the way up
+            moveZ(0,true); //Recentering the robot
+            moveXY(5.25,0); //Moving up to high junction
+            moveArmY(robot.armPositions[3]-600); //Lowering arm onto junction
+            waitForArm(); //Waiting for the arm
+            drop(); //Releasing cone
+            moveXY(-5.25,0); //Backing away from the junction
+            moveArmY(robot.coneStackBase*5);
+            moveXY(0,-15);
+            moveZ(-85, true);
+            moveXY(26,0);
+            grab();
+            moveArmY((robot.coneStackBase*5)+800);
             waitForArm();
-            moveXY(10,0);
+            moveXY(-26,0);
+            moveArmY(robot.armPositions[2]);
+            moveZ(135,true);
+            moveXY(14,0);
             moveArmY(robot.armPositions[2]-600);
             waitForArm();
             drop();
-            moveXY(-10,0);
-            moveZ(-90,true);
-
+            moveXY(-14,0);
+            moveZ(0,true);
         } else {
 
         }
@@ -232,10 +245,23 @@ public class AutonomousLevel4 extends LinearOpMode {
             double distanceOffCenter = robot.getAngle() - startingAngle;
 
             //Defining heading offset for each motor
-            double flOffset = (distanceOffCenter/50);
-            double frOffset = (-distanceOffCenter/50);
-            double blOffset = (distanceOffCenter/50);
-            double brOffset = (-distanceOffCenter/50);
+            double flOffset = 0;
+            double frOffset = 0;
+            double blOffset = 0;
+            double brOffset = 0;
+            if(x == 0) {
+                if(y >= 0) {
+                    flOffset = (distanceOffCenter/30);
+                    frOffset = (-distanceOffCenter/30);
+                    blOffset = (distanceOffCenter/30);
+                    brOffset = (-distanceOffCenter/30);
+                } else {
+                    flOffset = (-distanceOffCenter/30);
+                    frOffset = (distanceOffCenter/30);
+                    blOffset = (-distanceOffCenter/30);
+                    brOffset = (distanceOffCenter/30);
+                }
+            }
 
             //Using above to correct speed
             robot.FrontLeftDrive.setPower(flSpeed + flOffset);
@@ -259,9 +285,11 @@ public class AutonomousLevel4 extends LinearOpMode {
 
         //Setting speed equal to all to prevent the robot tweaking at an angle
         robot.FrontLeftDrive.setPower(flSpeed);
-        robot.FrontRightDrive.setPower(frSpeed);
-        robot.BackLeftDrive.setPower(blSpeed);
         robot.BackRightDrive.setPower(brSpeed);
+        robot.BackLeftDrive.setPower(blSpeed);
+        robot.FrontRightDrive.setPower(frSpeed);
+
+        waitTime(pauseBetweenActions);
     }
 
 
@@ -273,7 +301,7 @@ public class AutonomousLevel4 extends LinearOpMode {
         String turnDirection = (targetZ<robotCurrentZ)?"Left":"Right"; //Checks if the robot needs to turn left or right
 
         //Adding offset based on amount needed to turn
-        double imuTurnOffset = (10);
+        double imuTurnOffset = (15);
         targetZ = turnDirection.equals("Left")?targetZ+imuTurnOffset:targetZ-imuTurnOffset;
 
 
