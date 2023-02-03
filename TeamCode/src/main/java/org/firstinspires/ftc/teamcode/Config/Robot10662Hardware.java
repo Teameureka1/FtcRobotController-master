@@ -122,7 +122,6 @@ public class Robot10662Hardware {
         //Open Claw
         Claw0.setPosition(clawOpen[0]);
         Claw1.setPosition(clawOpen[1]);
-        resetArm();
     }
 
     public void resetArm() {

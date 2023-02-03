@@ -67,6 +67,7 @@ public class AutonomousLevel2 extends LinearOpMode {
     public void runOpMode() {
         //Setting motors ect
         robot.init(hardwareMap);
+        robot.resetArm(); //Lower arm
 
 
         //Asking driver what side the robot is on
