@@ -34,7 +34,7 @@ public class AutonomousLevel4 extends LinearOpMode {
     private final double tfodTimeout = 3; //Seconds until tfod will time out
     private final double waitForArmTimeout = 3; //Seconds until arm will time out
 
-    private final boolean sideSelectorEnabled = false; //If disabled robot will default to the left side of the field
+    private final boolean sideSelectorEnabled = true; //If disabled robot will default to the left side of the field
     //TODO: DONT FORGET TO ENAbLE
 
     ///////////////////////////////////////////////////////////////////// SETUP ////////////////////
@@ -171,57 +171,100 @@ public class AutonomousLevel4 extends LinearOpMode {
             moveXY(54,0); //Pushing signal cone
             moveArmY(robot.armPositions[3]); //Raising arm to high junction
             moveZ(0,true);
-            moveXY(0,15); //Strafing over to high junction
+            moveXY(0,13); //Strafing over to high junction
             waitForArm(); //Making sure arm is all the way up
             moveZ(0,true); //Recentering the robot
-            moveXY(5.25,0); //Moving up to high junction
+            moveXY(5,0); //Moving up to high junction
             moveArmY(robot.armPositions[3]-600); //Lowering arm onto junction
             waitForArm(); //Waiting for the arm
             drop(); //Releasing cone
-            moveXY(-5.25,0); //Backing away from the junction
-            moveArmY(robot.coneStackBase*5);
-            moveXY(0,-15);
-            moveZ(-85, true);
-            moveXY(26,0);
-            grab();
-            moveZ(-90,true);
-            moveArmY((robot.coneStackBase*5)+800);
-            waitForArm();
-            moveXY(-26,0);
-            moveArmY(robot.armPositions[2]);
-            moveZ(132,true);
-            moveXY(14,0);
-            moveArmY(robot.armPositions[2]-600);
-            waitForArm();
-            drop();
-            moveXY(-14,0);
-            moveZ(-85, true);
-            moveArmY(robot.coneStackBase*4);
-            moveXY(26,0);
-            grab();
-            moveZ(-90,true);
-            moveArmY((robot.coneStackBase*4)+800);
-            waitForArm();
-            moveXY(-26,0);
-            moveArmY(robot.armPositions[2]);
-            moveZ(130,true);
-            moveXY(14,0);
-            moveArmY(robot.armPositions[2]-600);
-            waitForArm();
-            drop();
-            moveXY(-13,0);
-            moveZ(2,true);
-
-            if(parkingPos == 1) {
-                moveXY(-28,0);
-            } else if (parkingPos == 3) {
-                moveXY(28,0);
-            }
-
+            moveXY(-5,0); //Backing away from the junction
+            moveArmY(robot.coneStackBase*5); //Lowering arm to the fith cone on the stack
+            moveXY(0,-13); //Strafing to back
+            moveZ(-85, true); //Turning to cone stack
+            moveXY(26,0); //Aproaching cone stack
+            grab(); //Grabbing cone
+            moveZ(-90,true); //Realigning bot
+            moveArmY((robot.coneStackBase*5)+800); //Lifting cone off of the stack
+            waitForArm(); //Waiting for the arm
+            moveXY(-26,0); //Backing up
+            moveArmY(robot.armPositions[2]); //Rasing arm to medium junction
+            moveZ(132,true); //Rotating to medium junction
+            moveXY(14,0); //Aproaching medium junction
+            moveArmY(robot.armPositions[2]-600); //Lowering cone onto junction
+            waitForArm(); //Waiting for arm
+            drop(); //Releasing cone
+            moveXY(-14,0); //Backing up
+            moveZ(-85, true); //Turning to cone stack
+            moveArmY(robot.coneStackBase*4); //Lowering arm to the fourth cone on the stack
+            moveXY(26,0); //Aproaching cone stack
+            grab(); //Grabbing cone
+            moveZ(-90,true); //Realigning bot
+            moveArmY((robot.coneStackBase*4)+800); //Lifting cone off of high stack
+            waitForArm(); //Waiting for arm
+            moveXY(-26,0); //Backing up
+            moveArmY(robot.armPositions[2]); //Rasiing arm to medium junction
+            moveZ(130,true); //Turning to junction
+            moveXY(14,0); //Aproaching junction
+            moveArmY(robot.armPositions[2]-600); //Lowering cone onto junction
+            waitForArm(); //Waiting for arm
+            drop(); //Dropping cone onto junction
+            moveXY(-13,0); //backing away from junction
+            moveZ(2,true); //Turning to zero
         } else {
-
+            moveArmY(200); //Raising arm to prevent cone from dragging
+            moveXY(54,0); //Pushing signal cone
+            moveArmY(robot.armPositions[3]); //Raising arm to high junction
+            moveZ(0,true);
+            moveXY(0,-13); //Strafing over to high junction
+            waitForArm(); //Making sure arm is all the way up
+            moveZ(0,true); //Recentering the robot
+            moveXY(5,0); //Moving up to high junction
+            moveArmY(robot.armPositions[3]-600); //Lowering arm onto junction
+            waitForArm(); //Waiting for the arm
+            drop(); //Releasing cone
+            moveXY(-5,0); //Backing away from the junction
+            moveArmY(robot.coneStackBase*5); //Lowering arm to the fith cone on the stack
+            moveXY(0,13); //Strafing to back
+            moveZ(85, true); //Turning to cone stack
+            moveXY(26,0); //Aproaching cone stack
+            grab(); //Grabbing cone
+            moveZ(90,true); //Realigning bot
+            moveArmY((robot.coneStackBase*5)+800); //Lifting cone off of the stack
+            waitForArm(); //Waiting for the arm
+            moveXY(-26,0); //Backing up
+            moveArmY(robot.armPositions[2]); //Rasing arm to medium junction
+            moveZ(-132,true); //Rotating to medium junction
+            moveXY(14,0); //Aproaching medium junction
+            moveArmY(robot.armPositions[2]-600); //Lowering cone onto junction
+            waitForArm(); //Waiting for arm
+            drop(); //Releasing cone
+            moveXY(-14,0); //Backing up
+            moveZ(85, true); //Turning to cone stack
+            moveArmY(robot.coneStackBase*4); //Lowering arm to the fourth cone on the stack
+            moveXY(26,0); //Aproaching cone stack
+            grab(); //Grabbing cone
+            moveZ(90,true); //Realigning bot
+            moveArmY((robot.coneStackBase*4)+800); //Lifting cone off of high stack
+            waitForArm(); //Waiting for arm
+            moveXY(-26,0); //Backing up
+            moveArmY(robot.armPositions[2]); //Rasiing arm to medium junction
+            moveZ(-130,true); //Turning to junction
+            moveXY(14,0); //Aproaching junction
+            moveArmY(robot.armPositions[2]-600); //Lowering cone onto junction
+            waitForArm(); //Waiting for arm
+            drop(); //Dropping cone onto junction
+            moveXY(-13,0); //backing away from junction
+            moveZ(-2,true); //Turning to zero
         }
 
+
+            //Parking based on side
+            if(parkingPos == 1) {
+                moveXY(0,-28);
+            } else if (parkingPos == 3) {
+                moveXY(0,28);
+            }
     }
 
     ///////////////////////////////////////////////////////////////////// MOVEMENT /////////////////

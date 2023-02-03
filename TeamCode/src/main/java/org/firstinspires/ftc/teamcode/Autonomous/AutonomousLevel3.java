@@ -183,12 +183,12 @@ public class AutonomousLevel3 extends LinearOpMode {
 
             moveArmY(robot.coneStackBase*5); //Lowering arm to cone
             moveZ(-85,true); //Turning to cone stack
-            moveXY(29,0); //Approaching cone stack
+            moveXY(26,0); //Approaching cone stack
             grab(); //Grabbing cone
             moveArmY(robot.armPositions[1]); //Raising arm above cone stack
             waitForArm(); //Waiting to avoid knocking over the cone stack
             moveArmY(robot.armPositions[3]); //Beginning to raise arm to tall junction
-            moveXY(-29,0); //Backing up
+            moveXY(-26,0); //Backing up
             moveZ(40,true); //Turning to junction
             moveXY(15,0); //Approaching junction
             waitTime(0.5);
@@ -199,12 +199,12 @@ public class AutonomousLevel3 extends LinearOpMode {
 
             moveArmY(robot.coneStackBase*4); //Lowering arm to cone
             moveZ(-85,true); //Turning to cone stack
-            moveXY(29,0); //Approaching cone stack
+            moveXY(26,0); //Approaching cone stack
             grab(); //Grabbing cone
             moveArmY(robot.armPositions[1]); //Raising arm above cone stack
             waitForArm(); //Waiting to avoid knocking over the cone stack
             moveArmY(0); //Beginning to lower arm to floor
-            moveXY(-29,0); //Backing up
+            moveXY(-26,0); //Backing up
             moveZ(-2,true); //Turning back to zero
         } else {
             moveArmY(robot.armPositions[2]); //Begin raising arm half way
@@ -223,12 +223,12 @@ public class AutonomousLevel3 extends LinearOpMode {
 
             moveArmY(robot.coneStackBase*5); //Lowering arm to cone
             moveZ(85,true); //Turning to cone stack
-            moveXY(30,0); //Approaching cone stack
+            moveXY(26,0); //Approaching cone stack
             grab(); //Grabbing cone
             moveArmY(robot.armPositions[1]); //Raising arm above cone stack
             waitForArm(); //Waiting to avoid knocking over the cone stack
             moveArmY(robot.armPositions[3]); //Beginning to raise arm to tall junction
-            moveXY(-29,0); //Backing up
+            moveXY(-26,0); //Backing up
             moveZ(-40,true); //Turning to junction
             moveXY(15,0); //Approaching junction
             waitTime(0.5);
@@ -239,12 +239,12 @@ public class AutonomousLevel3 extends LinearOpMode {
 
             moveArmY(robot.coneStackBase*4); //Lowering arm to cone
             moveZ(85,true); //Turning to cone stack
-            moveXY(30,0); //Approaching cone stack
+            moveXY(26,0); //Approaching cone stack
             grab(); //Grabbing cone
             moveArmY(robot.armPositions[1]); //Raising arm above cone stack
             waitForArm(); //Waiting to avoid knocking over the cone stack
             moveArmY(0); //Beginning to lower arm to floor
-            moveXY(-29,0); //Backing up
+            moveXY(-26,0); //Backing up
             moveZ(2,true); //Turning back to zero
         }
 
