@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.Config.Robot10662Hardware;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 
 import java.util.List;
 
@@ -47,6 +48,9 @@ public class AutonomousLevel3 extends LinearOpMode {
     //Variables
     private String side = "Left"; //Robots position on field, later modified, defualts to left
     private int parkingPos = 0; //Position for robot to park in signaled by cone, later changed
+
+    //Gain Control
+    GainControl myGainControl;
 
     private static final String TFOD_MODEL_ASSET = "CustomSleeveV2.tflite"; //Tflite file used for object detection
 
@@ -157,6 +161,9 @@ public class AutonomousLevel3 extends LinearOpMode {
             tfod.setZoom(1.0, 16.0/9.0);
         }
 
+        myGainControl = vuforia.getCamera().getControl(GainControl.class);
+        myGainControl.setGain(40);
+
         //Waiting for the user
         telemetry.addData(">>","LET IT RIP! Smack that play button!");
         telemetry.update();
@@ -253,6 +260,9 @@ public class AutonomousLevel3 extends LinearOpMode {
         } else if (parkingPos == 3) {
             moveXY(0,30);
         }
+
+        moveZ(0,true
+        );
     }
 
     ///////////////////////////////////////////////////////////////////// MOVEMENT /////////////////

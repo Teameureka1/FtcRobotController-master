@@ -24,6 +24,7 @@ public class MainTeleop extends OpMode{
 
     //Mode Variables
     private boolean FieldCentricDriving = true;
+    private double  imuOffset = 0;
     private boolean DebugMode = false;
 
     //Bebounce booleans
@@ -75,7 +76,7 @@ public class MainTeleop extends OpMode{
         double throttle1 = gamepad1.right_trigger;
         boolean holdButton = gamepad1.left_bumper;
         boolean drivingButton = gamepad1.dpad_up;
-        boolean imuResetButton = gamepad1.dpad_up;
+        boolean imuResetButton = gamepad1.dpad_right;
 
         //FCD Mode Switcher
         if(drivingButton && !driveModeDebounce) {
@@ -85,13 +86,16 @@ public class MainTeleop extends OpMode{
             driveModeDebounce = false;
         }
 
-        //TODO: Correct and implement imu reset.
+        //ImuReset
+        if(imuResetButton) {
+            imuOffset = robot.getAngle();
+        }
 
         //Using a formula to get the robots current heading and convert the joystick heading to
         // Allow the robot to always head forward when joystick pushed forward.
         double gamepadRadians = Math.atan2(xCoordinate, yCoordinate);
         double gamepadHypot = Range.clip(Math.hypot(xCoordinate, yCoordinate), 0, 1);
-        double robotRadians = (robot.getAngle() * (Math.PI/180));
+        double robotRadians = ((robot.getAngle()-imuOffset) * (Math.PI/180));
         double targetRadians = gamepadRadians + robotRadians;
         double xControl = Math.sin(targetRadians)*gamepadHypot;
         double yControl = Math.cos(targetRadians)*gamepadHypot;

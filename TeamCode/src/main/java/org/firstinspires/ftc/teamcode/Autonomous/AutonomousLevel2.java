@@ -26,7 +26,6 @@ import java.util.List;
 
 ///////////////////////////////////////////////////////////////////// CLASS ////////////////////////
 @Autonomous(name="Autonomous :: Level 2", group = "Robot")
-@Disabled
 public class AutonomousLevel2 extends LinearOpMode {
     //Defining the config files
     Robot10662Hardware robot = new Robot10662Hardware();
@@ -154,10 +153,19 @@ public class AutonomousLevel2 extends LinearOpMode {
         telemetry.update();
         waitForStart();
         ///////////////////////////////////////////////////////////// RUNNING //////////////////////
-
-        grab(); //Grabbing preloaded cone
+        grab();
+        //Reseting timer for later
+        runtime.reset();
+        telemetry.addData("Current Action:","TFOD");
+        telemetry.update();
         if (opModeIsActive()) { //Scanning cone
             while (opModeIsActive() && parkingPos == 0) {
+                if(runtime.seconds() >= 3) { //Timeout reached or program quit
+                    parkingPos = 3; //Setting parking pos to 3 and quiting
+                    telemetry.addData("ERROR", "Cone not scanned within '" + 3 + "' seconds, defaulting to 3");
+                    telemetry.update();
+                    break;
+                }
                 if (tfod != null) {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
@@ -171,14 +179,14 @@ public class AutonomousLevel2 extends LinearOpMode {
                                 parkingPos = 3;
                             }
 
-                            telemetry.addData("Parking Position",parkingPos);
+                            telemetry.addData("Parking Position:",parkingPos);
                             telemetry.update();
                         }
                     }
                 }
             }
         }
-        armHeightPreset(1); //Raising cone
+        armHeightPreset(robot.armPositions[1]); //Raising cone
 
 
 
@@ -187,17 +195,18 @@ public class AutonomousLevel2 extends LinearOpMode {
         } else {
             moveInches(0,-14,0);
         }
-        moveInches(11,0,0); //Getting closer
+        moveInches(10.5,0,0); //Getting closer
+        armHeightPreset(robot.armPositions[1]-600);
         drop(); //Drops cone
         waitTime(0.5);
 
-        moveInches(-4,0,0); //Moving back
+        moveInches(-6,0,0); //Moving back
         armHeightPreset(0); //Dropping arm back down
 
         if (side.equals("Left")) { //Moving to parking area
-            moveInches(0,-15,0);
+            moveInches(0,-14,0);
         } else {
-            moveInches(0,15,0);
+            moveInches(0,14,0);
         }
 
 
@@ -274,7 +283,7 @@ public class AutonomousLevel2 extends LinearOpMode {
     ///////////////////////////////////////////////////////////////// ARM HEIGHT ///////////////////
     private void armHeightPreset(int pos) {
         //Grabbing height from table
-        int targetHeight = robot.armPositions[pos];
+        int targetHeight = pos;
 
         //Setting positions
         robot.Arm.setTargetPosition(targetHeight);
